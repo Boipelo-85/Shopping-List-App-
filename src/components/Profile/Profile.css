@@ -1,0 +1,144 @@
+.profile-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.profile-header {
+  margin-bottom: 40px;
+}
+
+.profile-header h1 {
+  font-size: 32px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: #1a1a1a;
+}
+
+.profile-subtitle {
+  font-size: 16px;
+  color: #999;
+  margin: 0;
+}
+
+/* Profile Card */
+.profile-card {
+  background: #f9f9f9;
+  border-radius: 12px;
+  padding: 30px;
+  margin-bottom: 40px;
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-details {
+  flex: 1;
+}
+
+.profile-details h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #1a1a1a;
+}
+
+.profile-details p {
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  color: #999;
+}
+
+.change-photo-btn {
+  padding: 8px 16px;
+  background: #f0f0f0;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #666;
+  transition: all 0.3s ease;
+}
+
+.change-photo-btn:hover {
+  background: #e8e8e8;
+  border-color: #d0d0d0;
+}
+
+/* Personal Information Section */
+.personal-info-section {
+  background: #f9f9f9;
+  border-radius: 12px;
+  padding: 30px;
+}
+
+.personal-info-section h3 {
+  margin: 0 0 24px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.form-group input {
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #333;
+  background: #fff;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #aa3bff;
+  box-shadow: 0 0 0 3px rgba(170, 59, 255, 0.1);
+}
+
+.form-group input::placeholder {
+  color: #ccc;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .profile-info {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .profile-header h1 {
+    font-size: 24px;
+  }
+}
