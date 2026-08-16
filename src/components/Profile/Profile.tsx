@@ -33,8 +33,7 @@ export const Profile = () => {
         <div className="profile-info">
           <img src="https://via.placeholder.com/80" alt="Profile" className="profile-avatar" />
           <div className="profile-details">
-            <h2></h2>
-            <p></p>
+
           </div>
           <button className="change-photo-btn">📷 Change Photo</button>
         </div>
@@ -44,7 +43,7 @@ export const Profile = () => {
 
       <div className="personal-info-section">
         <h3>Personal Information</h3>
-        
+
         <form className="form-grid">
           <div className="form-group">
             <label htmlFor="firstName">First name</label>
@@ -55,6 +54,7 @@ export const Profile = () => {
               value={formData.firstName}
               onChange={handleChange}
               placeholder="firstname"
+              
             />
           </div>
 

@@ -5,6 +5,7 @@ import { useState } from 'react'
 
 import './App.css'
 import { Header } from './components/Header/Header';
+import { Login } from './components/LoginPage/Login';
 
 function App() {
 
@@ -12,6 +13,9 @@ function App() {
     <>
         <div>
               <Header />
+              <div>
+                <Login />
+              </div>
         </div>
     </>
   )

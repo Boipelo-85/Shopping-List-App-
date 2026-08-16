@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import './Login.css'
+import { FaEye } from 'react-icons/fa';
 
 export const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -26,8 +26,8 @@ export const Login = () => {
       {/* Left Side - Login Form */}
       <div className="login-left">
         <div className="login-content">
-          <h1>Welcome back!</h1>
-          <p className="login-subtitle">Simplify </p>
+          <h1> Shopping-list app </h1>
+          <p className="login-subtitle"> </p>
 
           <form onSubmit={handleLogin} className="login-form">
             <div className="form-group">
@@ -55,7 +55,7 @@ export const Login = () => {
                 className="toggle-password"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                👁️
+               <FaEye /> 
               </button>
             </div>
 
@@ -64,16 +64,7 @@ export const Login = () => {
             <button type="submit" className="login-btn">Login</button>
           </form>
 
-          <div className="social-login">
-            <p>or continue with</p>
-            <div className="social-buttons">
-              <button className="social-btn google-btn">G</button>
-              <button className="social-btn github-btn">⚙️</button>
-              <button className="social-btn facebook-btn">f</button>
-            </div>
-          </div>
-
-          <p className="register-link">Not a member? <a href="to={'Registration'}">Register now</a></p>
+          <p className="register-link">Not a member? <a href="/src/components/Registration">Register now</a></p>
         </div>
       </div>
 
