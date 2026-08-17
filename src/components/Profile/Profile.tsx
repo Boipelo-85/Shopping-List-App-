@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
-import './Profile.css'
 
 export const Profile = () => {
   const [formData, setFormData] = useState({
+
     firstName: ' ',
     lastName: ' ',
     email: ' ',
     phone: ''
+    
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,8 +55,9 @@ export const Profile = () => {
               value={formData.firstName}
               onChange={handleChange}
               placeholder="firstname"
-              
+
             />
+
           </div>
 
           <div className="form-group">
@@ -67,6 +69,7 @@ export const Profile = () => {
               value={formData.lastName}
               onChange={handleChange}
               placeholder="Lastname"
+
             />
           </div>
 
@@ -79,6 +82,7 @@ export const Profile = () => {
               value={formData.email}
               onChange={handleChange}
               placeholder="Email@gmail.com"
+              
             />
           </div>
 
@@ -91,6 +95,7 @@ export const Profile = () => {
               value={formData.phone}
               onChange={handleChange}
               placeholder="+27"
+
             />
           </div>
         </form>
