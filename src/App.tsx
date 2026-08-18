@@ -4,6 +4,7 @@
 
 import './App.css'
 import { Header } from './components/Header/Header';
+import { Home } from './components/Home/Home';
 import { Login } from './components/LoginPage/Login';
 
 function App() {
@@ -12,8 +13,9 @@ function App() {
     <>
         <div className="app-container">
               <Header />
-              <div>
-                <Login />
+              <div className='main-content'>
+                {/* <Login /> */}
+                <Home />
               </div>
         </div>
     </>

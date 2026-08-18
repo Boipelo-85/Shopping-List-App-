@@ -144,10 +144,14 @@ code {
 }
 .search-logo{
   position: absolute;
-  left: 15px;
+  left: 170px;
   width: 20px;
   height: 20px;
   z-index: 1;
+  color: #000;
+  cursor: pointer;
+  padding : 0px 2px;
+
 }
 /* Login details  */
 
@@ -277,7 +281,7 @@ code {
 
 /* Social Login */
 
-.social-login {
+/* .social-login {
   text-align: center;
   margin-bottom: 24px;
 }
@@ -292,7 +296,7 @@ code {
   display: flex;
   justify-content: center;
   gap: 16px;
-}
+} */
 
 /* .social-btn {
   width: 48px;
@@ -828,4 +832,95 @@ code {
   .profile-header h1 {
     font-size: 24px;
   }
+}
+/* Home details  */
+
+.home-content{
+
+    margin-top: 100px;
+    /* border: 1px solid #e0e0e0;
+    transition: border-color 0.3s ease; */
+    padding-top: 20px;
+    width: 100%;
+
+}
+.innerContent{
+
+      border: 1px solid #5a595941;
+      transition: border-color 0.3s ease;
+}
+.buttons-content{
+
+      margin-left: 68%;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      
+}
+.sort-label{
+
+    font-size: 15px;
+    padding-right: 5px;
+    color: #000;
+}
+.sort-by-section{
+
+    border-radius: 10px;
+    padding: 5px 10px;
+    padding-left: 10px;
+    border: none;
+}
+.addList-content{
+
+    border-radius: 10px;
+    padding: 5px 30px;
+    background-color: #98a09e;
+    border: none;
+    margin-left: 5px;
+    cursor: pointer;
+    color: #fdfdfd;
+
+}
+.addList-content:hover{
+
+      background-color: #f0f1f0;
+      color: #000;
+      
+}
+.sort-by-section:hover{
+
+      background-color: #f0f1f0;
+    
+      
+}
+.main-content-card{
+
+    border: 1px solid #5a595941;
+    transition: border-color 0.3s ease;
+    width: 100%;
+    padding-top: 20px;
+    min-height: 80vh;
+    border-top: none;
+
+}
+.heading-names{
+
+    margin-left: -1000px;
+}
+.content-list{
+
+    margin-top: 50px;
+     border-bottom: 1px solid #5a595941;
+      transition: border-color 0.3s ease;
+      border-radius: 10px;
+
+}
+.List-Items-section-card{
+
+      border: 1px solid #5a595941;
+      transition: border-color 0.3s ease;
+      width: 80%;
+      margin-left: 110px;
+      min-height: 60%;
+      border-radius: 15px;
+
 }
