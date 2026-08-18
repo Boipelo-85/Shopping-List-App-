@@ -842,6 +842,7 @@ code {
     transition: border-color 0.3s ease; */
     padding-top: 20px;
     width: 100%;
+    padding-bottom: 100px;
 
 }
 .innerContent{
@@ -914,7 +915,7 @@ code {
       border-radius: 10px;
 
 }
-.List-Items-section-card{
+.List-section-card{
 
       border: 1px solid #5a595941;
       transition: border-color 0.3s ease;
@@ -922,5 +923,27 @@ code {
       margin-left: 110px;
       min-height: 60%;
       border-radius: 15px;
+      
+}
+.ellipsis-button{
 
+    padding: 0px 15px;
+    border: none;
+    background-color: #dfe2e1;
+    font-size: 25px;
+}
+
+/* Item content section */
+.table-content{
+
+    width: 100%;
+    border: 1px solid rgba(22, 22, 22, 0.226);
+    border-radius: 15px;
+}
+.Items-section-card{
+
+       width: 80%;
+      margin-left: 110px;
+      min-height: 60%;
+      border-radius: 15px;
 }

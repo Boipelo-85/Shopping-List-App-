@@ -1,5 +1,6 @@
 import React from 'react'
 import { Text } from '../Text/Text';
+import { FaEdit, FaEllipsisH, FaTrash } from 'react-icons/fa';
 
 export const Home = () => {
     return (
@@ -15,7 +16,6 @@ export const Home = () => {
                         <option value="alphabetical">Aplhabetically</option>
                         <option value="mannual">Mannually</option>
                     </select>
-
                     <button className='addList-content'>
                         Add list
                     </button>
@@ -29,9 +29,55 @@ export const Home = () => {
                 </div>
 
                 {/* List and Items section */}
-                <div className='List-Items-section-card'>
+                <div className='List-section-card'>
 
                     <div className='content-list'>
+
+                        <Text variant={'h2'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace", marginLeft: '-700px' }}> List</Text>
+                        <button className='ellipsis-button'><FaEllipsisH />  </button>
+                    </div>
+                    <div className='content-list'>
+
+                        <Text variant={'h2'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace", marginLeft: '-700px' }}> List</Text>
+                        <button className='ellipsis-button'><FaEllipsisH />  </button>
+                    </div>
+                    <div className='content-list'>
+
+                        <Text variant={'h2'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace", marginLeft: '-700px' }}> List</Text>
+                        <button className='ellipsis-button'><FaEllipsisH />  </button>
+                    </div>
+                </div>
+                <div>
+                    <Text variant={'h2'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace", marginLeft: '-700px' }}> itemsss</Text>
+                </div>
+                <div className='Items-section-card'>
+                    <table border={1} className='table-content'>
+                        <tr>
+                            <th>Item Picture & Name</th>
+                            <th>Quantity</th>
+                            <th>Edit</th>
+                            <th>Remove</th>
+                        </tr>
+                        <tr>
+                            <td>Image</td>
+                            <td>2</td>
+                            <td><FaEdit /></td>
+                            <td><FaTrash /></td>
+                        </tr>
+                        <tr>
+                            <td>Image</td>
+                            <td>1</td>
+                            <td><FaEdit /></td>
+                            <td><FaTrash /></td>
+                        </tr>
+                        <tr>
+                            <td>Image</td>
+                            <td>4</td>
+                            <td><FaEdit /></td>
+                            <td><FaTrash /></td>
+                        </tr>
+                    </table>
+                    {/* <div className='content-list'>
 
                         <Text variant={'h2'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace",marginLeft:'-700px' }}> itemsss</Text>
 
@@ -45,14 +91,11 @@ export const Home = () => {
 
                         <Text variant={'h2'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace",marginLeft:'-700px' }}> itemsss</Text>
 
-                    </div>
-                    
+                    </div> */}
 
                 </div>
 
             </div>
-
-
 
 
         </div>
