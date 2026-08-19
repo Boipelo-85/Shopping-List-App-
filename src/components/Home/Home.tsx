@@ -248,7 +248,7 @@ export const Home = () => {
                         <p>Are you sure you want to remove this list?</p>
                         <div className='confirm-dialog-buttons'>
                             <button onClick={() => setShowConfirmDialog(false)} className='cancel-btn'>Cancel</button>
-                            <button onClick={removeList} className='confirm-btn'>Remove</button>
+                            <button onClick={removeList} className='remove-btn'>Remove</button>
                         </div>
                     </div>
                 </div>
@@ -261,7 +261,7 @@ export const Home = () => {
                         <h3>Add New List</h3>
                         <div className='add-list-form'>
                             <div className='form-row'>
-                                <label>List Name :</label>
+                                <label className='list-label'>List Name :</label>
                                 <input
                                     type='text'
                                     value={newListName}
@@ -272,7 +272,7 @@ export const Home = () => {
                                 />
                             </div>
                             <div className='form-row'>
-                                <label>List Type :</label>
+                                <label className='list-label'>List Type :</label>
                                 <select
                                     value={newListType}
                                     onChange={(e) => setNewListType(e.target.value as 'Grocery list' | 'Categorized list' | 'Basic list')}

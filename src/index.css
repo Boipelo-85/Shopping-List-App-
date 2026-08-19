@@ -64,7 +64,7 @@
 
 body {
   margin: 0;
-  background-color: #dfe2e1;
+  background-color: #fdfdfd;
 }
 
 h1,
@@ -135,13 +135,14 @@ code {
 
 }
 .search-items{
+
     position: relative;
     display: flex;
     align-items: center;
     border-radius: 20px;
     margin-top: 5px;
     margin-left: 450px;
-
+    font-family: 'Courier New', Courier, monospace;
 }
 .search-logo{
   position: absolute;
@@ -153,6 +154,10 @@ code {
   cursor: pointer;
   padding : 0px 2px;
 
+}
+.profile-icon{
+
+      font-size: 30px;
 }
 /* Login details  */
 
@@ -408,32 +413,7 @@ code {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* .avatar-1 {
-  top: 20px;
-  left: 20px;
-}
 
-.avatar-1::before {
-  content: "👩";
-}
-
-.avatar-2 {
-  bottom: 40px;
-  right: 60px;
-}
-
-.avatar-2::before {
-  content: "👨";
-}
-
-.avatar-3 {
-  top: 60px;
-  right: 40px;
-}
-
-.avatar-3::before {
-  content: "👩";
-} */
 
 .heart-icon {
   position: absolute;
@@ -536,6 +516,8 @@ code {
   min-height: 100vh;
   padding: 40px 20px;
   background: #fff;
+  padding-top: 120px;
+  
 }
 
 .registration-header {
@@ -574,6 +556,7 @@ code {
 
 .form-group {
   margin-bottom: 16px;
+  
 }
 
 .form-group label {
@@ -591,19 +574,22 @@ code {
   border-radius: 25px;
   font-size: 14px;
   color: #333;
-  background: #fff;
+  background: #fff; 
   box-sizing: border-box;
   transition: border-color 0.3s ease;
+  
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #b9a8c5;
+  border-color: none;
   box-shadow: 0 0 0 3px rgba(170, 59, 255, 0.1);
 }
 
 .form-group input::placeholder {
+
   color: #ccc;
+
 }
 
 .phone-input-group {
@@ -638,8 +624,49 @@ code {
   transition: background 0.3s ease;
   margin-top: 24px;
   margin-bottom: 24px;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
 }
+.reg-labels{
 
+      font-family: 'Courier New', Courier, monospace; 
+      color: #000;
+      font-weight: bold;
+      margin-left: -140px;
+
+}
+.reg-labels-emals{
+
+
+      font-family: 'Courier New', Courier, monospace; 
+      color: #000;
+      font-weight: bold;
+      margin-left: -360px;
+}
+.reg-labels-phone{
+
+    font-family: 'Courier New', Courier, monospace; 
+      color: #000;
+      font-weight: bold;
+      margin-left: -360px;
+}
+.cel-input{
+
+  width: 100%;
+  padding: 5px 16px;
+  border-radius: 25px;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+
+}
+.reg-labels-password{
+
+      font-family: 'Courier New', Courier, monospace; 
+      color: #000;
+      font-weight: bold;
+      margin-left: -420px;
+}
 .register-btn:hover {
   background: #333;
 }
@@ -870,16 +897,18 @@ code {
     padding: 5px 10px;
     padding-left: 10px;
     border: none;
+    font-family: 'Courier New', Courier, monospace;
 }
 .addList-content{
 
     border-radius: 10px;
-    padding: 5px 30px;
+    padding: 5px 35px;
     background-color: #98a09e;
     border: none;
     margin-left: 5px;
     cursor: pointer;
     color: #fdfdfd;
+    font-family: 'Courier New', Courier, monospace;
 
 }
 .addList-content:hover{
@@ -1108,8 +1137,8 @@ code {
 
 .confirm-btn {
     padding: 10px 20px;
-    background: #dc3545;
-    color: #fff;
+    background: #727877;
+    color: #fdfdfd;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -1117,9 +1146,24 @@ code {
 }
 
 .confirm-btn:hover {
-    background: #c82333;
+    background: #000;
 }
+.remove-btn{
 
+    padding: 10px 20px;
+    background: #e9c1c1;
+    color: #f30606;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+
+}
+.remove-btn:hover{
+
+         background: #e71616;
+         color: #fdfdfd;
+}
 /* Add list popup styles */
 .add-list-popup-overlay {
     position: fixed;
@@ -1147,6 +1191,7 @@ code {
     margin: 0 0 20px 0;
     font-size: 18px;
     color: #1a1a1a;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 .add-list-form {
@@ -1175,6 +1220,7 @@ code {
     border-radius: 8px;
     font-size: 14px;
     font-family: 'Courier New', Courier, monospace;
+    color: #000;
 }
 
 .add-list-input:focus {
@@ -1190,6 +1236,8 @@ code {
     font-size: 14px;
     background: #fff;
     cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
+
 }
 
 .add-list-select:focus {
@@ -1219,4 +1267,8 @@ code {
     outline: none;
     border-color: #98a09e;
     box-shadow: 0 0 0 3px rgba(152, 160, 158, 0.1);
+}
+.list-label{
+
+      font-family: 'Courier New', Courier, monospace;
 }

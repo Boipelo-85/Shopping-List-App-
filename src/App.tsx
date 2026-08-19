@@ -6,6 +6,7 @@ import './App.css'
 import { Header } from './components/Header/Header';
 import { Home } from './components/Home/Home';
 import { Login } from './components/LoginPage/Login';
+import { Registration } from './components/Registration/Registration';
 
 function App() {
 
@@ -15,7 +16,8 @@ function App() {
               <Header />
               <div className='main-content'>
                 {/* <Login /> */}
-                <Home />
+                {/* <Home /> */}
+                <Registration />
               </div>
         </div>
     </>
