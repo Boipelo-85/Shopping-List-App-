@@ -1,4 +1,7 @@
 import React, { useState } from 'react'
+import {PhoneInput} from 'react-international-phone'
+import 'react-international-phone/style.css'
+import { Text } from '../Text/Text';
 
 export const Profile = () => {
   const [formData, setFormData] = useState({
@@ -6,7 +9,7 @@ export const Profile = () => {
     firstName: ' ',
     lastName: ' ',
     email: ' ',
-    phone: ''
+    celphone: ''
     
   })
 
@@ -24,7 +27,7 @@ export const Profile = () => {
       {/* Header */}
 
       <div className="profile-header">
-        <h1>Profile Settings</h1>
+        <Text variant={'h1'} style={{color:'#000',fontWeight: 'bold',fontFamily: "'Courier New', Courier, monospace"}}> Profile Settings </Text>
         <p className="profile-subtitle">Manage your personal information and account details</p>
       </div>
 
@@ -47,56 +50,42 @@ export const Profile = () => {
 
         <form className="form-grid">
           <div className="form-group">
-            <label htmlFor="firstName">First name</label>
+            <label className='label-content'>First name</label>
             <input 
-              type="text" 
-              id="firstName"
-              name="firstName"
+              type="text"
               value={formData.firstName}
               onChange={handleChange}
-              placeholder="firstname"
-
+              placeholder="Firsname"
+              required
             />
 
           </div>
-
           <div className="form-group">
-            <label htmlFor="lastName">Last name</label>
+            <label className='label-content'>Last name</label>
             <input 
               type="text" 
-              id="lastName"
-              name="lastName"
               value={formData.lastName}
               onChange={handleChange}
               placeholder="Lastname"
-
+              required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="email">Email address</label>
+            <label className='label-content'>Email address</label>
             <input 
               type="email" 
-              id="email"
-              name="email"
               value={formData.email}
               onChange={handleChange}
               placeholder="Email@gmail.com"
-              
+              required
             />
+
           </div>
 
           <div className="form-group">
-            <label htmlFor="phone">Phone number</label>
-            <input 
-              type="tel" 
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              placeholder="+27"
-
-            />
+            <label className='label-content'>Phone number</label>
+            <PhoneInput className='cel-input' defaultCountry="za" forceDialCode={true} value={formData.celphone} onChange={(phone) => setFormData({ ...formData,celphone: phone})} />
           </div>
         </form>
       </div>

@@ -121,17 +121,17 @@ code {
     width: 100%;
     z-index: 1000;
     display: flex;
+    flex: 1;
     align-items: center;
     padding: 0 20px;
     box-sizing: border-box;
     gap:50px;
     padding-bottom: 30px;
     padding-top: 20px;
-
 }
 .nav-content{
 
-  margin-left: 200px;
+  margin-left: 215px;
 
 }
 .search-items{
@@ -158,6 +158,12 @@ code {
 .profile-icon{
 
       font-size: 30px;
+      color: #2e2d2d9a;
+      cursor: pointer;
+}
+.profile-icon:hover{
+
+      color: #000;
 }
 /* Login details  */
 
@@ -229,11 +235,11 @@ code {
   color: #ccc;
 }
 
-.password-group {
+/* .password-group {
   position: relative;
-}
+} */
 
-.toggle-password {
+/* .toggle-password {
   position: absolute;
   right: 16px;
   top: 50%;
@@ -244,9 +250,9 @@ code {
   font-size: 16px;
   padding: 4px 8px;
   color: #999;
-}
+} */
 
-.toggle-password:hover {
+/* .toggle-password:hover {
   color: #666;
 }
 
@@ -261,7 +267,7 @@ code {
 
 .forgot-password:hover {
   color: #aa3bff;
-}
+} */
 
 .login-btn {
   width: 100%;
@@ -645,7 +651,7 @@ code {
 }
 .reg-labels-phone{
 
-    font-family: 'Courier New', Courier, monospace; 
+      font-family: 'Courier New', Courier, monospace; 
       color: #000;
       font-weight: bold;
       margin-left: -360px;
@@ -658,8 +664,8 @@ code {
   font-size: 14px;
   box-sizing: border-box;
   transition: border-color 0.3s ease;
-
 }
+
 .reg-labels-password{
 
       font-family: 'Courier New', Courier, monospace; 
@@ -721,8 +727,9 @@ code {
   max-width: 900px;
   margin: 0 auto;
   padding: 40px 20px;
-}
+  padding-top: 200px;
 
+}
 .profile-header {
   margin-bottom: 40px;
 }
@@ -738,6 +745,8 @@ code {
   font-size: 16px;
   color: #999;
   margin: 0;
+  font-family: 'Courier New', Courier, monospace;
+    
 }
 
 /* Profile Card */
@@ -803,10 +812,16 @@ code {
 .personal-info-section h3 {
   margin: 0 0 24px 0;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: bold; 
   color: #1a1a1a;
-}
+  font-family: 'Courier New', Courier, monospace;
 
+}
+.label-content{
+
+      font-family: 'Courier New', Courier, monospace;
+      color: #000;
+}
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
