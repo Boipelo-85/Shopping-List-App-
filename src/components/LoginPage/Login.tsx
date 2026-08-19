@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { FaEye } from 'react-icons/fa';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { Registration } from '../Registration/Registration';
 
 export const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -55,7 +57,7 @@ export const Login = () => {
                 className="toggle-password"
                 onClick={() => setShowPassword(!showPassword)}
               >
-               <FaEye /> 
+               {/* <FaEye />  */}
               </button>
             </div>
 
@@ -64,7 +66,8 @@ export const Login = () => {
             <button type="submit" className="login-btn">Login</button>
           </form>
 
-          <p className="register-link">Not a member? <a href="/src/components/Registration">Register now</a></p>
+         <p className="register-link"> Not a member? <Link to="/register">Register now</Link></p>
+         
         </div>
       </div>
 

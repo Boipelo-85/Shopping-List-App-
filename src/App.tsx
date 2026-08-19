@@ -20,9 +20,9 @@ function App() {
       <div className="app-container">
         <Header />
         <div className='main-content'>
-          {/* React-router-dom for re-directing pages */}
+          {/* React-router-dom for re-directing pages */}                
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Home />} /> 
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Registration />} />
             <Route path="/profile" element={<Profile/>} /> {/* profile route */}

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Text } from '../Text/Text';
 import {PhoneInput} from 'react-international-phone'
 import 'react-international-phone/style.css'
-import { DiVim } from 'react-icons/di';
+
 
 export const Registration = () => {
   const [formData, setFormData] = useState({
@@ -27,7 +27,7 @@ export const Registration = () => {
   return (
     <div className="registration-container">
       <div className="registration-header">
-        <Text variant={'h1'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace"}}>Create Account</Text>
+        <Text variant={'h1'} style={{ color:'#000',fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace"}}>Create Account</Text>
         <p className="registration-subtitle">Join us today and get started with your shopping list</p>
       </div>
 

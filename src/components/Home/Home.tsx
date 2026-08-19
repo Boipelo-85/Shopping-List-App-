@@ -6,11 +6,24 @@ interface ListItem {
   id: number;
   name: string;
   listType: 'Grocery list' | 'Categorized list' | 'Basic list';
-  items: string[];
+  items: Item[];
+}
+
+interface Item {
+  id: number;
+  name: string;
+  quantity: number;
+  category: string;
+  notes?: string;
+  image?: string;
 }
 
 export const Home = () => {
-  const [lists, setLists] = useState<ListItem[]>([]);
+  const [lists, setLists] = useState<ListItem[]>([
+    { id: 1, name: 'Grocery List', listType: 'Grocery list', items: [] },
+    { id: 2, name: 'Party Supplies', listType: 'Categorized list', items: [] },
+    { id: 3, name: 'Office Items', listType: 'Basic list', items: [] }
+  ]);
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editName, setEditName] = useState('');
@@ -20,6 +33,16 @@ export const Home = () => {
   const [showAddListPopup, setShowAddListPopup] = useState(false);
   const [newListName, setNewListName] = useState('');
   const [newListType, setNewListType] = useState<'Grocery list' | 'Categorized list' | 'Basic list'>('Grocery list');
+  const [showAddItemModal, setShowAddItemModal] = useState(false);
+  const [selectedListId, setSelectedListId] = useState<number | null>(null);
+  const [itemName, setItemName] = useState('');
+  const [itemQuantity, setItemQuantity] = useState(1);
+  const [itemCategory, setItemCategory] = useState('');
+  const [itemNotes, setItemNotes] = useState('');
+  const [itemImage, setItemImage] = useState<File | null>(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [sortMethod, setSortMethod] = useState<'alphabetical' | 'manual'>('manual');
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -108,17 +131,84 @@ export const Home = () => {
     }
   };
 
+  const openAddItemModal = (listId: number) => {
+    setSelectedListId(listId);
+    setShowAddItemModal(true);
+  };
+
+  const closeAddItemModal = () => {
+    setShowAddItemModal(false);
+    setSelectedListId(null);
+    setItemName('');
+    setItemQuantity(1);
+    setItemCategory('');
+    setItemNotes('');
+    setItemImage(null);
+  };
+
+  const addItemToList = () => {
+    if (selectedListId !== null && itemName.trim()) {
+      const newItem: Item = {
+        id: Date.now(),
+        name: itemName,
+        quantity: itemQuantity,
+        category: itemCategory,
+        notes: itemNotes || undefined,
+        image: itemImage ? URL.createObjectURL(itemImage) : undefined
+      };
+      setLists(lists.map(list => 
+        list.id === selectedListId 
+          ? { ...list, items: [...list.items, newItem] }
+          : list
+      ));
+      closeAddItemModal();
+      setToastMessage('Item added successfully!');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    }
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      setItemImage(file);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      setItemImage(file);
+    }
+  };
+
+  const getSortedLists = () => {
+    if (sortMethod === 'alphabetical') {
+      return [...lists].sort((a, b) => a.name.localeCompare(b.name));
+    }
+    return lists;
+  };
+
   return (
-        // home content for its
-        <div className='home-content'>
+        <>
+            {/* Toast Notification */}
+            {showToast && (
+                <div className='toast-notification'>
+                    <span>{toastMessage}</span>
+                </div>
+            )}
+
+            {/* home content for its */}
+            <div className='home-content'>
 
             <div className='innerContent'>
                 {/* Button at the top right for sort by and add list */}
                 <div className='buttons-content'>
                     <label className='sort-label' >Sort by :</label>
-                    <select className='sort-by-section'>
-                        <option value="alphabetical">Aplhabetically</option>
-                        <option value="mannual">Mannually</option>
+                    <select className='sort-by-section' value={sortMethod} onChange={(e) => setSortMethod(e.target.value as 'alphabetical' | 'manual')}>
+                        <option value="alphabetical">Alphabetically</option>
+                        <option value="manual">Manually</option>
                     </select>
                     <button className='addList-content' onClick={() => setShowAddListPopup(true)}>
                         Add list
@@ -134,7 +224,7 @@ export const Home = () => {
 
                 {/* List and Items section */}
                 <div className='List-section-card'>
-                    {lists.map((list) => (
+                    {getSortedLists().map((list) => (
                         <div key={list.id} className='content-list' ref={openDropdownId === list.id ? dropdownRef : null}>
                             <div className='list-info'>
                                 {editingId === list.id ? (
@@ -160,7 +250,11 @@ export const Home = () => {
                                     </div>
                                 ) : (
                                     <>
-                                        <Text variant={'h2'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace", marginLeft: '-650px',paddingLeft:'5px' }}> {list.name}</Text>
+                                        <div 
+                                            style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace", marginLeft: '-650px',paddingLeft:'5px', cursor: 'pointer', fontSize: '24px' }} 
+                                            onClick={() => openAddItemModal(list.id)}
+                                        >
+                                         {list.name}</div>
                                         <Text variant={'p'} style={{ fontSize: '12px', color: '#999', marginLeft: '-700px', marginTop: '5px' }}>{list.items.length} items</Text>
                                     </>
                                 )}
@@ -267,7 +361,7 @@ export const Home = () => {
                                     value={newListName}
                                     onChange={(e) => setNewListName(e.target.value)}
                                     className='add-list-input'
-                                    placeholder='Enter list name'
+                                    placeholder='.Enter list name'
                                     autoFocus
                                 />
                             </div>
@@ -291,7 +385,100 @@ export const Home = () => {
                     </div>
                 </div>
             )}
+
+            {/* Add Item Modal */}
+            {showAddItemModal && (
+                <div className='add-item-modal-overlay'>
+                    <div className='add-item-modal'>
+                        <div className='modal-header'>
+                            <h3>Add New Item</h3>
+                            <p className='modal-subtitle'>Add a new item to this list</p>
+                            <button className='modal-close-btn' onClick={closeAddItemModal}>×</button>
+                        </div>
+                        <div className='add-item-form'>
+                            <div className='form-row-two-col'>
+                                <div className='form-group-item'>
+                                    <label>Item Name</label>
+                                    <input
+                                        type='text'
+                                        value={itemName}
+                                        onChange={(e) => setItemName(e.target.value)}
+                                        className='item-input'
+                                        placeholder='Fill your item name'
+                                        autoFocus
+                                    />
+                                </div>
+                                <div className='form-group-item'>
+                                    <label>Category</label>
+                                    <select
+                                        value={itemCategory}
+                                        onChange={(e) => setItemCategory(e.target.value)}
+                                        className='item-select'
+                                    >
+                                        <option value=''>Search Category</option>
+                                        <option value='Food'>Food</option>
+                                        <option value='Beverages'>Beverages</option>
+                                        <option value='Household'>Household</option>
+                                        <option value='Personal Care'>Personal Care</option>
+                                        <option value='Other'>Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className='form-group-item'>
+                                <label>Quantity</label>
+                                <input
+                                    type='number'
+                                    value={itemQuantity}
+                                    onChange={(e) => setItemQuantity(parseInt(e.target.value) || 1)}
+                                    className='item-input'
+                                    min='1'
+                                />
+                            </div>
+                            <div className='form-group-item'>
+                                <label>Optional Notes</label>
+                                <textarea
+                                    value={itemNotes}
+                                    onChange={(e) => setItemNotes(e.target.value)}
+                                    className='item-textarea'
+                                    placeholder='Add any additional notes (optional)'
+                                    rows={3}
+                                />
+                            </div>
+                            <div className='form-group-item'>
+                                <label>Upload Image</label>
+                                <div 
+                                    className='image-upload-zone'
+                                    onDrop={handleDrop}
+                                    onDragOver={(e) => e.preventDefault()}
+                                >
+                                    <div className='upload-prompt'>
+                                        <span>Choose file or Drag and drop image here</span>
+                                    </div>
+                                    <input
+                                        type='file'
+                                        accept='image/*'
+                                        onChange={handleImageUpload}
+                                        className='file-input'
+                                    />
+                                    <button className='browse-btn'>Browse file</button>
+                                </div>
+                                {itemImage && (
+                                    <div className='image-preview'>
+                                        <img src={URL.createObjectURL(itemImage)} alt='Preview' />
+                                        <button onClick={() => setItemImage(null)} className='remove-image-btn'>×</button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        <div className='add-item-buttons'>
+                            <button onClick={closeAddItemModal} className='cancel-btn'>Cancel</button>
+                            <button onClick={addItemToList} className='confirm-btn'>Add Item</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
+        </>
 
     )
 }
