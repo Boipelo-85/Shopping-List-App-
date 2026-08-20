@@ -285,34 +285,52 @@ export const Home = () => {
                     ))}
                 </div>
                 <div>
-                    <Text variant={'h2'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace", marginLeft: '-700px' }}> itemsss</Text>
+                    <Text variant={'h2'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace", marginLeft: '-700px' }}> Items</Text>
                 </div>
                 <div className='Items-section-card'>
-                    <table border={1} className='table-content'>
-                        <tr>
-                            <th>Item Picture & Name</th>
-                            <th>Quantity</th>
-                            <th>Edit</th>
-                            <th>Remove</th>
-                        </tr>
-                        <tr>
-                            <td>Image</td>
-                            <td>2</td>
-                            <td><FaEdit /></td>
-                            <td><FaTrash /></td>
-                        </tr>
-                        <tr>
-                            <td>Image</td>
-                            <td>1</td>
-                            <td><FaEdit /></td>
-                            <td><FaTrash /></td>
-                        </tr>
-                        <tr>
-                            <td>Image</td>
-                            <td>4</td>
-                            <td><FaEdit /></td>
-                            <td><FaTrash /></td>
-                        </tr>
+                    <table className='table-content'>
+                        <thead>
+                            <tr>
+                                <th className='text-left'>Item picture and name</th>
+                                <th className='text-center'>Quantity</th>
+                                <th className='text-center'>Edit</th>
+                                <th className='text-right'>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {lists.flatMap(list => list.items).map((item) => (
+                                <tr key={item.id} className='item-row'>
+                                    <td className='text-left'>
+                                        <div className='item-cell'>
+                                            {item.image && (
+                                                <img src={item.image} alt={item.name} className='item-image' />
+                                            )}
+                                            <div className='item-details'>
+                                                <div className='item-name'>{item.name}</div>
+                                                {item.category && (
+                                                    <div className='item-subtext'>Set : Colour: {item.category}</div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className='text-center'>
+                                        <div className='quantity-stepper'>
+                                            <button className='stepper-btn'>+</button>
+                                            <span className='stepper-value'>{item.quantity}</span>
+                                            <button className='stepper-btn'>−</button>
+                                        </div>
+                                    </td>
+                                    <td className='text-center'>
+                                        <span className='item-price'>R{item.quantity * 50}</span>
+                                    </td>
+                                    <td className='text-right'>
+                                        <button className='delete-btn'>
+                                            <FaTrash />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
                     </table>
                     {/* <div className='content-list'>
 

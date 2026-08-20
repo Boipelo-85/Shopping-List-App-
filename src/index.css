@@ -202,7 +202,6 @@ code {
     font-family: 'Courier New', Courier, monospace;
     color: #000;
     margin-left: -78%;
-    
 }
 .password-label{
 
@@ -440,8 +439,6 @@ code {
   font-size: 28px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
-
-
 
 .heart-icon {
   position: absolute;
@@ -955,6 +952,7 @@ code {
     padding-left: 10px;
     border: none;
     font-family: 'Courier New', Courier, monospace;
+    background-color: #f5f6f5;
 }
 .addList-content{
 
@@ -966,12 +964,10 @@ code {
     cursor: pointer;
     color: #fdfdfd;
     font-family: 'Courier New', Courier, monospace;
-
 }
 .addList-content:hover{
 
-      background-color: #f0f1f0;
-      color: #000;
+      background-color: #727877;
       
 }
 .sort-by-section:hover{
@@ -1016,25 +1012,172 @@ code {
 
     padding: 0px 15px;
     border: none;
-    background-color: #dfe2e1;
+    background-color: #fdfdfd;
     font-size: 25px;
     cursor: pointer;
     
 }
 
 /* Item content section */
-.table-content{
-
-    width: 100%;
-    border: 1px solid rgba(22, 22, 22, 0.226);
-    border-radius: 15px;
-}
 .Items-section-card{
+    width: 80%;
+    margin-left: 110px;
+    min-height: 60%;
+    border-radius: 15px;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
 
-       width: 80%;
-      margin-left: 110px;
-      min-height: 60%;
-      border-radius: 15px;
+.table-content{
+    width: 100%;
+    border-collapse: collapse;
+    border: none;
+}
+
+.table-content thead tr {
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.table-content th {
+    padding: 15px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Courier New', Courier, monospace;
+    color: #333;
+}
+
+.table-content tbody tr {
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.table-content tbody tr:last-child {
+    border-bottom: none;
+}
+
+.table-content td {
+    padding: 20px 15px;
+    vertical-align: middle;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.item-row {
+    transition: background 0.2s ease;
+}
+
+.item-row:hover {
+    background: #f9f9f9;
+}
+
+.item-cell {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.item-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid #e0e0e0;
+}
+
+.item-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.item-name {
+    font-weight: bold;
+    font-size: 14px;
+    font-family: 'Courier New', Courier, monospace;
+    color: #333;
+}
+
+.item-subtext {
+    font-size: 12px;
+    color: #999;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.quantity-stepper {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    padding: 4px;
+    gap: 8px;
+    background: #fff;
+}
+
+.stepper-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: #f5f5f5;
+    color: #333;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+}
+
+.stepper-btn:hover {
+    background: #e0e0e0;
+}
+
+.stepper-value {
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Courier New', Courier, monospace;
+    color: #333;
+    min-width: 30px;
+    text-align: center;
+}
+
+.item-price {
+    font-weight: bold;
+    font-size: 16px;
+    font-family: 'Courier New', Courier, monospace;
+    color: #333;
+}
+
+.delete-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: none;
+    background: #fee;
+    color: #dc3545;
+    font-size: 16px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.delete-btn:hover {
+    background: #fcc;
+    color: #c82333;
 }
 
 /* Dropdown menu styles */

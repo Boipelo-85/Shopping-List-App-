@@ -10,26 +10,52 @@ import { Registration } from './components/Registration/Registration';
 import {Profile} from './components/Profile/Profile'; // <-- create this
 
 
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 function App() {
 
   return (
     <>
-     
       <Router>
-      <div className="app-container">
-        {/* <Header /> */}
-        <div className='main-content'>
-          {/* React-router-dom for re-directing pages */}                
+        <div className="app-container">
           <Routes>
-            <Route path="/" element={<Home />} /> 
+            {/* Default route - Login page without header */}
+            <Route path="/" element={<Login />} />
             <Route path="/login" element={<Login />} />
+            
+            {/* Registration page without header */}
             <Route path="/register" element={<Registration />} />
-            <Route path="/profile" element={<Profile/>} /> {/* profile route */}
+            
+            {/* Home page with header */}
+            <Route 
+              path="/home" 
+              element={
+                <>
+                  <Header />
+                  <div className='main-content'>
+                    <Home />
+                  </div>
+                </>
+              } 
+            />
+            
+            {/* Profile page with header */}
+            <Route 
+              path="/profile" 
+              element={
+                <>
+                  <Header />
+                  <div className='main-content'>
+                    <Profile />
+                  </div>
+                </>
+              } 
+            />
+            
+            {/* Redirect any unknown routes to login */}
+            <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
         </div>
-      </div>
-    </Router>
+      </Router>
     </>
   )
 }

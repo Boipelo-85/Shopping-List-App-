@@ -6,11 +6,11 @@ import { Text } from '../Text/Text';
 export const Profile = () => {
   const [formData, setFormData] = useState({
 
-    firstName: ' ',
-    lastName: ' ',
-    email: ' ',
+    firstName: '',
+    lastName: '',
+    email: '',
     celphone: ''
-    
+
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,15 +51,15 @@ export const Profile = () => {
         <form className="form-grid">
           <div className="form-group">
             <label className='label-content'>First name</label>
-            <input  type="text"  placeholder="Firsname" value={formData.firstName} onChange={handleChange}  required />
+            <input  type="text" name="firstName" placeholder="Firstname" value={formData.firstName} onChange={handleChange}  required />
           </div>
           <div className="form-group">
             <label className='label-content'>Last name</label>
-            <input  type="text" value={formData.lastName} onChange={handleChange}  placeholder="Lastname" required />
+            <input  type="text" name="lastName" value={formData.lastName} onChange={handleChange}  placeholder="Lastname" required />
           </div>
           <div className="form-group">
             <label className='label-content'>Email address</label>
-            <input type="email" value={formData.email}  onChange={handleChange} placeholder="Email@gmail.com" required />
+            <input type="email" name="email" value={formData.email}  onChange={handleChange} placeholder="Email@gmail.com" required />
 
           </div>
           <div className="form-group">

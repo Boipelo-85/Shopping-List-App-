@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { FaEye } from 'react-icons/fa';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { Registration } from '../Registration/Registration';
+import { Link, useNavigate } from 'react-router-dom';
 import { Text } from '../Text/Text';
 
 export const Login = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
     username: '',
@@ -22,6 +22,8 @@ export const Login = () => {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
     console.log('Login attempt:', formData)
+    // Redirect to home page after successful login
+    navigate('/home');
   }
 
   return (
