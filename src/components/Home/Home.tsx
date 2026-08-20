@@ -251,7 +251,7 @@ export const Home = () => {
                                 ) : (
                                     <>
                                         <div 
-                                            style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace", marginLeft: '-650px',paddingLeft:'5px', cursor: 'pointer', fontSize: '24px' }} 
+                                            style={{ color:'#000',fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace", marginLeft: '-640px',paddingLeft:'15px', cursor: 'pointer', fontSize: '24px' }} 
                                             onClick={() => openAddItemModal(list.id)}
                                         >
                                          {list.name}</div>

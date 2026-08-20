@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { FaEye } from 'react-icons/fa';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { Registration } from '../Registration/Registration';
+import { Text } from '../Text/Text';
 
 export const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -28,8 +29,9 @@ export const Login = () => {
       {/* Left Side - Login Form */}
       <div className="login-left">
         <div className="login-content">
-          <h1> Shopping-list app </h1>
-          <p className="login-subtitle"> </p>
+          <Text  variant={'h1'} style={{ color : '#000',fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace",paddingBottom:'10px'}}> Shopping-list app </Text>
+          {/* className="login-subtitle" */}
+          <Text  variant={'p'} style={{fontFamily: "'Courier New', Courier, monospace",paddingBottom:'70px'}} >  Smart lists for stress‑free shopping </Text>
 
           <form onSubmit={handleLogin} className="login-form">
             <div className="form-group">

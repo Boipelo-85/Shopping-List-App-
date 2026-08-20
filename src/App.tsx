@@ -18,7 +18,7 @@ function App() {
      
       <Router>
       <div className="app-container">
-        <Header />
+  
         <div className='main-content'>
           {/* React-router-dom for re-directing pages */}                
           <Routes>
