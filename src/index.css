@@ -173,6 +173,8 @@ code {
   width: 100%;
   background: #fff;
   padding-top: 40px;
+
+
 }
 
 /* Left Side - Login Form */
@@ -186,10 +188,29 @@ code {
 }
 
 .login-content {
-  width: 100%;
-  max-width: 360px;
-}
 
+  width: 100%;
+  max-width: 370px;
+  border: 1px solid #0000002d;
+  padding: 100px;
+  border-radius: 20px;
+  transition: border-color 0.3s ease;
+
+}
+.username-label{
+
+    font-family: 'Courier New', Courier, monospace;
+    color: #000;
+    margin-left: -78%;
+    
+}
+.password-label{
+
+    font-family: 'Courier New', Courier, monospace;
+    color: #000;
+    margin-left: -78%;
+
+}
 .login-content h1 {
   font-size: 32px;
   font-weight: 700;
@@ -747,6 +768,7 @@ code {
   margin: 0 auto;
   padding: 40px 20px;
   padding-top: 200px;
+  
 
 }
 .profile-header {
@@ -840,6 +862,7 @@ code {
 
       font-family: 'Courier New', Courier, monospace;
       color: #000;
+      margin-left: -70%;
 }
 .form-grid {
   display: grid;
@@ -995,6 +1018,8 @@ code {
     border: none;
     background-color: #dfe2e1;
     font-size: 25px;
+    cursor: pointer;
+    
 }
 
 /* Item content section */

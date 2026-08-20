@@ -31,36 +31,30 @@ export const Login = () => {
         <div className="login-content">
           <Text  variant={'h1'} style={{ color : '#000',fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace",paddingBottom:'10px'}}> Shopping-list app </Text>
           {/* className="login-subtitle" */}
-          <Text  variant={'p'} style={{fontFamily: "'Courier New', Courier, monospace",paddingBottom:'70px'}} >  Smart lists for stress‑free shopping </Text>
+          <Text  variant={'p'} style={{fontFamily: "'Courier New', Courier, monospace",paddingBottom:'70px',width:'110%'}} >  Smart lists for stress‑free shopping </Text>
 
           <form onSubmit={handleLogin} className="login-form">
             <div className="form-group">
+              <label className='username-label'>Username</label>
               <input
                 type="text"
-                name="username"
                 placeholder="Username"
                 value={formData.username}
                 onChange={handleChange}
                 className="input-field"
+
               />
             </div>
 
             <div className="form-group password-group">
+              <label className='password-label'>Password</label>
               <input
                 type={showPassword ? 'text' : 'password'}
-                name="password"
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
                 className="input-field"
               />
-              <button
-                type="button"
-                className="toggle-password"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-               {/* <FaEye />  */}
-              </button>
             </div>
 
             <a href="#" className="forgot-password">Forgot Password?</a>

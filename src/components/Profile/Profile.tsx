@@ -33,7 +33,7 @@ export const Profile = () => {
 
       {/* Profile Card */}
 
-      <div className="profile-card">
+      {/* <div className="profile-card">
         <div className="profile-info">
           <img src="https://via.placeholder.com/80" alt="Profile" className="profile-avatar" />
           <div className="profile-details">
@@ -41,7 +41,7 @@ export const Profile = () => {
           </div>
           <button className="change-photo-btn">📷 Change Photo</button>
         </div>
-      </div>
+      </div> */}
 
       {/* Personal Information Section */}
 
@@ -51,38 +51,17 @@ export const Profile = () => {
         <form className="form-grid">
           <div className="form-group">
             <label className='label-content'>First name</label>
-            <input 
-              type="text"
-              value={formData.firstName}
-              onChange={handleChange}
-              placeholder="Firsname"
-              required
-            />
-
+            <input  type="text"  placeholder="Firsname" value={formData.firstName} onChange={handleChange}  required />
           </div>
           <div className="form-group">
             <label className='label-content'>Last name</label>
-            <input 
-              type="text" 
-              value={formData.lastName}
-              onChange={handleChange}
-              placeholder="Lastname"
-              required
-            />
+            <input  type="text" value={formData.lastName} onChange={handleChange}  placeholder="Lastname" required />
           </div>
-
           <div className="form-group">
             <label className='label-content'>Email address</label>
-            <input 
-              type="email" 
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Email@gmail.com"
-              required
-            />
+            <input type="email" value={formData.email}  onChange={handleChange} placeholder="Email@gmail.com" required />
 
           </div>
-
           <div className="form-group">
             <label className='label-content'>Phone number</label>
             <PhoneInput className='cel-input' defaultCountry="za" forceDialCode={true} value={formData.celphone} onChange={(phone) => setFormData({ ...formData,celphone: phone})} />
