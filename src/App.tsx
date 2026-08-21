@@ -8,11 +8,14 @@ import { Home } from './components/Home/Home';
 import { Login } from './components/LoginPage/Login';
 import { Registration } from './components/Registration/Registration';
 import {Profile} from './components/Profile/Profile'; // <-- create this
-
+// import { useSelector } from 'react-redux';
+// import type { RootState } from './store/store';
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 function App() {
 
+  //  const auth = useSelector((state: RootState) => state.auth);
+   
   return (
     <>
       <Router>
@@ -50,7 +53,6 @@ function App() {
                 </>
               } 
             />
-            
             {/* Redirect any unknown routes to login */}
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
