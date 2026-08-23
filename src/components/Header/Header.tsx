@@ -1,8 +1,19 @@
 import { Text } from '../Text/Text';
 import searchIcon from '../../assets/searchbar.png'
-import { FaUserCircle } from 'react-icons/fa';
-import { Link } from 'react-router-dom'
-export const Header = () => {
+import { ProfileDropdown } from '../ProfileDropdown/ProfileDropdown';
+
+interface HeaderProps {
+  searchQuery?: string;
+  setSearchQuery?: (query: string) => void;
+}
+
+export const Header = ({ searchQuery = '', setSearchQuery }: HeaderProps) => {
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (setSearchQuery) {
+      setSearchQuery(e.target.value);
+    }
+  };
+
   return (
 
     <nav className='nav'>
@@ -12,11 +23,16 @@ export const Header = () => {
         </div>
         <div className='search-items'>
                 <img src={searchIcon} alt="search logo" className='search-logo' />
-                <input type="text" placeholder='Search for Item' style={{padding: '10px 10px 10px 45px',borderRadius:'20px',border:'none',background:'#fdfdfd'}}/>
+                <input 
+                  type="text" 
+                  placeholder='Search for Item' 
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  style={{padding: '10px 10px 10px 45px',borderRadius:'20px',border:'none',background:'#fdfdfd'}}
+                />
         </div>
         <div className='profile-content'>
-
-              <Link to="/profile"> <Text variant="h3"><FaUserCircle className="profile-icon" /></Text></Link>     
+              <ProfileDropdown />
         </div>
     </nav>
   )

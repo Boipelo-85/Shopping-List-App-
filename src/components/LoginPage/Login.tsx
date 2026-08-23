@@ -3,15 +3,16 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Text } from '../Text/Text';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginSuccess } from  '../../store/authSlice'
+import { loginUser, clearError } from  '../../store/authSlice'
 import type { RootState } from '../../store/store';
+import type { AppDispatch } from '../../store/store';
 
 
 export const Login = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
-  // Local state only for toggling password visibility
+  // Local state for toggling password visibility
   const [showPassword, setShowPassword] = useState(false);
 
   // Redux state for form data
@@ -23,32 +24,31 @@ export const Login = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
- const handleLogin = (e: React.FormEvent) => {
-  e.preventDefault();
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
 
-  //  Basic validation
-  if (!formData.username || !formData.password) {
-    alert("Please enter both username and password");
-    return;
-  }
+    // Clear any previous errors
+    dispatch(clearError());
 
-  //  Dispatch login action
-  dispatch(loginSuccess({
-    username: formData.username,
-    token: formData.password, 
-  }));
+    // Basic validation
+    if (!formData.username || !formData.password) {
+      alert("Please enter both username and password");
+      return;
+    }
 
-  console.log("Login attempt:", formData);
+    // Dispatch login thunk
+    dispatch(loginUser({
+      username: formData.username,
+      password: formData.password,
+    }));
+  };
 
-   //  Navigate only if authenticated
-useEffect(() => {
-  if (auth.isAuthenticated) {
-    navigate('/home');
-  }
-}, [auth.isAuthenticated, navigate]);
-
-
-};
+  // Navigate only if authenticated
+  useEffect(() => {
+    if (auth.isAuthenticated) {
+      navigate('/home');
+    }
+  }, [auth.isAuthenticated, navigate]);
 
   return (
     <div className="login-container">
@@ -60,6 +60,12 @@ useEffect(() => {
 
           <Text  variant={'p'} style={{fontFamily: "'Courier New', Courier, monospace",paddingBottom:'70px',width:'110%'}} >  Smart lists for stress‑free shopping </Text>
 
+          {auth.error && (
+            <div style={{ color: 'red', marginBottom: '16px', padding: '8px', backgroundColor: '#fee', borderRadius: '4px' }}>
+              {auth.error}
+            </div>
+          )}
+
           <form onSubmit={handleLogin} className="login-form">
             <div className="form-group">
               <label className='username-label'>Username</label>
@@ -68,15 +74,23 @@ useEffect(() => {
             </div>
             <div className="form-group password-group">
               <label className='password-label'>Password</label>
-              <input  type={showPassword ? 'text' : 'password'} name='password' placeholder="Password" value={formData.password}  onChange={handleChange} className="input-field"/>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input  type={showPassword ? 'text' : 'password'} name='password' placeholder="Password" value={formData.password}  onChange={handleChange} className="input-field"/>
+                {/* <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ padding: '8px 12px', cursor: 'pointer' }}>
+                </button> */}
+              </div>
             </div>
             <a href="#" className="forgot-password">Forgot Password?</a>
-
+          
             <button type="submit" className="login-btn">Login</button>
+          
           </form>
-         <p className="register-link"> Not a member? <Link to="/register">Register now</Link></p>
+          
+           <p className="register-link"> Not a member? <Link to="/register">Register now</Link></p>
+                 
         </div>
       </div>
     </div>
+
   )
 }

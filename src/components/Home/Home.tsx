@@ -18,7 +18,7 @@ interface Item {
   image?: string;
 }
 
-export const Home = () => {
+export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
   const [lists, setLists] = useState<ListItem[]>([
     { id: 1, name: 'Grocery List', listType: 'Grocery list', items: [] },
     { id: 2, name: 'Party Supplies', listType: 'Categorized list', items: [] },
@@ -190,6 +190,41 @@ export const Home = () => {
     return lists;
   };
 
+  // Search filtering logic
+  const getFilteredLists = () => {
+    if (!searchQuery.trim()) {
+      return getSortedLists();
+    }
+
+    const query = searchQuery.toLowerCase();
+    
+    return lists.filter(list => {
+      // Check if list name matches
+      const listNameMatches = list.name.toLowerCase().includes(query);
+      
+      // Check if any items in this list match
+      const hasMatchingItems = list.items.some(item => 
+        item.name.toLowerCase().includes(query)
+      );
+      
+      return listNameMatches || hasMatchingItems;
+    });
+  };
+
+  const getFilteredItems = () => {
+    if (!searchQuery.trim()) {
+      return lists.flatMap(list => list.items);
+    }
+
+    const query = searchQuery.toLowerCase();
+    
+    return lists.flatMap(list => 
+      list.items
+        .filter(item => item.name.toLowerCase().includes(query))
+        .map(item => ({ ...item, listName: list.name }))
+    );
+  };
+
   return (
         <>
             {/* Toast Notification */}
@@ -224,7 +259,7 @@ export const Home = () => {
 
                 {/* List and Items section */}
                 <div className='List-section-card'>
-                    {getSortedLists().map((list) => (
+                    {getFilteredLists().map((list) => (
                         <div key={list.id} className='content-list' ref={openDropdownId === list.id ? dropdownRef : null}>
                             <div className='list-info'>
                                 {editingId === list.id ? (
@@ -298,7 +333,7 @@ export const Home = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {lists.flatMap(list => list.items).map((item) => (
+                            {getFilteredItems().map((item: any) => (
                                 <tr key={item.id} className='item-row'>
                                     <td className='text-left'>
                                         <div className='item-cell'>
@@ -309,6 +344,11 @@ export const Home = () => {
                                                 <div className='item-name'>{item.name}</div>
                                                 {item.category && (
                                                     <div className='item-subtext'>Set : Colour: {item.category}</div>
+                                                )}
+                                                {searchQuery && item.listName && (
+                                                    <div className='item-subtext' style={{ color: '#666', fontSize: '11px' }}>
+                                                        List: {item.listName}
+                                                    </div>
                                                 )}
                                             </div>
                                         </div>
