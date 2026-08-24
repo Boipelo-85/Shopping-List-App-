@@ -1,51 +1,55 @@
 import { useState, useRef, useEffect } from 'react'
 import { Text } from '../Text/Text';
-import { FaEdit, FaEllipsisH, FaTrash, FaCopy } from 'react-icons/fa';
-
-// interface ListItem {
-//   id: number;
-//   name: string;
-//   listType: 'Grocery list' | 'Categorized list' | 'Basic list';
-//   items: Item[];
-// }
-
-interface Item {
-  id: number;
-  name: string;
-  quantity: number;
-  category: string;
-  notes?: string;
-  image?: string;
-}
+import { FaEdit, FaEllipsisH, FaTrash, FaCopy, FaPlus } from 'react-icons/fa';
+import { useSelector, useDispatch } from 'react-redux';
+import { addList, removeList as removeListAction, updateListName, incrementItemCount, decrementItemCount } from '../../store/listSlice';
+import { addItem, removeItem as deleteItemAction, updateItemQuantity } from '../../store/itemsSlice';
+import type { RootState } from '../../store/store';
+import type { AppDispatch } from '../../store/store';
+import type { List } from '../../store/listSlice';
+import type { Item } from '../../store/itemsSlice';
 
 export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
-//   const [lists, setLists] = useState<ListItem[]>([
-//     { id: 1, name: 'Grocery List', listType: 'Grocery list', items: [] },
-//     { id: 2, name: 'Party Supplies', listType: 'Categorized list', items: [] },
-//     { id: 3, name: 'Office Items', listType: 'Basic list', items: [] }
-//   ]);
-  const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
-//   const [editingId, setEditingId] = useState<number | null>(null);
-//   const [editName, setEditName] = useState('');
-  const [items, setItems] = useState<Item[]>([]);
+  const dispatch = useDispatch<AppDispatch>();
+  const lists = useSelector((state: RootState) => state.lists.lists);
+  const items = useSelector((state: RootState) => state.items.items);
+  
+  // Tab Navigation
+  const [activeTab, setActiveTab] = useState<'lists' | 'items'>('lists');
 
-//   const [editListType, setEditListType] = useState<'Grocery list' | 'Categorized list' | 'Basic list'>('Grocery list');
+  // Dropdown State
+  const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Editing State
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editName, setEditName] = useState('');
+
+  // Confirmation Dialog State
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [itemsToDelete, setItemsToDelete] = useState<number | null>(null);
-//   const [showAddListPopup, setShowAddListPopup] = useState(false);
-//   const [newListName, setNewListName] = useState('');
-//   const [newListType, setNewListType] = useState<'Grocery list' | 'Categorized list' | 'Basic list'>('Grocery list');
+
+  // Add List Modal State
+  const [showAddListModal, setShowAddListModal] = useState(false);
+  const [newListName, setNewListName] = useState('');
+
+  // Add Item Modal State
   const [showAddItemModal, setShowAddItemModal] = useState(false);
-//   const [selectedListId, setSelectedListId] = useState<number | null>(null);
   const [itemName, setItemName] = useState('');
   const [itemQuantity, setItemQuantity] = useState(1);
   const [itemCategory, setItemCategory] = useState('');
+  const [itemListId, setItemListId] = useState<number | null>(null);
+  const [showNewListInput, setShowNewListInput] = useState(false);
+  const [newListFromItem, setNewListFromItem] = useState('');
   const [itemNotes, setItemNotes] = useState('');
   const [itemImage, setItemImage] = useState<File | null>(null);
+
+  // Toast Notification State
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+
+  // Sorting State
   const [sortMethod, setSortMethod] = useState<'alphabetical' | 'manual'>('manual');
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -58,66 +62,73 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [openDropdownId]);
 
+  // Auto-select newly created list in Add Item modal
+  useEffect(() => {
+    if (itemCategory && !itemListId) {
+      const list = lists.find(l => l.name === itemCategory);
+      if (list) {
+        setItemListId(list.id);
+      }
+    }
+  }, [lists, itemCategory, itemListId]);
+
   const toggleDropdown = (id: number) => {
     setOpenDropdownId(openDropdownId === id ? null : id);
   };
 
-//   const startEditing = (id: number, currentName: string, currentListType: 'Grocery list' | 'Categorized list' | 'Basic list') => {
-//     setEditingId(id);
-//     setEditName(currentName);
-//     setEditListType(currentListType);
-//     setOpenDropdownId(null);
-//   };
+  const startEditing = (id: number, currentName: string) => {
+    setEditingId(id);
+    setEditName(currentName);
+    setOpenDropdownId(null);
+  };
 
-//   const saveEdit = (id: number) => {
-//     setLists(lists.map(list => 
-//       list.id === id ? { ...list, name: editName, listType: editListType } : list
-//     ));
-//     setEditingId(null);
-//     setEditName('');
-//     setEditListType('Grocery list');
-//   };
+  const saveEdit = (id: number) => {
+    dispatch(updateListName({ id, name: editName }));
+    setEditingId(null);
+    setEditName('');
+  };
 
-//   const cancelEdit = () => {
-//     setEditingId(null);
-//     setEditName('');
-//     setEditListType('Grocery list');
-//   };
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditName('');
+  };
 
-//   const duplicateList = (id: number) => {
-//     const listToDuplicate = lists.find(list => list.id === id);
-//     if (listToDuplicate) {
-//       const newId = Math.max(...lists.map(l => l.id)) + 1;
-//       setLists([...lists, { 
-//         ...listToDuplicate, 
-//         id: newId, 
-//         name: `${listToDuplicate.name} (Copy)`,
-//         items: [...listToDuplicate.items]
-//       }]);
-//     }
-//     setOpenDropdownId(null);
-//   };
+  const duplicateList = (id: number) => {
+    const listToDuplicate = lists.find(list => list.id === id);
+    if (listToDuplicate) {
+      dispatch(addList(`${listToDuplicate.name} (Copy)`));
+    }
+    setOpenDropdownId(null);
+  };
 
-//   const addNewList = () => {
-//     if (newListName.trim()) {
-//       const newId = lists.length > 0 ? Math.max(...lists.map(l => l.id)) + 1 : 1;
-//       setLists([...lists, {
-//         id: newId,
-//         name: newListName,
-//         listType: newListType,
-//         items: []
-//       }]);
-//       setNewListName('');
-//       setNewListType('Grocery list');
-//       setShowAddListPopup(false);
-//     }
-//   };
+  const addNewList = () => {
+    if (newListName.trim()) {
+      dispatch(addList(newListName.trim()));
+      setNewListName('');
+      setShowAddListModal(false);
+      setToastMessage('List created successfully!');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    }
+  };
 
-//   const cancelAddList = () => {
-//     setNewListName('');
-//     setNewListType('Grocery list');
-//     setShowAddListPopup(false);
-//   };
+  const cancelAddList = () => {
+    setNewListName('');
+    setShowAddListModal(false);
+  };
+
+  const createListFromItem = () => {
+    if (newListFromItem.trim()) {
+      const listName = newListFromItem.trim();
+      dispatch(addList(listName));
+      setItemCategory(listName);
+      setNewListFromItem('');
+      setShowNewListInput(false);
+      setToastMessage('List created successfully!');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    }
+  };
 
   const confirmRemove = (id: number) => {
     setItemsToDelete(id);
@@ -125,22 +136,36 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
     setOpenDropdownId(null);
   };
 
-  const removeList = () => {
+  const handleRemoveList = () => {
     if (itemsToDelete !== null) {
-      setItems(items.filter(item => item.id !== itemsToDelete));
+      // Remove list and all its items
+      dispatch(removeListAction(itemsToDelete));
+      const listItems = items.filter(item => item.listId === itemsToDelete);
+      listItems.forEach(item => dispatch(deleteItemAction(item.id)));
       setItemsToDelete(null);
       setShowConfirmDialog(false);
+      setToastMessage('List removed successfully!');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
     }
   };
 
-  const openAddItemModal = (listId: number) => {
-  
-    setShowAddItemModal(true);
+  const handleRemoveItem = (id: number) => {
+    const item = items.find(i => i.id === id);
+    if (item && item.listId) {
+      dispatch(decrementItemCount(item.listId));
+    }
+    dispatch(deleteItemAction(id));
+    setToastMessage('Item removed successfully!');
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
   };
 
   const closeAddItemModal = () => {
     setShowAddItemModal(false);
-    
+    // Don't reset itemListId to preserve the selected list filter
+    setShowNewListInput(false);
+    setNewListFromItem('');
     setItemName('');
     setItemQuantity(1);
     setItemCategory('');
@@ -148,22 +173,32 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
     setItemImage(null);
   };
 
-  const addItem = () => {
-   if (itemName.trim()) {
-    const newItem: Item = {
-      id: Date.now(),
-      name: itemName,
-      quantity: itemQuantity,
-      category: itemCategory,
-      notes: itemNotes || undefined,
-      image: itemImage ? URL.createObjectURL(itemImage) : undefined
-    };
-    setItems([...items, newItem]);
-    closeAddItemModal();
-    setToastMessage('Item added successfully!');
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
-    
+  const handleAddItem = () => {
+    if (itemName.trim() && itemListId) {
+      const selectedList = lists.find(l => l.id === itemListId);
+      if (!selectedList) return;
+
+      const newItem = {
+        name: itemName,
+        quantity: itemQuantity,
+        category: itemCategory,
+        listId: itemListId,
+        notes: itemNotes || undefined,
+        image: itemImage ? URL.createObjectURL(itemImage) : undefined
+      };
+
+      dispatch(addItem(newItem));
+      dispatch(incrementItemCount(itemListId));
+      closeAddItemModal();
+      setToastMessage('Item added successfully!');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    }
+  };
+
+  const updateQuantity = (itemId: number, newQuantity: number) => {
+    if (newQuantity >= 1) {
+      dispatch(updateItemQuantity({ id: itemId, quantity: newQuantity }));
     }
   };
 
@@ -222,6 +257,11 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
     );
   };
 
+  // Filter items by selected list
+  const filteredItems = itemListId 
+    ? items.filter(item => item.listId === itemListId)
+    : items;
+
   return (
         <>
             {/* Toast Notification */}
@@ -235,156 +275,195 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
             <div className='home-content'>
 
             <div className='innerContent'>
-                {/* Button at the top right for sort by and add list */}
-                <div className='buttons-content'>
-                    <label className='sort-label' >Sort by :</label>
-                    <select className='sort-by-section' value={sortMethod} onChange={(e) => setSortMethod(e.target.value as 'alphabetical' | 'manual')}>
-                        <option value="alphabetical">Name</option>
-                        <option value="manual">Category</option>
-                        <option value="manual">Date added</option>
-                    </select>
-                    <button className='addList-content' onClick={() => setShowAddItemModal(true)}>
-                        Add Item
+                {/* Tab Navigation */}
+                <div className='tab-navigation'>
+                    <button 
+                        type='button'
+                        className={`tab-button ${activeTab === 'lists' ? 'active' : 'inactive'}`}
+                        onClick={() => setActiveTab('lists')}
+                    >
+                        Lists
                     </button>
+                    <button 
+                        type='button'
+                        className={`tab-button ${activeTab === 'items' ? 'active' : 'inactive'}`}
+                        onClick={() => setActiveTab('items')}
+                    >
+                        Items
+                    </button>
+                </div>
+
+                {/* Action buttons based on active tab */}
+                <div className='buttons-content'>
+                    {activeTab === 'lists' && (
+                        <button type='button' className='addList-content' onClick={() => setShowAddListModal(true)}>
+                            <FaPlus style={{ marginRight: '8px' }} /> Add List
+                        </button>
+                    )}
+                    {activeTab === 'items' && (
+                        <button type='button' className='addList-content' onClick={() => {
+                            // Pre-select the current filtered list if one is selected
+                            if (itemListId) {
+                                const selectedList = lists.find(l => l.id === itemListId);
+                                if (selectedList) {
+                                    setItemCategory(selectedList.name);
+                                }
+                            }
+                            setShowAddItemModal(true);
+                        }}>
+                            <FaPlus style={{ marginRight: '8px' }} /> Add Item
+                        </button>
+                    )}
                 </div>
             </div>
             {/* Main content where my list and the items will be placed */}
             <div className='main-content-card'>
 
-                <div className='heading-names'>
-                    <Text variant={'h2'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace" }}> Items </Text>
-                </div>
-
-                {/* List and Items section */}
-                {/* <div className='List-section-card'>
-                    {getFilteredLists().map((list) => (
-                        <div key={list.id} className='content-list' ref={openDropdownId === list.id ? dropdownRef : null}>
-                            <div className='list-info'>
-                                {editingId === list.id ? (
-                                    <div className='edit-name-container'>
-                                        <input
-                                            type='text'
-                                            value={editName}
-                                            onChange={(e) => setEditName(e.target.value)}
-                                            className='edit-name-input'
-                                            autoFocus
-                                        />
-                                        <select
-                                            value={editListType}
-                                            onChange={(e) => setEditListType(e.target.value as 'Grocery list' | 'Categorized list' | 'Basic list')}
-                                            className='edit-type-select'
-                                        >
-                                            <option value='Grocery list'>Grocery list</option>
-                                            <option value='Categorized list'>Categorized list</option>
-                                            <option value='Basic list'>Basic list</option>
-                                        </select>
-                                        <button onClick={() => saveEdit(list.id)} className='save-edit-btn'>Save</button>
-                                        <button onClick={cancelEdit} className='cancel-edit-btn'>Cancel</button>
-                                    </div>
-                                ) : (
-                                    <>
-                                        <div 
-                                            style={{ color:'#000',fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace", marginLeft: '-640px',paddingLeft:'15px', cursor: 'pointer', fontSize: '24px' }} 
-                                            onClick={() => openAddItemModal(list.id)}
-                                        >
-                                         {list.name}</div>
-                                        <Text variant={'p'} style={{ fontSize: '12px', color: '#999', marginLeft: '-700px', marginTop: '5px' }}>{list.items.length} items</Text>
-                                    </>
-                                )}
-                            </div>
-                            <div className='list-actions'>
-                                <button 
-                                    className='ellipsis-button' 
-                                    onClick={() => toggleDropdown(list.id)}
-                                    title='Action Section'
-                                >
-                                    <FaEllipsisH />
-                                </button>
-                                {openDropdownId === list.id && (
-                                    <div className='dropdown-menu'>
-                                        <button onClick={() => startEditing(list.id, list.name, list.listType)} className='dropdown-item'>
-                                            <FaEdit /> Edit Name
-                                        </button>
-                                        <button onClick={() => duplicateList(list.id)} className='dropdown-item'>
-                                            <FaCopy /> Duplicate
-                                        </button>
-                                        <button onClick={() => confirmRemove(list.id)} className='dropdown-item dropdown-item-danger'>
-                                            <FaTrash /> Remove
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
+                {/* Lists Tab Content */}
+                {activeTab === 'lists' && (
+                    <>
+                        <div className='heading-names'>
+                            <Text variant={'h2'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace" }}> Lists </Text>
                         </div>
-                    ))}
-                </div> */}
-                {/* <div>
-                    <Text variant={'h2'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace", marginLeft: '-700px' }}> Items</Text>
-                </div> */}
-
-                <div className='Items-section-card'>
-                    <table className='table-content'>
-                        <thead>
-                            <tr>
-                                <th className='text-left'>Item picture and name</th>
-                                <th className='text-center'>Quantity</th>
-                                <th className='text-center'>Edit</th>
-                                <th className='text-right'>Remove</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {items.map(item => (
-                                <tr key={item.id} className='item-row'>
-                                    <td className='text-left'>
-                                        <div className='item-cell'>
-                                            {item.image && (
-                                                <img src={item.image} alt={item.name} className='item-image' />
+                        <div className='List-section-card'>
+                            {lists.length === 0 ? (
+                                <div className='empty-state'>
+                                    <p>No lists yet. Create your first list!</p>
+                                </div>
+                            ) : (
+                                lists.map((list) => (
+                                    <div key={list.id} className='content-list' ref={openDropdownId === list.id ? dropdownRef : null}>
+                                        <div className='list-info'>
+                                            {editingId === list.id ? (
+                                                <div className='edit-name-container'>
+                                                    <input
+                                                        type='text'
+                                                        value={editName}
+                                                        onChange={(e) => setEditName(e.target.value)}
+                                                        className='edit-name-input'
+                                                        autoFocus
+                                                    />
+                                                    <button type='button' onClick={() => saveEdit(list.id)} className='save-edit-btn'>Save</button>
+                                                    <button type='button' onClick={cancelEdit} className='cancel-edit-btn'>Cancel</button>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <div 
+                                                        style={{ color:'#000',fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace", marginLeft: '-640px',paddingLeft:'15px', cursor: 'pointer', fontSize: '24px' }} 
+                                                        onClick={() => {
+                                                            setItemListId(list.id);
+                                                            setActiveTab('items');
+                                                        }}
+                                                    >
+                                                    {list.name}</div>
+                                                    <Text variant={'p'} style={{ fontSize: '12px', color: '#999', marginLeft: '-700px', marginTop: '5px' }}>{list.itemCount} items</Text>
+                                                </>
                                             )}
-                                            <div className='item-details'>
-                                                <div className='item-name'>{item.name}</div>
-                                                {item.category && (
-                                                    <div className='item-subtext'>Category: {item.category}</div>
-                                                )}
-                                            </div>
                                         </div>
-                                    </td>
-                                    <td className='text-center'>
-                                        <div className='quantity-stepper'>
-                                            <button className='stepper-btn'>+</button>
-                                            <span className='stepper-value'>{item.quantity}</span>
-                                            <button className='stepper-btn'>−</button>
+                                        <div className='list-actions'>
+                                            <button 
+                                                type='button'
+                                                className='ellipsis-button' 
+                                                onClick={() => toggleDropdown(list.id)}
+                                                title='Action Section'
+                                            >
+                                                <FaEllipsisH />
+                                            </button>
+                                            {openDropdownId === list.id && (
+                                                <div className='dropdown-menu'>
+                                                    <button type='button' onClick={() => startEditing(list.id, list.name)} className='dropdown-item'>
+                                                        <FaEdit /> Edit Name
+                                                    </button>
+                                                    <button type='button' onClick={() => duplicateList(list.id)} className='dropdown-item'>
+                                                        <FaCopy /> Duplicate
+                                                    </button>
+                                                    <button type='button' onClick={() => confirmRemove(list.id)} className='dropdown-item dropdown-item-danger'>
+                                                        <FaTrash /> Remove
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
-                                    </td>
-                                    <td className='text-center'>
-                                        <button onClick={() => ('')} className='dropdown-item'>
-                                            <FaEdit /> 
-                                        </button>
-                                    </td>
-                                    <td className='text-right'>
-                                        <button  onClick={() => confirmRemove(item.id)} className='delete-btn'>
-                                            <FaTrash />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    {/* <div className='content-list'>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </>
+                )}
 
-                        <Text variant={'h2'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace",marginLeft:'-700px' }}> itemsss</Text>
+                {/* Items Tab Content */}
+                {activeTab === 'items' && (
+                    <>
+                        <div className='heading-names'>
+                            <Text variant={'h2'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace" }}>
+                                {itemListId ? lists.find(l => l.id === itemListId)?.name || 'Items' : 'All Items'}
+                            </Text>
+                            {itemListId && (
+                                <button 
+                                    type='button' 
+                                    onClick={() => setItemListId(null)}
+                                    style={{ marginLeft: '20px', fontSize: '14px', cursor: 'pointer', color: '#666' }}
+                                >
+                                    Show All Items
+                                </button>
+                            )}
+                        </div>
 
-                    </div>
-                      <div className='content-list'>
-
-                        <Text variant={'h2'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace" ,marginLeft:'-700px'}}> itemsss</Text>
-
-                    </div>
-                      <div className='content-list'>
-
-                        <Text variant={'h2'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace",marginLeft:'-700px' }}> itemsss</Text>
-
-                    </div> */}
-
-                </div>
+                        <div className='Items-section-card'>
+                            {filteredItems.length === 0 ? (
+                                <div className='empty-state'>
+                                    <p>{itemListId ? 'No items in this list yet.' : 'No items yet. Add your first item!'}</p>
+                                </div>
+                            ) : (
+                                <table className='table-content'>
+                                    <thead>
+                                        <tr>
+                                            <th className='text-left'>Item picture and name</th>
+                                            <th className='text-center'>Quantity</th>
+                                            <th className='text-center'>Edit</th>
+                                            <th className='text-right'>Remove</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {filteredItems.map(item => (
+                                            <tr key={item.id} className='item-row'>
+                                                <td className='text-left'>
+                                                    <div className='item-cell'>
+                                                        {item.image && (
+                                                            <img src={item.image} alt={item.name} className='item-image' />
+                                                        )}
+                                                        <div className='item-details'>
+                                                            <div className='item-name'>{item.name}</div>
+                                                            {item.category && (
+                                                                <div className='item-subtext'>Category: {item.category}</div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className='text-center'>
+                                                    <div className='quantity-stepper'>
+                                                        <button type='button' className='stepper-btn' onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
+                                                        <span className='stepper-value'>{item.quantity}</span>
+                                                        <button type='button' className='stepper-btn' onClick={() => updateQuantity(item.id, item.quantity - 1)}>−</button>
+                                                    </div>
+                                                </td>
+                                                <td className='text-center'>
+                                                    <button type='button' onClick={() => {}} className='dropdown-item'>
+                                                        <FaEdit /> 
+                                                    </button>
+                                                </td>
+                                                <td className='text-right'>
+                                                    <button type='button' onClick={() => handleRemoveItem(item.id)} className='delete-btn'>
+                                                        <FaTrash />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
+                        </div>
+                    </>
+                )}
 
             </div>
 
@@ -395,15 +474,15 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                         <h3>Confirm Remove</h3>
                         <p>Are you sure you want to remove this item?</p>
                         <div className='confirm-dialog-buttons'>
-                            <button onClick={() => setShowConfirmDialog(false)} className='cancel-btn'>Cancel</button>
-                            <button onClick={removeList} className='remove-btn'>Remove</button>
+                            <button type='button' onClick={() => setShowConfirmDialog(false)} className='cancel-btn'>Cancel</button>
+                            <button type='button' onClick={handleRemoveList} className='remove-btn'>Remove</button>
                         </div>
                     </div>
                 </div>
             )}
 
-            {/* Add List Popup */}
-            {/* {showAddListPopup && (
+            {/* Add List Modal */}
+            {showAddListModal && (
                 <div className='add-list-popup-overlay'>
                     <div className='add-list-popup'>
                         <h3>Add New List</h3>
@@ -415,30 +494,18 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                                     value={newListName}
                                     onChange={(e) => setNewListName(e.target.value)}
                                     className='add-list-input'
-                                    placeholder='.Enter list name'
+                                    placeholder='Enter list name'
                                     autoFocus
                                 />
                             </div>
-                            <div className='form-row'>
-                                <label className='list-label'>List Type :</label>
-                                <select
-                                    value={newListType}
-                                    onChange={(e) => setNewListType(e.target.value as 'Grocery list' | 'Categorized list' | 'Basic list')}
-                                    className='add-list-select'
-                                >
-                                    <option value='Grocery list'>Grocery list</option>
-                                    <option value='Categorized list'>Categorized list</option>
-                                    <option value='Basic list'>Basic list</option>
-                                </select>
-                            </div>
                         </div>
                         <div className='add-list-buttons'>
-                            <button onClick={cancelAddList} className='cancel-btn'>Cancel</button>
-                            <button onClick={addNewList} className='confirm-btn'>Add List</button>
+                            <button type='button' onClick={cancelAddList} className='cancel-btn'>Cancel</button>
+                            <button type='button' onClick={addNewList} className='confirm-btn'>Add List</button>
                         </div>
                     </div>
                 </div>
-            )} */}
+            )}
 
             {/* Add Item Modal */}
             {showAddItemModal && (
@@ -447,7 +514,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                         <div className='modal-header'>
                             <h3>Add New Item</h3>
                             <p className='modal-subtitle'>Add a new item to this list</p>
-                            <button className='modal-close-btn' onClick={closeAddItemModal}>×</button>
+                            <button type='button' className='modal-close-btn' onClick={closeAddItemModal}>×</button>
                         </div>
                         <div className='add-item-form'>
                             <div className='form-row-two-col'>
@@ -463,21 +530,47 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                                     />
                                 </div>
                                 <div className='form-group-item'>
-                                    <label>Category</label>
+                                    <label>Category (List)</label>
                                     <select
-                                        value={itemCategory}
-                                        onChange={(e) => setItemCategory(e.target.value)}
+                                        value={itemListId || ''}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            if (value === 'new') {
+                                                setShowNewListInput(true);
+                                                setItemListId(null);
+                                                setItemCategory('');
+                                            } else {
+                                                const selectedList = lists.find(l => l.id === Number(value));
+                                                setItemListId(Number(value));
+                                                setItemCategory(selectedList?.name || '');
+                                                setShowNewListInput(false);
+                                            }
+                                        }}
                                         className='item-select'
                                     >
-                                        <option value=''>Search Category</option>
-                                        <option value='Food'>Food</option>
-                                        <option value='Beverages'>Beverages</option>
-                                        <option value='Household'>Household</option>
-                                        <option value='Personal Care'>Personal Care</option>
-                                        <option value='Other'>Other</option>
+                                        <option value=''>Select a list</option>
+                                        {lists.map(list => (
+                                            <option key={list.id} value={list.id}>{list.name}</option>
+                                        ))}
+                                        <option value='new'>+ Create new list</option>
                                     </select>
                                 </div>
                             </div>
+                            {showNewListInput && (
+                                <div className='form-group-item'>
+                                    <label>New List Name</label>
+                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                        <input
+                                            type='text'
+                                            value={newListFromItem}
+                                            onChange={(e) => setNewListFromItem(e.target.value)}
+                                            className='item-input'
+                                            placeholder='Enter new list name'
+                                        />
+                                        <button type='button' onClick={createListFromItem} className='confirm-btn' style={{ padding: '10px 20px' }}>Create</button>
+                                    </div>
+                                </div>
+                            )}
                             <div className='form-group-item'>
                                 <label>Quantity</label>
                                 <input
@@ -518,21 +611,21 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                                 {itemImage && (
                                     <div className='image-preview'>
                                         <img src={URL.createObjectURL(itemImage)} alt='Preview' />
-                                        <button onClick={() => setItemImage(null)} className='remove-image-btn'>×</button>
+                                        <button type='button' onClick={() => setItemImage(null)} className='remove-image-btn'>×</button>
                                     </div>
                                 )}
                                 </div>
-                               
+
                             </div>
                         </div>
                         <div className='add-item-buttons'>
-                            <button onClick={closeAddItemModal} className='cancel-btn'>Cancel</button>
-                            <button onClick={addItem} className='confirm-btn'>Add Item</button>
+                            <button type='button' onClick={closeAddItemModal} className='cancel-btn'>Cancel</button>
+                            <button type='button' onClick={handleAddItem} className='confirm-btn'>Add Item</button>
                         </div>
                     </div>
                 </div>
             )}
-        </div>
+            </div>
         </>
 
     )

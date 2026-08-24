@@ -70,7 +70,7 @@ export const loginUser = createAsyncThunk(
       const users = usersStr ? JSON.parse(usersStr) : [];
       
       const user = users.find(
-        (u: any) => u.username === credentials.username && u.password === credentials.password
+        (u: any) => (u.username === credentials.username || u.email === credentials.username) && u.password === credentials.password
       );
       
       if (!user) {

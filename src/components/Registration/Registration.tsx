@@ -41,6 +41,11 @@ export const Registration = () => {
     dispatch(registerUser(formData));
   }
 
+  // Clear any previous errors when component mounts
+  React.useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
+
   // Navigate to login after successful registration
   React.useEffect(() => {
     if (!auth.loading && !auth.error && formData.firstName) {
@@ -49,7 +54,7 @@ export const Registration = () => {
       const usersStr = localStorage.getItem('users');
       const users = usersStr ? JSON.parse(usersStr) : [];
       const userExists = users.find((u: any) => u.email === formData.email);
-      
+
       if (userExists) {
         navigate('/login');
       }

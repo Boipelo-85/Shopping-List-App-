@@ -1,13 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { FaUserCircle, FaEdit, FaEye, FaUserPlus } from 'react-icons/fa';
+import { FaUserCircle, FaEdit, FaEye, FaUserPlus, FaSignOutAlt } from 'react-icons/fa';
 import type { RootState } from '../../store/store';
+import { logout } from '../../store/authSlice';
 
 export const ProfileDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const auth = useSelector((state: RootState) => state.auth);
 
   // Close dropdown when clicking outside
@@ -45,6 +47,12 @@ export const ProfileDropdown = () => {
 
   const handleCreateProfile = () => {
     navigate('/profile');
+    setIsOpen(false);
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/login');
     setIsOpen(false);
   };
 
@@ -175,7 +183,7 @@ export const ProfileDropdown = () => {
                 color: '#374151',
                 fontFamily: "'Courier New', Courier, monospace",
                 transition: 'background-color 0.2s'
-                
+
 
               }}
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f3f4f6'}
@@ -185,6 +193,33 @@ export const ProfileDropdown = () => {
               <FaUserPlus style={{ color: '#6b7280', fontSize: '16px' }} />
               <span>Create Profile</span>
 
+            </button>
+
+            <div style={{ borderTop: '1px solid #e5e7eb', margin: '8px 0' }} />
+
+            <button
+              className="profile-dropdown-option"
+              onClick={handleLogout}
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                textAlign: 'left',
+                fontSize: '14px',
+                color: '#dc2626',
+                fontFamily: "'Courier New', Courier, monospace",
+                transition: 'background-color 0.2s'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fef2f2'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+            >
+              <FaSignOutAlt style={{ color: '#dc2626', fontSize: '16px' }} />
+              <span>Logout</span>
             </button>
           </div>
         </div>

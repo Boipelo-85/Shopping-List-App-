@@ -86,8 +86,8 @@ export const Login = () => {
           
           </form>
           
-           <p className="register-link"> Not a member? <Link to="/register">Register now</Link></p>
-                 
+          <p className="register-link"> Not a member? <Link to="/register">Register now</Link></p>
+                
         </div>
       </div>
     </div>

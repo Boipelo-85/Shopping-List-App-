@@ -183,19 +183,19 @@ code {
   height: 100vh;
   width: 100%;
   background: #fff;
-  padding-top: 40px;
-
-
+  padding-top: 5px;
+  position: fixed;
+  justify-content: center;
 }
 
 /* Left Side - Login Form */
 .login-left {
   flex: 1;
   display: flex;
-  align-items: center;
   justify-content: center;
   padding: 40px;
   background: #fff;
+  margin-left: -395px;
 }
 
 .login-content {
@@ -922,6 +922,57 @@ code {
   border-left: none;
   border-right: none;
   
+}
+
+/* Tab Navigation Styles */
+.tab-navigation {
+  display: flex;
+  background: #f5f6f5;
+  border-radius: 25px;
+  padding: 4px;
+  width: fit-content;
+  margin: 0 auto;
+  gap: 4px;
+}
+
+.tab-button {
+  padding: 10px 30px;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Courier New', Courier, monospace;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.tab-button.active {
+  background: #1a1a1a;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.tab-button.inactive {
+  background: transparent;
+  color: #999;
+}
+
+.tab-button.inactive:hover {
+  color: #666;
+}
+
+.tab-button.active:hover {
+  background: #333;
+}
+
+/* Empty State Styles */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 16px;
 }
 
 .buttons-content {
