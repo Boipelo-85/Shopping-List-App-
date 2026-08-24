@@ -10,7 +10,6 @@ import { Registration } from './components/Registration/Registration';
 import {Profile} from './components/Profile/Profile'; // <-- create this
 import { useSelector } from 'react-redux';
 import type { RootState } from './store/store';
-import { useState } from 'react';
 
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
@@ -23,22 +22,25 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
   
   return <>{children}</>;
+
 };
 
 // Public Route component (redirects to home if already authenticated)
+
 const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   const auth = useSelector((state: RootState) => state.auth);
   
   if (auth.isAuthenticated) {
+
     return <Navigate to="/home" replace />;
+    
   }
   
   return <>{children}</>;
+
 };
 
 function App() {
-  const [searchQuery, setSearchQuery] = useState('');
-
   return (
     <>
       <Router>
@@ -68,9 +70,9 @@ function App() {
               path="/home" 
               element={
                 <ProtectedRoute>
-                  <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+                  <Header />
                   <div className='main-content'>
-                    <Home searchQuery={searchQuery} />
+                    <Home />
                   </div>
                 </ProtectedRoute>
               } 
@@ -79,9 +81,9 @@ function App() {
             {/* Profile page with header - protected */}
             <Route 
               path="/profile" 
-              element={
-                <ProtectedRoute>
-                  <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+              element={ 
+                <ProtectedRoute> 
+                  <Header />
                   <div className='main-content'>
                     <Profile />
                   </div>

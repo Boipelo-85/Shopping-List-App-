@@ -19,17 +19,19 @@ interface Item {
 }
 
 export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
-  const [lists, setLists] = useState<ListItem[]>([
-    { id: 1, name: 'Grocery List', listType: 'Grocery list', items: [] },
-    { id: 2, name: 'Party Supplies', listType: 'Categorized list', items: [] },
-    { id: 3, name: 'Office Items', listType: 'Basic list', items: [] }
-  ]);
+//   const [lists, setLists] = useState<ListItem[]>([
+//     { id: 1, name: 'Grocery List', listType: 'Grocery list', items: [] },
+//     { id: 2, name: 'Party Supplies', listType: 'Categorized list', items: [] },
+//     { id: 3, name: 'Office Items', listType: 'Basic list', items: [] }
+//   ]);
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editName, setEditName] = useState('');
+  const [items, setItems] = useState<Item[]>([]);
+
   const [editListType, setEditListType] = useState<'Grocery list' | 'Categorized list' | 'Basic list'>('Grocery list');
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [listToDelete, setListToDelete] = useState<number | null>(null);
+  const [itemsToDelete, setItemsToDelete] = useState<number | null>(null);
   const [showAddListPopup, setShowAddListPopup] = useState(false);
   const [newListName, setNewListName] = useState('');
   const [newListType, setNewListType] = useState<'Grocery list' | 'Categorized list' | 'Basic list'>('Grocery list');
@@ -67,14 +69,14 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
     setOpenDropdownId(null);
   };
 
-  const saveEdit = (id: number) => {
-    setLists(lists.map(list => 
-      list.id === id ? { ...list, name: editName, listType: editListType } : list
-    ));
-    setEditingId(null);
-    setEditName('');
-    setEditListType('Grocery list');
-  };
+//   const saveEdit = (id: number) => {
+//     setLists(lists.map(list => 
+//       list.id === id ? { ...list, name: editName, listType: editListType } : list
+//     ));
+//     setEditingId(null);
+//     setEditName('');
+//     setEditListType('Grocery list');
+//   };
 
   const cancelEdit = () => {
     setEditingId(null);
@@ -82,34 +84,34 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
     setEditListType('Grocery list');
   };
 
-  const duplicateList = (id: number) => {
-    const listToDuplicate = lists.find(list => list.id === id);
-    if (listToDuplicate) {
-      const newId = Math.max(...lists.map(l => l.id)) + 1;
-      setLists([...lists, { 
-        ...listToDuplicate, 
-        id: newId, 
-        name: `${listToDuplicate.name} (Copy)`,
-        items: [...listToDuplicate.items]
-      }]);
-    }
-    setOpenDropdownId(null);
-  };
+//   const duplicateList = (id: number) => {
+//     const listToDuplicate = lists.find(list => list.id === id);
+//     if (listToDuplicate) {
+//       const newId = Math.max(...lists.map(l => l.id)) + 1;
+//       setLists([...lists, { 
+//         ...listToDuplicate, 
+//         id: newId, 
+//         name: `${listToDuplicate.name} (Copy)`,
+//         items: [...listToDuplicate.items]
+//       }]);
+//     }
+//     setOpenDropdownId(null);
+//   };
 
-  const addNewList = () => {
-    if (newListName.trim()) {
-      const newId = lists.length > 0 ? Math.max(...lists.map(l => l.id)) + 1 : 1;
-      setLists([...lists, {
-        id: newId,
-        name: newListName,
-        listType: newListType,
-        items: []
-      }]);
-      setNewListName('');
-      setNewListType('Grocery list');
-      setShowAddListPopup(false);
-    }
-  };
+//   const addNewList = () => {
+//     if (newListName.trim()) {
+//       const newId = lists.length > 0 ? Math.max(...lists.map(l => l.id)) + 1 : 1;
+//       setLists([...lists, {
+//         id: newId,
+//         name: newListName,
+//         listType: newListType,
+//         items: []
+//       }]);
+//       setNewListName('');
+//       setNewListType('Grocery list');
+//       setShowAddListPopup(false);
+//     }
+//   };
 
   const cancelAddList = () => {
     setNewListName('');
@@ -118,15 +120,15 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
   };
 
   const confirmRemove = (id: number) => {
-    setListToDelete(id);
+    setItemsToDelete(id);
     setShowConfirmDialog(true);
     setOpenDropdownId(null);
   };
 
   const removeList = () => {
-    if (listToDelete !== null) {
-      setLists(lists.filter(list => list.id !== listToDelete));
-      setListToDelete(null);
+    if (itemsToDelete !== null) {
+      setItems(items.filter(item => item.id !== itemsToDelete));
+      setItemsToDelete(null);
       setShowConfirmDialog(false);
     }
   };
@@ -146,25 +148,22 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
     setItemImage(null);
   };
 
-  const addItemToList = () => {
-    if (selectedListId !== null && itemName.trim()) {
-      const newItem: Item = {
-        id: Date.now(),
-        name: itemName,
-        quantity: itemQuantity,
-        category: itemCategory,
-        notes: itemNotes || undefined,
-        image: itemImage ? URL.createObjectURL(itemImage) : undefined
-      };
-      setLists(lists.map(list => 
-        list.id === selectedListId 
-          ? { ...list, items: [...list.items, newItem] }
-          : list
-      ));
-      closeAddItemModal();
-      setToastMessage('Item added successfully!');
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
+  const addItem = () => {
+   if (itemName.trim()) {
+    const newItem: Item = {
+      id: Date.now(),
+      name: itemName,
+      quantity: itemQuantity,
+      category: itemCategory,
+      notes: itemNotes || undefined,
+      image: itemImage ? URL.createObjectURL(itemImage) : undefined
+    };
+    setItems([...items, newItem]);
+    closeAddItemModal();
+    setToastMessage('Item added successfully!');
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+    
     }
   };
 
@@ -185,9 +184,9 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
 
   const getSortedLists = () => {
     if (sortMethod === 'alphabetical') {
-      return [...lists].sort((a, b) => a.name.localeCompare(b.name));
+      return [...items].sort((a, b) => a.name.localeCompare(b.name));
     }
-    return lists;
+    return items;
   };
 
   // Search filtering logic
@@ -198,12 +197,12 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
 
     const query = searchQuery.toLowerCase();
     
-    return lists.filter(list => {
+    return items.filter(Itemslist => {
       // Check if list name matches
-      const listNameMatches = list.name.toLowerCase().includes(query);
+      const listNameMatches = Itemslist.name.toLowerCase().includes(query);
       
       // Check if any items in this list match
-      const hasMatchingItems = list.items.some(item => 
+      const hasMatchingItems = items.some(item => 
         item.name.toLowerCase().includes(query)
       );
       
@@ -213,15 +212,13 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
 
   const getFilteredItems = () => {
     if (!searchQuery.trim()) {
-      return lists.flatMap(list => list.items);
+      return items.flatMap(list => list.id);
     }
 
     const query = searchQuery.toLowerCase();
     
-    return lists.flatMap(list => 
-      list.items
-        .filter(item => item.name.toLowerCase().includes(query))
-        .map(item => ({ ...item, listName: list.name }))
+    return items.flatMap(item =>
+      item.id
     );
   };
 
@@ -245,8 +242,8 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                         <option value="alphabetical">Alphabetically</option>
                         <option value="manual">Manually</option>
                     </select>
-                    <button className='addList-content' onClick={() => setShowAddListPopup(true)}>
-                        Add list
+                    <button className='addList-content' onClick={() => setShowAddItemModal(true)}>
+                        Add Item
                     </button>
                 </div>
             </div>
@@ -254,11 +251,11 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
             <div className='main-content-card'>
 
                 <div className='heading-names'>
-                    <Text variant={'h2'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace" }}> List</Text>
+                    <Text variant={'h2'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace" }}> Items </Text>
                 </div>
 
                 {/* List and Items section */}
-                <div className='List-section-card'>
+                {/* <div className='List-section-card'>
                     {getFilteredLists().map((list) => (
                         <div key={list.id} className='content-list' ref={openDropdownId === list.id ? dropdownRef : null}>
                             <div className='list-info'>
@@ -318,10 +315,11 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                             </div>
                         </div>
                     ))}
-                </div>
-                <div>
+                </div> */}
+                {/* <div>
                     <Text variant={'h2'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace", marginLeft: '-700px' }}> Items</Text>
-                </div>
+                </div> */}
+
                 <div className='Items-section-card'>
                     <table className='table-content'>
                         <thead>
@@ -329,11 +327,11 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                                 <th className='text-left'>Item picture and name</th>
                                 <th className='text-center'>Quantity</th>
                                 <th className='text-center'>Edit</th>
-                                <th className='text-right'>Action</th>
+                                <th className='text-right'>Remove</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {getFilteredItems().map((item: any) => (
+                            {items.map(item => (
                                 <tr key={item.id} className='item-row'>
                                     <td className='text-left'>
                                         <div className='item-cell'>
@@ -343,12 +341,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                                             <div className='item-details'>
                                                 <div className='item-name'>{item.name}</div>
                                                 {item.category && (
-                                                    <div className='item-subtext'>Set : Colour: {item.category}</div>
-                                                )}
-                                                {searchQuery && item.listName && (
-                                                    <div className='item-subtext' style={{ color: '#666', fontSize: '11px' }}>
-                                                        List: {item.listName}
-                                                    </div>
+                                                    <div className='item-subtext'>Category: {item.category}</div>
                                                 )}
                                             </div>
                                         </div>
@@ -361,10 +354,12 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                                         </div>
                                     </td>
                                     <td className='text-center'>
-                                        <span className='item-price'>R{item.quantity * 50}</span>
+                                        <button onClick={() => startEditing} className='dropdown-item'>
+                                            <FaEdit /> 
+                                        </button>
                                     </td>
                                     <td className='text-right'>
-                                        <button className='delete-btn'>
+                                        <button  onClick={() => confirmRemove(item.id)} className='delete-btn'>
                                             <FaTrash />
                                         </button>
                                     </td>
@@ -397,7 +392,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                 <div className='confirm-dialog-overlay'>
                     <div className='confirm-dialog'>
                         <h3>Confirm Remove</h3>
-                        <p>Are you sure you want to remove this list?</p>
+                        <p>Are you sure you want to remove this item?</p>
                         <div className='confirm-dialog-buttons'>
                             <button onClick={() => setShowConfirmDialog(false)} className='cancel-btn'>Cancel</button>
                             <button onClick={removeList} className='remove-btn'>Remove</button>
@@ -407,7 +402,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
             )}
 
             {/* Add List Popup */}
-            {showAddListPopup && (
+            {/* {showAddListPopup && (
                 <div className='add-list-popup-overlay'>
                     <div className='add-list-popup'>
                         <h3>Add New List</h3>
@@ -442,7 +437,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                         </div>
                     </div>
                 </div>
-            )}
+            )} */}
 
             {/* Add Item Modal */}
             {showAddItemModal && (
@@ -530,7 +525,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                         </div>
                         <div className='add-item-buttons'>
                             <button onClick={closeAddItemModal} className='cancel-btn'>Cancel</button>
-                            <button onClick={addItemToList} className='confirm-btn'>Add Item</button>
+                            <button onClick={addItem} className='confirm-btn'>Add Item</button>
                         </div>
                     </div>
                 </div>

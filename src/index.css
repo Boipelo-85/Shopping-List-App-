@@ -328,52 +328,6 @@ code {
   transform: scale(0.98);
 }
 
-/* Social Login */
-
-/* .social-login {
-  text-align: center;
-  margin-bottom: 24px;
-}
-
-.social-login p {
-  font-size: 12px;
-  color: #999;
-  margin: 0 0 16px 0;
-}
-
-.social-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-} */
-
-/* .social-btn {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 1px solid #e0e0e0;
-  background: #fff;
-  cursor: pointer;
-  font-size: 20px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
-
-.social-btn:hover {
-  border-color: #aa3bff;
-  background: rgba(170, 59, 255, 0.05);
-} */
-
-/* .google-btn {
-  color: #1f2937;
-}
-
-.github-btn {
-  color: #1f2937;
-} */
 
 .facebook-btn {
   color: #1877f2;
@@ -952,7 +906,7 @@ code {
 
 .home-content {
 
-  margin-top: 100px;
+  margin-top: 79px;
   /* border: 1px solid #e0e0e0;
     transition: border-color 0.3s ease; */
   padding-top: 20px;
@@ -965,6 +919,8 @@ code {
 
   border: 1px solid #5a595941;
   transition: border-color 0.3s ease;
+  border-left: none;
+  border-right: none;
 }
 
 .buttons-content {
@@ -1019,8 +975,8 @@ code {
 
 .main-content-card {
 
-  border: 1px solid #5a595941;
-  transition: border-color 0.3s ease;
+  /* border: 1px solid #5a595941;
+  transition: border-color 0.3s ease; */
   width: 100%;
   padding-top: 20px;
   min-height: 80vh;
@@ -1829,9 +1785,9 @@ code {
 /* Toast Notification Styles */
 .toast-notification {
   position: fixed;
-  bottom: 30px;
+  top: 40px;
   right: 30px;
-  background: #4caf50;
+  background: #000000;
   color: #fff;
   padding: 16px 24px;
   border-radius: 8px;
