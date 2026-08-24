@@ -27,7 +27,7 @@ export const Profile = () => {
       {/* Header */}
 
       <div className="profile-header">
-        <Text variant={'h1'} style={{color:'#000',fontWeight: 'bold',fontFamily: "'Courier New', Courier, monospace"}}> Profile Settings </Text>
+        <Text variant={'h1'} style={{color:'#000',fontWeight: 'bold',fontFamily: "'Courier New', Courier, monospace"}}> Personal Information </Text>
         <p className="profile-subtitle">Manage your personal information and account details</p>
       </div>
 
@@ -46,7 +46,7 @@ export const Profile = () => {
       {/* Personal Information Section */}
 
       <div className="personal-info-section">
-        <h3>Personal Information</h3>
+        {/* <h3>Personal Information</h3> */}
 
         <form className="form-grid">
           <div className="form-group">

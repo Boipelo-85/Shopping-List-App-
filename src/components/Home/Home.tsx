@@ -2,12 +2,12 @@ import { useState, useRef, useEffect } from 'react'
 import { Text } from '../Text/Text';
 import { FaEdit, FaEllipsisH, FaTrash, FaCopy } from 'react-icons/fa';
 
-interface ListItem {
-  id: number;
-  name: string;
-  listType: 'Grocery list' | 'Categorized list' | 'Basic list';
-  items: Item[];
-}
+// interface ListItem {
+//   id: number;
+//   name: string;
+//   listType: 'Grocery list' | 'Categorized list' | 'Basic list';
+//   items: Item[];
+// }
 
 interface Item {
   id: number;
@@ -25,18 +25,18 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
 //     { id: 3, name: 'Office Items', listType: 'Basic list', items: [] }
 //   ]);
   const [openDropdownId, setOpenDropdownId] = useState<number | null>(null);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [editName, setEditName] = useState('');
+//   const [editingId, setEditingId] = useState<number | null>(null);
+//   const [editName, setEditName] = useState('');
   const [items, setItems] = useState<Item[]>([]);
 
-  const [editListType, setEditListType] = useState<'Grocery list' | 'Categorized list' | 'Basic list'>('Grocery list');
+//   const [editListType, setEditListType] = useState<'Grocery list' | 'Categorized list' | 'Basic list'>('Grocery list');
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [itemsToDelete, setItemsToDelete] = useState<number | null>(null);
-  const [showAddListPopup, setShowAddListPopup] = useState(false);
-  const [newListName, setNewListName] = useState('');
-  const [newListType, setNewListType] = useState<'Grocery list' | 'Categorized list' | 'Basic list'>('Grocery list');
+//   const [showAddListPopup, setShowAddListPopup] = useState(false);
+//   const [newListName, setNewListName] = useState('');
+//   const [newListType, setNewListType] = useState<'Grocery list' | 'Categorized list' | 'Basic list'>('Grocery list');
   const [showAddItemModal, setShowAddItemModal] = useState(false);
-  const [selectedListId, setSelectedListId] = useState<number | null>(null);
+//   const [selectedListId, setSelectedListId] = useState<number | null>(null);
   const [itemName, setItemName] = useState('');
   const [itemQuantity, setItemQuantity] = useState(1);
   const [itemCategory, setItemCategory] = useState('');
@@ -62,12 +62,12 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
     setOpenDropdownId(openDropdownId === id ? null : id);
   };
 
-  const startEditing = (id: number, currentName: string, currentListType: 'Grocery list' | 'Categorized list' | 'Basic list') => {
-    setEditingId(id);
-    setEditName(currentName);
-    setEditListType(currentListType);
-    setOpenDropdownId(null);
-  };
+//   const startEditing = (id: number, currentName: string, currentListType: 'Grocery list' | 'Categorized list' | 'Basic list') => {
+//     setEditingId(id);
+//     setEditName(currentName);
+//     setEditListType(currentListType);
+//     setOpenDropdownId(null);
+//   };
 
 //   const saveEdit = (id: number) => {
 //     setLists(lists.map(list => 
@@ -78,11 +78,11 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
 //     setEditListType('Grocery list');
 //   };
 
-  const cancelEdit = () => {
-    setEditingId(null);
-    setEditName('');
-    setEditListType('Grocery list');
-  };
+//   const cancelEdit = () => {
+//     setEditingId(null);
+//     setEditName('');
+//     setEditListType('Grocery list');
+//   };
 
 //   const duplicateList = (id: number) => {
 //     const listToDuplicate = lists.find(list => list.id === id);
@@ -113,11 +113,11 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
 //     }
 //   };
 
-  const cancelAddList = () => {
-    setNewListName('');
-    setNewListType('Grocery list');
-    setShowAddListPopup(false);
-  };
+//   const cancelAddList = () => {
+//     setNewListName('');
+//     setNewListType('Grocery list');
+//     setShowAddListPopup(false);
+//   };
 
   const confirmRemove = (id: number) => {
     setItemsToDelete(id);
@@ -134,13 +134,13 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
   };
 
   const openAddItemModal = (listId: number) => {
-    setSelectedListId(listId);
+  
     setShowAddItemModal(true);
   };
 
   const closeAddItemModal = () => {
     setShowAddItemModal(false);
-    setSelectedListId(null);
+    
     setItemName('');
     setItemQuantity(1);
     setItemCategory('');
@@ -239,8 +239,9 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                 <div className='buttons-content'>
                     <label className='sort-label' >Sort by :</label>
                     <select className='sort-by-section' value={sortMethod} onChange={(e) => setSortMethod(e.target.value as 'alphabetical' | 'manual')}>
-                        <option value="alphabetical">Alphabetically</option>
-                        <option value="manual">Manually</option>
+                        <option value="alphabetical">Name</option>
+                        <option value="manual">Category</option>
+                        <option value="manual">Date added</option>
                     </select>
                     <button className='addList-content' onClick={() => setShowAddItemModal(true)}>
                         Add Item
@@ -354,7 +355,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                                         </div>
                                     </td>
                                     <td className='text-center'>
-                                        <button onClick={() => startEditing} className='dropdown-item'>
+                                        <button onClick={() => ('')} className='dropdown-item'>
                                             <FaEdit /> 
                                         </button>
                                     </td>
@@ -482,7 +483,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                                 <input
                                     type='number'
                                     value={itemQuantity}
-                                    onChange={(e) => setItemQuantity(parseInt(e.target.value) || 1)}
+                                    onChange={(e) => setItemQuantity(parseInt(e.target.value) || 0)}
                                     className='item-input'
                                     min='1'
                                 />
@@ -514,13 +515,14 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                                         className='file-input'
                                     />
                                     <button className='browse-btn'>Browse file</button>
-                                </div>
                                 {itemImage && (
                                     <div className='image-preview'>
                                         <img src={URL.createObjectURL(itemImage)} alt='Preview' />
                                         <button onClick={() => setItemImage(null)} className='remove-image-btn'>×</button>
                                     </div>
                                 )}
+                                </div>
+                               
                             </div>
                         </div>
                         <div className='add-item-buttons'>

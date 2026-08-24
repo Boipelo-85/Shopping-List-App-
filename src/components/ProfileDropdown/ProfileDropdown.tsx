@@ -76,7 +76,7 @@ export const ProfileDropdown = () => {
         <div 
 
           className="profile-dropdown-menu"
-          style={{    position: 'absolute', top: '100%', right: '0', marginTop: '8px', backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)', minWidth: '280px', zIndex: 1000, overflow: 'hidden',}}
+          style={{    position: 'absolute', top: '100%', right: '20px', marginTop: '0px', backgroundColor: '#ffffff', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)', minWidth: '300px', zIndex: 1000, overflow: 'hidden',}}
         >
           {/* User Info Header */}
 
