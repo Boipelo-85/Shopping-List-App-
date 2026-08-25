@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { FaUserCircle, FaEdit, FaEye, FaUserPlus, FaSignOutAlt } from 'react-icons/fa';
+import { FaUserCircle, FaEdit, FaEye, FaUserPlus, FaSignOutAlt, FaPencilAlt } from 'react-icons/fa';
 import type { RootState } from '../../store/store';
 import { logout } from '../../store/authSlice';
 
@@ -127,18 +127,8 @@ export const ProfileDropdown = () => {
 
           {/* Menu Options */}
           <div className="profile-dropdown-options">
-            <button
-              className="profile-dropdown-option"
-              onClick={handleViewProfile}
-              style={{ width: '100%', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', fontSize: '14px', color: '#374151', fontFamily: "'Courier New', Courier, monospace", transition: 'background-color 0.2s',}}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f3f4f6'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-            >
-              <FaEye style={{ color: '#6b7280', fontSize: '16px' }} />
-
-              <span>View Profile</span>
-
-            </button>
+            
+          
 
             <button
               className="profile-dropdown-option"
@@ -162,7 +152,7 @@ export const ProfileDropdown = () => {
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f3f4f6'}
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
             >
-              <FaEdit style={{ color: '#6b7280', fontSize: '16px' }} />
+              <FaPencilAlt style={{ color: '#6b7280', fontSize: '16px' }} />
               <span>Edit Profile</span>
             </button>
 
@@ -194,9 +184,20 @@ export const ProfileDropdown = () => {
               <span>Create Profile</span>
 
             </button>
+               <button
+              className="profile-dropdown-option"
+              onClick={handleViewProfile}
+              style={{ width: '100%', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', fontSize: '14px', color: '#374151', fontFamily: "'Courier New', Courier, monospace", transition: 'background-color 0.2s',}}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f3f4f6'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+            >
+              <FaPencilAlt   style={{ color: '#6b7280', fontSize: '16px' }} />
 
+              <span>Update login details</span>
+
+            </button>
             <div style={{ borderTop: '1px solid #e5e7eb', margin: '8px 0' }} />
-
+               
             <button
               className="profile-dropdown-option"
               onClick={handleLogout}

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { Text } from '../Text/Text';
-import { FaEdit, FaEllipsisH, FaTrash, FaCopy, FaPlus } from 'react-icons/fa';
+import { FaEdit, FaEllipsisH, FaTrash, FaCopy, FaPlus, FaClipboardList } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import { addList, removeList as removeListAction, updateListName, incrementItemCount, decrementItemCount } from '../../store/listSlice';
 import { addItem, removeItem as deleteItemAction, updateItemQuantity } from '../../store/itemsSlice';
@@ -146,7 +146,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
       setShowConfirmDialog(false);
       setToastMessage('List removed successfully!');
       setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
+      setTimeout(() => setShowToast(false), 2000);
     }
   };
 
@@ -156,9 +156,9 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
       dispatch(decrementItemCount(item.listId));
     }
     dispatch(deleteItemAction(id));
-    setToastMessage('Item removed successfully!');
+    setToastMessage('Item removed successfully');
     setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+    setTimeout(() => setShowToast(false), 2000);
   };
 
   const closeAddItemModal = () => {
@@ -190,7 +190,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
       dispatch(addItem(newItem));
       dispatch(incrementItemCount(itemListId));
       closeAddItemModal();
-      setToastMessage('Item added successfully!');
+      setToastMessage('Item added successfully');
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     }
@@ -287,7 +287,10 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                     <button 
                         type='button'
                         className={`tab-button ${activeTab === 'items' ? 'active' : 'inactive'}`}
-                        onClick={() => setActiveTab('items')}
+                        onClick={() => {
+                            setActiveTab('items');
+                            setItemListId(null);
+                        }}
                     >
                         Items
                     </button>
@@ -295,6 +298,15 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
 
                 {/* Action buttons based on active tab */}
                 <div className='buttons-content'>
+                    {/* <div className='sort-section'>
+                        <label className='sort-label'>Sort by:</label>
+                           <select name="" id="" >
+                            <option value="">Name</option>
+                            <option value="">Category</option>
+                            <option value="">Date Created</option>
+                           </select>
+                    </div> */}
+                    
                     {activeTab === 'lists' && (
                         <button type='button' className='addList-content' onClick={() => setShowAddListModal(true)}>
                             <FaPlus style={{ marginRight: '8px' }} /> Add List
@@ -328,6 +340,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                         <div className='List-section-card'>
                             {lists.length === 0 ? (
                                 <div className='empty-state'>
+                                    <Text variant='h3'><FaClipboardList style={{fontSize:'50px',color:'#000'}}/></Text>
                                     <p>No lists yet. Create your first list!</p>
                                 </div>
                             ) : (
@@ -356,7 +369,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                                                         }}
                                                     >
                                                     {list.name}</div>
-                                                    <Text variant={'p'} style={{ fontSize: '12px', color: '#999', marginLeft: '-700px', marginTop: '5px' }}>{list.itemCount} items</Text>
+                                                    <Text variant={'p'} style={{ fontSize: '12px', color: '#999', marginLeft: '-620px', marginTop: '5px' }}>{list.itemCount} items</Text>
                                                 </>
                                             )}
                                         </div>
@@ -394,18 +407,10 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                 {activeTab === 'items' && (
                     <>
                         <div className='heading-names'>
-                            <Text variant={'h2'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace" }}>
+                            <Text variant={'h2'} style={{ paddingLeft:'15px', fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace" }}>
                                 {itemListId ? lists.find(l => l.id === itemListId)?.name || 'Items' : 'All Items'}
                             </Text>
-                            {itemListId && (
-                                <button 
-                                    type='button' 
-                                    onClick={() => setItemListId(null)}
-                                    style={{ marginLeft: '20px', fontSize: '14px', cursor: 'pointer', color: '#666' }}
-                                >
-                                    Show All Items
-                                </button>
-                            )}
+                           
                         </div>
 
                         <div className='Items-section-card'>

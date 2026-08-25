@@ -137,7 +137,7 @@ code {
 
 .nav-content {
 
-  margin-left: 215px;
+  margin-left: 190px;
 
 }
 
@@ -148,7 +148,7 @@ code {
   align-items: center;
   border-radius: 20px;
   margin-top: 5px;
-  margin-left: 450px;
+  margin-left: 470px;
   font-family: 'Courier New', Courier, monospace;
 }
 
@@ -328,10 +328,6 @@ code {
   transform: scale(0.98);
 }
 
-
-.facebook-btn {
-  color: #1877f2;
-}
 
 .register-link {
   text-align: center;
@@ -764,6 +760,7 @@ code {
 }
 
 .profile-subtitle {
+
   font-size: 16px;
   color: #999;
   margin: 0;
@@ -921,17 +918,19 @@ code {
   transition: border-color 0.3s ease;
   border-left: none;
   border-right: none;
-  
+  flex: 1;
+  display: flex;
+  padding: 10px 0px;
+
 }
 
 /* Tab Navigation Styles */
 .tab-navigation {
-  display: flex;
+
   background: #f5f6f5;
   border-radius: 25px;
   padding: 4px;
   width: fit-content;
-  margin: 0 auto;
   gap: 4px;
 }
 
@@ -979,16 +978,26 @@ code {
 
   margin-left: 64%;
   padding-top: 10px;
-  padding-bottom: 10px;
+  justify-content: space-between;
+  display: flex;
+  flex: 1;
+  
 
 }
+.sort-section{
 
+      display: flex;
+      align-items: center;
+
+}
 .sort-label {
 
   font-size: 15px;
   padding-right: 5px;
   color: #000;
   font-family: 'Courier New', Courier, monospace;
+
+  
 }
 
 .sort-by-section {
@@ -1007,7 +1016,7 @@ code {
   padding: 5px 35px;
   background-color: #98a09e;
   border: none;
-  margin-left: 5px;
+  margin-left: 25px;
   cursor: pointer;
   color: #fdfdfd;
   font-family: 'Courier New', Courier, monospace;
@@ -1015,7 +1024,7 @@ code {
 
 .addList-content:hover {
 
-  background-color: #727877;
+  background-color: #484b4af3;
 
 }
 
@@ -1842,8 +1851,8 @@ code {
 /* Toast Notification Styles */
 .toast-notification {
   position: fixed;
-  top: 40px;
-  margin-left: 260px;
+  top: 50px;
+  margin-left: 400px;
   background: #2b2a2ac7;
   color: #fff;
   padding: 16px 24px;

@@ -1,6 +1,7 @@
 import { Text } from '../Text/Text';
 import searchIcon from '../../assets/searchbar.png'
 import { ProfileDropdown } from '../ProfileDropdown/ProfileDropdown';
+import { FaClipboardList } from 'react-icons/fa';
 
 interface HeaderProps {
   searchQuery?: string;
@@ -19,7 +20,8 @@ export const Header = ({ searchQuery = '', setSearchQuery }: HeaderProps) => {
     <nav className='nav'>
 
         <div className='nav-content'>
-                <Text variant={'h2'} style={{fontWeight: 'bold',fontFamily: "'Courier New', Courier, monospace"}}> Shopping List-App </Text>
+
+                <Text variant={'h2'} style={{fontWeight: 'bold',fontFamily: "'Courier New', Courier, monospace"}}><FaClipboardList style={{color:'#000',fontSize:'25px',marginRight:'-7px'}}/> Shopping List-App </Text>
         </div>
         <div className='search-items'>
                 <img src={searchIcon} alt="search logo" className='search-logo' />
