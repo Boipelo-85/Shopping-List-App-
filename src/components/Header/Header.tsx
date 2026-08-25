@@ -2,18 +2,29 @@ import { Text } from '../Text/Text';
 import searchIcon from '../../assets/searchbar.png'
 import { ProfileDropdown } from '../ProfileDropdown/ProfileDropdown';
 import { FaClipboardList } from 'react-icons/fa';
+import { useSearchParams } from 'react-router-dom';
+import { useRef, useCallback } from 'react';
 
-interface HeaderProps {
-  searchQuery?: string;
-  setSearchQuery?: (query: string) => void;
-}
+export const Header = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchQuery = searchParams.get('search') || '';
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-export const Header = ({ searchQuery = '', setSearchQuery }: HeaderProps) => {
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (setSearchQuery) {
-      setSearchQuery(e.target.value);
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
     }
-  };
+    
+    searchTimeoutRef.current = setTimeout(() => {
+      if (query.trim()) {
+        setSearchParams({ search: query });
+      } else {
+        setSearchParams({});
+      }
+    }, 300);
+  }, [setSearchParams]);
 
   return (
 

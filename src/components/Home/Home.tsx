@@ -1,15 +1,16 @@
 import { useState, useRef, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom';
 import { Text } from '../Text/Text';
 import { FaEdit, FaEllipsisH, FaTrash, FaCopy, FaPlus, FaClipboardList } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
-import { addList, removeList as removeListAction, updateListName, incrementItemCount, decrementItemCount } from '../../store/listSlice';
-import { addItem, removeItem as deleteItemAction, updateItemQuantity } from '../../store/itemsSlice';
+import { createList, deleteList, updateList, fetchLists, incrementItemCount, decrementItemCount, updateListName } from '../../store/listSlice';
+import { createItem, deleteItem, updateItemApi, fetchItems, updateItemQuantity } from '../../store/itemsSlice';
 import type { RootState } from '../../store/store';
 import type { AppDispatch } from '../../store/store';
-import type { List } from '../../store/listSlice';
-import type { Item } from '../../store/itemsSlice';
 
-export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
+export const Home = () => {
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get('search') || '';
   const dispatch = useDispatch<AppDispatch>();
   const lists = useSelector((state: RootState) => state.lists.lists);
   const items = useSelector((state: RootState) => state.items.items);
@@ -49,7 +50,13 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
   const [toastMessage, setToastMessage] = useState('');
 
   // Sorting State
-  const [sortMethod, setSortMethod] = useState<'alphabetical' | 'manual'>('manual');
+  const [sortMethod] = useState<'alphabetical' | 'manual'>('manual');
+
+  // Load initial data from server on mount
+  useEffect(() => {
+    dispatch(fetchLists());
+    dispatch(fetchItems());
+  }, [dispatch]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -82,10 +89,17 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
     setOpenDropdownId(null);
   };
 
-  const saveEdit = (id: number) => {
-    dispatch(updateListName({ id, name: editName }));
-    setEditingId(null);
-    setEditName('');
+  const saveEdit = async (id: number) => {
+    try {
+      await dispatch(updateList({ id, data: { name: editName } })).unwrap();
+      setEditingId(null);
+      setEditName('');
+    } catch (error) {
+      console.error('Error updating list name:', error);
+      setToastMessage('Failed to update list name');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2000);
+    }
   };
 
   const cancelEdit = () => {
@@ -93,22 +107,33 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
     setEditName('');
   };
 
-  const duplicateList = (id: number) => {
+  const duplicateList = async (id: number) => {
     const listToDuplicate = lists.find(list => list.id === id);
     if (listToDuplicate) {
-      dispatch(addList(`${listToDuplicate.name} (Copy)`));
+      try {
+        await dispatch(createList(`${listToDuplicate.name} (Copy)`)).unwrap();
+        setOpenDropdownId(null);
+      } catch (error) {
+        console.error('Error duplicating list:', error);
+      }
     }
-    setOpenDropdownId(null);
   };
 
-  const addNewList = () => {
+  const addNewList = async () => {
     if (newListName.trim()) {
-      dispatch(addList(newListName.trim()));
-      setNewListName('');
-      setShowAddListModal(false);
-      setToastMessage('List created successfully!');
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
+      try {
+        await dispatch(createList(newListName.trim())).unwrap();
+        setNewListName('');
+        setShowAddListModal(false);
+        setToastMessage('List created successfully!');
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+      } catch (error) {
+        console.error('Error creating list:', error);
+        setToastMessage('Failed to create list');
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+      }
     }
   };
 
@@ -117,16 +142,23 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
     setShowAddListModal(false);
   };
 
-  const createListFromItem = () => {
+  const createListFromItem = async () => {
     if (newListFromItem.trim()) {
       const listName = newListFromItem.trim();
-      dispatch(addList(listName));
-      setItemCategory(listName);
-      setNewListFromItem('');
-      setShowNewListInput(false);
-      setToastMessage('List created successfully!');
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
+      try {
+        await dispatch(createList(listName)).unwrap();
+        setItemCategory(listName);
+        setNewListFromItem('');
+        setShowNewListInput(false);
+        setToastMessage('List created successfully!');
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+      } catch (error) {
+        console.error('Error creating list:', error);
+        setToastMessage('Failed to create list');
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+      }
     }
   };
 
@@ -136,29 +168,39 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
     setOpenDropdownId(null);
   };
 
-  const handleRemoveList = () => {
+  const handleRemoveList = async () => {
     if (itemsToDelete !== null) {
-      // Remove list and all its items
-      dispatch(removeListAction(itemsToDelete));
-      const listItems = items.filter(item => item.listId === itemsToDelete);
-      listItems.forEach(item => dispatch(deleteItemAction(item.id)));
-      setItemsToDelete(null);
-      setShowConfirmDialog(false);
-      setToastMessage('List removed successfully!');
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 2000);
+      try {
+        await dispatch(deleteList(itemsToDelete)).unwrap();
+        setItemsToDelete(null);
+        setShowConfirmDialog(false);
+        setToastMessage('List removed successfully!');
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 2000);
+      } catch (error) {
+        console.error('Error removing list:', error);
+        setToastMessage('Failed to remove list');
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 2000);
+      }
     }
   };
 
-  const handleRemoveItem = (id: number) => {
+  const handleRemoveItem = async (id: number) => {
     const item = items.find(i => i.id === id);
     if (item && item.listId) {
-      dispatch(decrementItemCount(item.listId));
+      try {
+        await dispatch(deleteItem(id)).unwrap();
+        setToastMessage('Item removed successfully');
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 2000);
+      } catch (error) {
+        console.error('Error removing item:', error);
+        setToastMessage('Failed to remove item');
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 2000);
+      }
     }
-    dispatch(deleteItemAction(id));
-    setToastMessage('Item removed successfully');
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 2000);
   };
 
   const closeAddItemModal = () => {
@@ -173,7 +215,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
     setItemImage(null);
   };
 
-  const handleAddItem = () => {
+  const handleAddItem = async () => {
     if (itemName.trim() && itemListId) {
       const selectedList = lists.find(l => l.id === itemListId);
       if (!selectedList) return;
@@ -187,12 +229,19 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
         image: itemImage ? URL.createObjectURL(itemImage) : undefined
       };
 
-      dispatch(addItem(newItem));
-      dispatch(incrementItemCount(itemListId));
-      closeAddItemModal();
-      setToastMessage('Item added successfully');
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
+      try {
+        await dispatch(createItem(newItem)).unwrap();
+        dispatch(incrementItemCount(itemListId));
+        closeAddItemModal();
+        setToastMessage('Item added successfully');
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+      } catch (error) {
+        console.error('Error adding item:', error);
+        setToastMessage('Failed to add item');
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+      }
     }
   };
 
@@ -217,50 +266,46 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
     }
   };
 
-  const getSortedLists = () => {
-    if (sortMethod === 'alphabetical') {
-      return [...items].sort((a, b) => a.name.localeCompare(b.name));
-    }
-    return items;
-  };
-
   // Search filtering logic
   const getFilteredLists = () => {
     if (!searchQuery.trim()) {
-      return getSortedLists();
+      return lists;
     }
 
     const query = searchQuery.toLowerCase();
     
-    return items.filter(Itemslist => {
+    return lists.filter(list => {
       // Check if list name matches
-      const listNameMatches = Itemslist.name.toLowerCase().includes(query);
+      const listNameMatches = list.name.toLowerCase().includes(query);
       
       // Check if any items in this list match
       const hasMatchingItems = items.some(item => 
-        item.name.toLowerCase().includes(query)
+        item.listId === list.id && item.name.toLowerCase().includes(query)
       );
       
       return listNameMatches || hasMatchingItems;
     });
   };
 
-  const getFilteredItems = () => {
-    if (!searchQuery.trim()) {
-      return items.flatMap(list => list.id);
-    }
-
-    const query = searchQuery.toLowerCase();
+  // Filter items by selected list and search query
+  const filteredItems = (() => {
+    let result = items;
     
-    return items.flatMap(item =>
-      item.id
-    );
-  };
+    // First filter by list if one is selected
+    if (itemListId) {
+      result = result.filter(item => item.listId === itemListId);
+    }
+    
+    // Then filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(item => item.name.toLowerCase().includes(query));
+    }
+    
+    return result;
+  })();
 
-  // Filter items by selected list
-  const filteredItems = itemListId 
-    ? items.filter(item => item.listId === itemListId)
-    : items;
+  const filteredLists = getFilteredLists();
 
   return (
         <>
@@ -338,13 +383,13 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                             <Text variant={'h2'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace" }}> Lists </Text>
                         </div>
                         <div className='List-section-card'>
-                            {lists.length === 0 ? (
+                            {filteredLists.length === 0 ? (
                                 <div className='empty-state'>
                                     <Text variant='h3'><FaClipboardList style={{fontSize:'50px',color:'#000'}}/></Text>
-                                    <p>No lists yet. Create your first list!</p>
+                                    <p>{searchQuery.trim() ? 'No lists match your search.' : 'No lists yet. Create your first list!'}</p>
                                 </div>
                             ) : (
-                                lists.map((list) => (
+                                filteredLists.map((list) => (
                                     <div key={list.id} className='content-list' ref={openDropdownId === list.id ? dropdownRef : null}>
                                         <div className='list-info'>
                                             {editingId === list.id ? (
@@ -415,9 +460,45 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
 
                         <div className='Items-section-card'>
                             {filteredItems.length === 0 ? (
-                                <div className='empty-state'>
-                                    <p>{itemListId ? 'No items in this list yet.' : 'No items yet. Add your first item!'}</p>
-                                </div>
+                                <>
+                                    <table className='table-content'>
+                                        <thead>
+                                            <tr>
+                                                <th className='text-left'>Item picture and name</th>
+                                                <th className='text-center'>Quantity</th>
+                                                <th className='text-center'>Edit</th>
+                                                <th className='text-right'>Remove</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {[1, 2, 3].map((_, index) => (
+                                                <tr key={`skeleton-${index}`} className='item-row skeleton-row'>
+                                                    <td className='text-left'>
+                                                        <div className='item-cell'>
+                                                            <div className='skeleton-image'></div>
+                                                            <div className='item-details'>
+                                                                <div className='skeleton-name'></div>
+                                                                <div className='skeleton-category'></div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className='text-center'>
+                                                        <div className='skeleton-stepper'></div>
+                                                    </td>
+                                                    <td className='text-center'>
+                                                        <div className='skeleton-edit'></div>
+                                                    </td>
+                                                    <td className='text-right'>
+                                                        <div className='skeleton-delete'></div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                    <div className='empty-state'>
+                                        <p>{searchQuery.trim() ? 'No items match your search.' : (itemListId ? 'No items in this list yet.' : 'No items yet. Add your first item!')}</p>
+                                    </div>
+                                </>
                             ) : (
                                 <table className='table-content'>
                                     <thead>

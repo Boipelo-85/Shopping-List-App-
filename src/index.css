@@ -1244,6 +1244,66 @@ code {
   color: #c82333;
 }
 
+/* Skeleton/ghost placeholder styles */
+.skeleton-row {
+  pointer-events: none;
+}
+
+.skeleton-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  background: #e0e0e0;
+  border: 1px solid #e0e0e0;
+}
+
+.skeleton-name {
+  width: 120px;
+  height: 14px;
+  border-radius: 4px;
+  background: #d0d0d0;
+  margin-bottom: 4px;
+}
+
+.skeleton-category {
+  width: 80px;
+  height: 12px;
+  border-radius: 4px;
+  background: #e8e8e8;
+}
+
+.skeleton-stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  padding: 4px;
+  gap: 8px;
+  background: #f5f5f5;
+  width: 100px;
+  height: 36px;
+}
+
+.skeleton-edit {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #e0e0e0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.skeleton-delete {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #fee;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Dropdown menu styles */
 .list-info {
   flex: 1;
