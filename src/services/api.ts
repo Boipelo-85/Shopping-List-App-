@@ -1,91 +1,136 @@
-//Localhost key
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+// src/services/api.ts
 
-//PixaBay key
-const PIXABAY_API_KEY = import.meta.env.VITE_PIXABAY_API_KEY;
+const API_BASE_URL = 'http://localhost:3000';
 
-// ✅ Define the Item interface
+// Helper function to check if backend is reachable
+const checkBackendConnection = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/data`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return response.ok;
+  } catch (error) {
+    return false;
+  }
+};
+
+// Helper function for API calls with better error handling
+const apiCall = async (url: string, options?: RequestInit) => {
+  try {
+    const response = await fetch(url, options);
+
+    // Check if we got HTML instead of JSON (backend not running)
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('text/html')) {
+      throw new Error('Cannot connect to backend — is json-server running on port 3000?');
+    }
+
+    if (!response.ok) {
+      throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+    }
+
+    return response;
+  } catch (error) {
+    if (error instanceof Error) {
+      // Re-throw with our custom message if it's a connection error
+      if (error.message.includes('Failed to fetch') || error.message.includes('ECONNREFUSED')) {
+        throw new Error('Cannot connect to backend — is json-server running on port 3000?');
+      }
+      throw error;
+    }
+    throw new Error('Unknown error occurred');
+  }
+};
+
 export interface Item {
-  id?: number;        // optional because backend generates it
-  listId: number;     // must belong to a list
-  name: string;       // item name
-  image?: string;     // optional URL for picture
-  createdAt?: number; // backend generates timestamp
-}
-// Interface for Image
- export interface PixabayImage {
   id: number;
-  pageURL: string;
-  previewURL: string;
-  largeImageURL: string;
+  listId: number;
+  name: string;
+  quantity: number;
+  category: string;
+  notes?: string;
+  image?: string;
+  createdAt: number;
 }
 
-// ✅ Define the List interface (optional but useful)
+export type CreateItemData = Omit<Item, 'id' | 'createdAt'>;
+export type UpdateItemData = Partial<CreateItemData>;
+
 export interface List {
-  id?: number;
+  id: number;
   name: string;
   itemCount: number;
-  createdAt?: number;
+  createdAt: number;
 }
 
 export const listsApi = {
   getAll: async (): Promise<List[]> => {
-    const response = await fetch(`${API_BASE_URL}/lists`);
+    const response = await apiCall(`${API_BASE_URL}/lists`);
     return response.json();
   },
+
   create: async (name: string): Promise<List> => {
-    const response = await fetch(`${API_BASE_URL}/lists`, {
+    const response = await apiCall(`${API_BASE_URL}/lists`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, itemCount: 0 }),
+      body: JSON.stringify({
+        name,
+        itemCount: 0,
+      }),
     });
     return response.json();
   },
-  update: async (id: number, data: Partial<List>): Promise<List> => {
-    const response = await fetch(`${API_BASE_URL}/lists/${id}`, {
+
+  update: async (
+    id: number,
+    data: Partial<List>
+  ): Promise<List> => {
+    const response = await apiCall(`${API_BASE_URL}/lists/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
     return response.json();
   },
+
   delete: async (id: number): Promise<void> => {
-    await fetch(`${API_BASE_URL}/lists/${id}`, { method: 'DELETE' });
+    await apiCall(`${API_BASE_URL}/lists/${id}`, {
+      method: 'DELETE',
+    });
   },
 };
 
 export const itemsApi = {
   getAll: async (): Promise<Item[]> => {
-    const response = await fetch(`${API_BASE_URL}/items`);
+    const response = await apiCall(`${API_BASE_URL}/items`);
     return response.json();
   },
-  create: async (item: Item): Promise<Item> => {
-    const response = await fetch(`${API_BASE_URL}/items`, {
+
+  create: async (item: CreateItemData): Promise<Item> => {
+    const response = await apiCall(`${API_BASE_URL}/items`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(item),
     });
     return response.json();
   },
-  update: async (id: number, data: Partial<Item>): Promise<Item> => {
-    const response = await fetch(`${API_BASE_URL}/items/${id}`, {
+
+  update: async (
+    id: number,
+    data: UpdateItemData
+  ): Promise<Item> => {
+    const response = await fetch(`${API_BASE_URL}/lists`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
     return response.json();
   },
+
   delete: async (id: number): Promise<void> => {
-    await fetch(`${API_BASE_URL}/items/${id}`, { method: 'DELETE' });
-  },
-};
-// Pixabay Image API
-export const imageApi = {
-  search: async (query: string): Promise<PixabayImage[]> => {
-    const response = await fetch(
-      `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(query)}&image_type=photo`
-    );
-    const data = await response.json();
-    return data.hits;
+    await apiCall(`${API_BASE_URL}/items/${id}`, {
+      method: 'DELETE',
+    });
   },
 };

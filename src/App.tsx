@@ -11,7 +11,7 @@ import {Profile} from './components/Profile/Profile'; // <-- create this
 import { useSelector } from 'react-redux';
 import type { RootState } from './store/store';
 
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useSearchParams } from 'react-router-dom';
 
 // Protected Route component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -38,6 +38,19 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   
   return <>{children}</>;
 
+};
+
+const HomePage = () => {
+  const [searchParams] = useSearchParams();
+
+  return (
+    <>
+      <Header />
+      <div className='main-content'>
+        <Home searchQuery={searchParams.get('search') || ''} />
+      </div>
+    </>
+  );
 };
 
 function App() {
@@ -70,10 +83,7 @@ function App() {
               path="/home" 
               element={
                 <ProtectedRoute>
-                  <Header />
-                  <div className='main-content'>
-                    <Home />
-                  </div>
+                  <HomePage />
                 </ProtectedRoute>
               } 
             />

@@ -18,11 +18,14 @@ export const Header = () => {
     }
     
     searchTimeoutRef.current = setTimeout(() => {
-      if (query.trim()) {
-        setSearchParams({ search: query });
-      } else {
-        setSearchParams({});
-      }
+      setSearchParams((currentParams) => {
+        if (query.trim()) {
+          currentParams.set('search', query);
+        } else {
+          currentParams.delete('search');
+        }
+        return currentParams;
+      });
     }, 300);
   }, [setSearchParams]);
 

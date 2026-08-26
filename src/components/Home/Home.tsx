@@ -2,16 +2,19 @@ import { useState, useRef, useEffect } from 'react'
 import { Text } from '../Text/Text';
 import { FaEdit, FaEllipsisH, FaTrash, FaCopy, FaPlus, FaClipboardList } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
-import { addList, removeList as removeListAction, updateListName, incrementItemCount, decrementItemCount } from '../../store/listSlice';
-import { addItem, removeItem as deleteItemAction, updateItemQuantity } from '../../store/itemsSlice';
+import { addList, removeList, updateListName, incrementItemCount, decrementItemCount } from '../../store/listSlice';
+import { addItem, removeItem, updateItem, updateItemQuantity } from '../../store/itemsSlice';
 import type { RootState } from '../../store/store';
 import type { AppDispatch } from '../../store/store';
-import { imageApi, type PixabayImage } from '../../services/api';
+import { PaxiBayResources } from '../../PaxiBayResources';
+import { useSearchParams } from 'react-router-dom';
+
 // import type { List } from '../../store/listSlice';
 // import type { Item } from '../../store/itemsSlice';
 
 export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const [searchParams, setSearchParams] = useSearchParams();
   const lists = useSelector((state: RootState) => state.lists.lists);
   const items = useSelector((state: RootState) => state.items.items);
   
@@ -43,24 +46,25 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
   const [showNewListInput, setShowNewListInput] = useState(false);
   const [newListFromItem, setNewListFromItem] = useState('');
   const [itemNotes, setItemNotes] = useState('');
-  const [itemImage, setItemImage] = useState<File | null>(null);
+  const [selectedItemImage, setSelectedItemImage] = useState<string>('');
+
+  // Edit Item Modal State
+  const [showEditItemModal, setShowEditItemModal] = useState(false);
+  const [editingItemId, setEditingItemId] = useState<number | null>(null);
+  const [editItemName, setEditItemName] = useState('');
+  const [editItemQuantity, setEditItemQuantity] = useState(1);
+  const [editItemCategory, setEditItemCategory] = useState('');
+  const [editItemListId, setEditItemListId] = useState<number | null>(null);
+  const [editItemNotes, setEditItemNotes] = useState('');
+  const [editItemImage, setEditItemImage] = useState<string>('');
+
 
   // Toast Notification State
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
-  // Sorting State
-  const [sortMethod, setSortMethod] = useState<'alphabetical' | 'manual'>('manual');
+    const sortMethod = searchParams.get('sort') || '';
 
-  //Search state for pictures
-    const [searchTerm, setSearchTerm] = useState('');
-    const [searchResults, setSearchResults] = useState<PixabayImage[]>([]);
-
-    const handleImageSearch = async () => {
-    if (!searchTerm.trim()) return;
-        const results = await imageApi.search(searchTerm);
-        setSearchResults(results);
-    };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -97,6 +101,9 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
     dispatch(updateListName({ id, name: editName }));
     setEditingId(null);
     setEditName('');
+    setToastMessage('List name updated successfully');
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
   };
 
   const cancelEdit = () => {
@@ -108,6 +115,9 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
     const listToDuplicate = lists.find(list => list.id === id);
     if (listToDuplicate) {
       dispatch(addList(`${listToDuplicate.name} (Copy)`));
+      setToastMessage('List duplicated successfully');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
     }
     setOpenDropdownId(null);
   };
@@ -149,10 +159,9 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
 
   const handleRemoveList = () => {
     if (itemsToDelete !== null) {
-      // Remove list and all its items
-      dispatch(removeListAction(itemsToDelete));
+      dispatch(removeList(itemsToDelete));
       const listItems = items.filter(item => item.listId === itemsToDelete);
-      listItems.forEach(item => dispatch(deleteItemAction(item.id)));
+      listItems.forEach(item => dispatch(removeItem(item.id)));
       setItemsToDelete(null);
       setShowConfirmDialog(false);
       setToastMessage('List removed successfully!');
@@ -166,7 +175,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
     if (item && item.listId) {
       dispatch(decrementItemCount(item.listId));
     }
-    dispatch(deleteItemAction(id));
+    dispatch(removeItem(id));
     setToastMessage('Item removed successfully');
     setShowToast(true);
     setTimeout(() => setShowToast(false), 2000);
@@ -181,7 +190,8 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
     setItemQuantity(1);
     setItemCategory('');
     setItemNotes('');
-    setItemImage(null);
+    setSelectedItemImage('');
+
   };
 
   const handleAddItem = () => {
@@ -195,7 +205,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
         category: itemCategory,
         listId: itemListId,
         notes: itemNotes || undefined,
-        image: itemImage ? URL.createObjectURL(itemImage) : undefined
+        image: selectedItemImage || undefined,
       };
 
       dispatch(addItem(newItem));
@@ -213,65 +223,95 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
     }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file && file.type.startsWith('image/')) {
-      setItemImage(file);
+  const startEditItem = (itemId: number) => {
+    const itemToEdit = items.find(item => item.id === itemId);
+    if (itemToEdit) {
+      setEditingItemId(itemId);
+      setEditItemName(itemToEdit.name);
+      setEditItemQuantity(itemToEdit.quantity);
+      setEditItemCategory(itemToEdit.category || '');
+      setEditItemListId(itemToEdit.listId);
+      setEditItemNotes(itemToEdit.notes || '');
+      setEditItemImage(itemToEdit.image || '');
+      setShowEditItemModal(true);
     }
   };
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
-      setItemImage(file);
+  const closeEditItemModal = () => {
+    setShowEditItemModal(false);
+    setEditingItemId(null);
+    setEditItemName('');
+    setEditItemQuantity(1);
+    setEditItemCategory('');
+    setEditItemListId(null);
+    setEditItemNotes('');
+    setEditItemImage('');
+  };
+
+  const handleUpdateItem = () => {
+    if (editingItemId && editItemName.trim() && editItemListId) {
+      const updatedItem = {
+        name: editItemName,
+        quantity: editItemQuantity,
+        category: editItemCategory,
+        listId: editItemListId,
+        notes: editItemNotes || undefined,
+        image: editItemImage || undefined,
+      };
+
+      dispatch(updateItem({ id: editingItemId, ...updatedItem }));
+      closeEditItemModal();
+      setToastMessage('Item updated successfully');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
     }
   };
 
-  const getSortedLists = () => {
-    if (sortMethod === 'alphabetical') {
-      return [...items].sort((a, b) => a.name.localeCompare(b.name));
-    }
-    return items;
-  };
 
-  // Search filtering logic
-  const getFilteredLists = () => {
-    if (!searchQuery.trim()) {
-      return getSortedLists();
-    }
 
-    const query = searchQuery.toLowerCase();
-    
-    return items.filter(Itemslist => {
-      // Check if list name matches
-      const listNameMatches = Itemslist.name.toLowerCase().includes(query);
-      
-      // Check if any items in this list match
-      const hasMatchingItems = items.some(item => 
-        item.name.toLowerCase().includes(query)
-      );
-      
-      return listNameMatches || hasMatchingItems;
-    });
-  };
+    const normalizedSearchQuery = searchQuery.trim().toLowerCase();
+    const hasItemsInCurrentView = itemListId
+        ? items.some(item => item.listId === itemListId)
+        : items.length > 0;
+    const filteredLists = lists
+        .filter(list => !normalizedSearchQuery || list.name.toLowerCase().includes(normalizedSearchQuery))
+        .sort((firstList, secondList) => {
+            if (sortMethod === 'dateAdded') return secondList.createdAt - firstList.createdAt;
+            if (sortMethod === 'name' || sortMethod === 'category') {
+                return firstList.name.localeCompare(secondList.name);
+            }
+            return 0;
+        });
 
-  const getFilteredItems = () => {
-    if (!searchQuery.trim()) {
-      return items.flatMap(list => list.id);
-    }
+    const filteredItems = items
+        .filter(item => {
+            const matchesSelectedList = !itemListId || item.listId === itemListId;
+            const matchesSearch = !normalizedSearchQuery ||
+                item.name.toLowerCase().includes(normalizedSearchQuery) ||
+                (item.category ?? '').toLowerCase().includes(normalizedSearchQuery);
 
-    const query = searchQuery.toLowerCase();
-    
-    return items.flatMap(item =>
-      item.id
-    );
-  };
+            return matchesSelectedList && matchesSearch;
+        })
+        .sort((firstItem, secondItem) => {
+            if (sortMethod === 'dateAdded') return secondItem.createdAt - firstItem.createdAt;
+            if (sortMethod === 'category') {
+                return (firstItem.category ?? '').localeCompare(secondItem.category ?? '') ||
+                    firstItem.name.localeCompare(secondItem.name);
+            }
+            if (sortMethod === 'name') return firstItem.name.localeCompare(secondItem.name);
+            return 0;
+        });
 
-  // Filter items by selected list
-  const filteredItems = itemListId 
-    ? items.filter(item => item.listId === itemListId)
-    : items;
+    const handleSortChange = (value: string) => {
+        setSearchParams((currentParams) => {
+            if (value) {
+                currentParams.set('sort', value);
+            } else {
+                currentParams.delete('sort');
+            }
+            return currentParams;
+        });
+    };
 
   return (
         <>
@@ -309,14 +349,15 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
 
                 {/* Action buttons based on active tab */}
                 <div className='buttons-content'>
-                    {/* <div className='sort-section'>
+                    <div className='sort-section'>
                         <label className='sort-label'>Sort by:</label>
-                           <select name="" id="" >
-                            <option value="">Name</option>
-                            <option value="">Category</option>
-                            <option value="">Date Created</option>
+                           <select name='sort' value={sortMethod} onChange={(e) => handleSortChange(e.target.value)}>
+                            <option value=''>Manual</option>
+                            <option value='name'>Name</option>
+                            <option value='category'>Category</option>
+                            <option value='dateAdded'>Date Added</option>
                            </select>
-                    </div> */}
+                    </div>
                     
                     {activeTab === 'lists' && (
                         <button type='button' className='addList-content' onClick={() => setShowAddListModal(true)}>
@@ -349,13 +390,13 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                             <Text variant={'h2'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace" }}> Lists </Text>
                         </div>
                         <div className='List-section-card'>
-                            {lists.length === 0 ? (
+                            {filteredLists.length === 0 ? (
                                 <div className='empty-state'>
                                     <Text variant='h3'><FaClipboardList style={{fontSize:'50px',color:'#000'}}/></Text>
-                                    <p>No lists yet. Create your first list!</p>
+                                    <p>{normalizedSearchQuery ? 'No lists or items match your search.' : 'No lists yet. Create your first list!'}</p>
                                 </div>
                             ) : (
-                                lists.map((list) => (
+                                filteredLists.map((list) => (
                            
                                     
                                     <div key={list.id} className='content-list' ref={openDropdownId === list.id ? dropdownRef : null}>
@@ -367,7 +408,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                                                         value={editName}
                                                         onChange={(e) => setEditName(e.target.value)}
                                                         className='edit-name-input'
-                                                        autoFocus
+                                                        autoFocus={true}
                                                     />
                                                     <button type='button' onClick={() => saveEdit(list.id)} className='save-edit-btn'>Save</button>
                                                     <button type='button' onClick={cancelEdit} className='cancel-edit-btn'>Cancel</button>
@@ -429,7 +470,11 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                         <div className='Items-section-card'>
                             {filteredItems.length === 0 ? (
                                 <div className='empty-state'>
-                                    <p>{itemListId ? 'No items in this list yet.' : 'No items yet. Add your first item!'}</p>
+                                    <p>{normalizedSearchQuery
+                                        ? 'No lists or items match your search.'
+                                        : itemListId
+                                            ? 'No items in this list yet.'
+                                            : 'No items yet. Add your first item!'}</p>
                                 </div>
                             ) : (
                                 <table className='table-content'>
@@ -443,7 +488,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                                     </thead>
                                     <tbody>
                                         {filteredItems.map(item => (
-                                            <tr key={item.id} className='item-row'>
+                                            <tr key={item.id} className='item-row'> 
                                                 <td className='text-left'>
                                                     <div className='item-cell'>
                                                         {item.image && (
@@ -465,8 +510,8 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                                                     </div>
                                                 </td>
                                                 <td className='text-center'>
-                                                    <button type='button' onClick={() => {}} className='dropdown-item'>
-                                                        <FaEdit /> 
+                                                    <button type='button' onClick={() => startEditItem(item.id)} className='dropdown-item'>
+                                                        <FaEdit />
                                                     </button>
                                                 </td>
                                                 <td className='text-right'>
@@ -513,7 +558,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                                     onChange={(e) => setNewListName(e.target.value)}
                                     className='add-list-input'
                                     placeholder='Enter list name'
-                                    autoFocus
+                                    autoFocus={true}
                                 />
                             </div>
                         </div>
@@ -544,7 +589,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                                         onChange={(e) => setItemName(e.target.value)}
                                         className='item-input'
                                         placeholder='Fill your item name'
-                                        autoFocus
+                                        autoFocus={true}
                                     />
                                 </div>
                                 <div className='form-group-item'>
@@ -610,51 +655,95 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                                 />
                             </div>
                             <div className='form-group-item'>
-                                <label>Image</label>
-                                <div 
-                                    className='image-upload-zone'
-                                    onDrop={handleDrop}
-                                    onDragOver={(e) => e.preventDefault()}
-                                >
-                                    {/* <div className='upload-prompt'>
-                                        <span>Choose file or Drag and drop image here</span>
-                                    </div> */}
-                                    <input
-                                        type='text'
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                        className='file-input'
-                                        placeholder='search for a picture'
-                                    />
-                                    <button  type='button' onClick={handleImageSearch} className='browse-btn'>Search</button>
-                                {/* {itemImage && (
-                                    <div className='image-preview'>
-                                        <img src={URL.createObjectURL(itemImage)} alt='Preview' />
-                                        <button type='button' onClick={() => setItemImage(null)} className='remove-image-btn'>×</button>
-                                    </div>
-                                )} */}
-                                {/* Show search results */}
-                                <div className='search-results'>
-                                    {searchResults.map((img) => (
-                                    <img
-                                        key={img.id}
-                                        src={img.previewURL}
-                                        alt='preview'
-                                        onClick={() => setItemImage(img.largeImageURL as any)}// store URL instead of File
-                                        style={{cursor:'pointer'}} 
-                                        // style={{
-                                        // cursor: 'pointer',
-                                        // border: itemImage === img.largeImageURL ? '2px solid blue' : 'none'
-                                        // }}
-                                    />
-                                    ))}
-                                </div>
-                            </div>
+                                <label>Image :</label>
+    
+                                <PaxiBayResources onImageSelect={(url) => setSelectedItemImage(url)} />
+                                
                             </div>
                         </div>
                         <div className='add-item-buttons'>
                             <button type='button' onClick={closeAddItemModal} className='cancel-btn'>Cancel</button>
                             <button type='button' onClick={handleAddItem} className='confirm-btn'>Add Item</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Edit Item Modal */}
+            {showEditItemModal && (
+                <div className='add-item-modal-overlay'>
+                    <div className='add-item-modal'>
+                        <div className='modal-header'>
+                            <h3>Edit Item</h3>
+                            <p className='modal-subtitle'>Edit item details</p>
+                            <button type='button' className='modal-close-btn' onClick={closeEditItemModal}>×</button>
+                        </div>
+                        <div className='add-item-form'>
+                            <div className='form-row-two-col'>
+                                <div className='form-group-item'>
+                                    <label>Item Name</label>
+                                    <input
+                                        type='text'
+                                        value={editItemName}
+                                        onChange={(e) => setEditItemName(e.target.value)}
+                                        className='item-input'
+                                        placeholder='Fill your item name'
+                                        autoFocus={true}
+                                    />
+                                </div>
+                                <div className='form-group-item'>
+                                    <label>Category (List)</label>
+                                    <select
+                                        value={editItemListId || ''}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            const selectedList = lists.find(l => l.id === Number(value));
+                                            setEditItemListId(Number(value));
+                                            setEditItemCategory(selectedList?.name || '');
+                                        }}
+                                        className='item-select'
+                                    >
+                                        <option value=''>Select a list</option>
+                                        {lists.map(list => (
+                                            <option key={list.id} value={list.id}>{list.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+                            <div className='form-group-item'>
+                                <label>Quantity</label>
+                                <input
+                                    type='number'
+                                    value={editItemQuantity}
+                                    onChange={(e) => setEditItemQuantity(parseInt(e.target.value) || 0)}
+                                    className='item-input'
+                                    min='1'
+                                />
+                            </div>
+                            <div className='form-group-item'>
+                                <label>Optional Notes</label>
+                                <textarea
+                                    value={editItemNotes}
+                                    onChange={(e) => setEditItemNotes(e.target.value)}
+                                    className='item-textarea'
+                                    placeholder='Add any additional notes (optional)'
+                                    rows={3}
+                                />
+                            </div>
+                            <div className='form-group-item'>
+                                <label>Image :</label>
+                                {editItemImage && (
+                                    <div className='selected-image-preview'>
+                                        <p className='selected-label'>Current image:</p>
+                                        <img src={editItemImage} alt="Current" className='selected-preview' />
+                                    </div>
+                                )}
+                                <PaxiBayResources onImageSelect={(url) => setEditItemImage(url)} />
+                            </div>
+                        </div>
+                        <div className='add-item-buttons'>
+                            <button type='button' onClick={closeEditItemModal} className='cancel-btn'>Cancel</button>
+                            <button type='button' onClick={handleUpdateItem} className='confirm-btn'>Update Item</button>
                         </div>
                     </div>
                 </div>
