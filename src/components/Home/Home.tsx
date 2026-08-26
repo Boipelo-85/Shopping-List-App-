@@ -1,16 +1,15 @@
 import { useState, useRef, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom';
 import { Text } from '../Text/Text';
 import { FaEdit, FaEllipsisH, FaTrash, FaCopy, FaPlus, FaClipboardList } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
-import { createList, deleteList, updateList, fetchLists, incrementItemCount, decrementItemCount, updateListName } from '../../store/listSlice';
-import { createItem, deleteItem, updateItemApi, fetchItems, updateItemQuantity } from '../../store/itemsSlice';
+import { addList, removeList as removeListAction, updateListName, incrementItemCount, decrementItemCount } from '../../store/listSlice';
+import { addItem, removeItem as deleteItemAction, updateItemQuantity } from '../../store/itemsSlice';
 import type { RootState } from '../../store/store';
 import type { AppDispatch } from '../../store/store';
+import type { List } from '../../store/listSlice';
+import type { Item } from '../../store/itemsSlice';
 
-export const Home = () => {
-  const [searchParams] = useSearchParams();
-  const searchQuery = searchParams.get('search') || '';
+export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
   const dispatch = useDispatch<AppDispatch>();
   const lists = useSelector((state: RootState) => state.lists.lists);
   const items = useSelector((state: RootState) => state.items.items);
@@ -50,13 +49,7 @@ export const Home = () => {
   const [toastMessage, setToastMessage] = useState('');
 
   // Sorting State
-  const [sortMethod] = useState<'alphabetical' | 'manual'>('manual');
-
-  // Load initial data from server on mount
-  useEffect(() => {
-    dispatch(fetchLists());
-    dispatch(fetchItems());
-  }, [dispatch]);
+  const [sortMethod, setSortMethod] = useState<'alphabetical' | 'manual'>('manual');
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -89,17 +82,10 @@ export const Home = () => {
     setOpenDropdownId(null);
   };
 
-  const saveEdit = async (id: number) => {
-    try {
-      await dispatch(updateList({ id, data: { name: editName } })).unwrap();
-      setEditingId(null);
-      setEditName('');
-    } catch (error) {
-      console.error('Error updating list name:', error);
-      setToastMessage('Failed to update list name');
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 2000);
-    }
+  const saveEdit = (id: number) => {
+    dispatch(updateListName({ id, name: editName }));
+    setEditingId(null);
+    setEditName('');
   };
 
   const cancelEdit = () => {
@@ -107,33 +93,22 @@ export const Home = () => {
     setEditName('');
   };
 
-  const duplicateList = async (id: number) => {
+  const duplicateList = (id: number) => {
     const listToDuplicate = lists.find(list => list.id === id);
     if (listToDuplicate) {
-      try {
-        await dispatch(createList(`${listToDuplicate.name} (Copy)`)).unwrap();
-        setOpenDropdownId(null);
-      } catch (error) {
-        console.error('Error duplicating list:', error);
-      }
+      dispatch(addList(`${listToDuplicate.name} (Copy)`));
     }
+    setOpenDropdownId(null);
   };
 
-  const addNewList = async () => {
+  const addNewList = () => {
     if (newListName.trim()) {
-      try {
-        await dispatch(createList(newListName.trim())).unwrap();
-        setNewListName('');
-        setShowAddListModal(false);
-        setToastMessage('List created successfully!');
-        setShowToast(true);
-        setTimeout(() => setShowToast(false), 3000);
-      } catch (error) {
-        console.error('Error creating list:', error);
-        setToastMessage('Failed to create list');
-        setShowToast(true);
-        setTimeout(() => setShowToast(false), 3000);
-      }
+      dispatch(addList(newListName.trim()));
+      setNewListName('');
+      setShowAddListModal(false);
+      setToastMessage('List created successfully!');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
     }
   };
 
@@ -142,23 +117,16 @@ export const Home = () => {
     setShowAddListModal(false);
   };
 
-  const createListFromItem = async () => {
+  const createListFromItem = () => {
     if (newListFromItem.trim()) {
       const listName = newListFromItem.trim();
-      try {
-        await dispatch(createList(listName)).unwrap();
-        setItemCategory(listName);
-        setNewListFromItem('');
-        setShowNewListInput(false);
-        setToastMessage('List created successfully!');
-        setShowToast(true);
-        setTimeout(() => setShowToast(false), 3000);
-      } catch (error) {
-        console.error('Error creating list:', error);
-        setToastMessage('Failed to create list');
-        setShowToast(true);
-        setTimeout(() => setShowToast(false), 3000);
-      }
+      dispatch(addList(listName));
+      setItemCategory(listName);
+      setNewListFromItem('');
+      setShowNewListInput(false);
+      setToastMessage('List created successfully!');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
     }
   };
 
@@ -168,39 +136,29 @@ export const Home = () => {
     setOpenDropdownId(null);
   };
 
-  const handleRemoveList = async () => {
+  const handleRemoveList = () => {
     if (itemsToDelete !== null) {
-      try {
-        await dispatch(deleteList(itemsToDelete)).unwrap();
-        setItemsToDelete(null);
-        setShowConfirmDialog(false);
-        setToastMessage('List removed successfully!');
-        setShowToast(true);
-        setTimeout(() => setShowToast(false), 2000);
-      } catch (error) {
-        console.error('Error removing list:', error);
-        setToastMessage('Failed to remove list');
-        setShowToast(true);
-        setTimeout(() => setShowToast(false), 2000);
-      }
+      // Remove list and all its items
+      dispatch(removeListAction(itemsToDelete));
+      const listItems = items.filter(item => item.listId === itemsToDelete);
+      listItems.forEach(item => dispatch(deleteItemAction(item.id)));
+      setItemsToDelete(null);
+      setShowConfirmDialog(false);
+      setToastMessage('List removed successfully!');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2000);
     }
   };
 
-  const handleRemoveItem = async (id: number) => {
+  const handleRemoveItem = (id: number) => {
     const item = items.find(i => i.id === id);
     if (item && item.listId) {
-      try {
-        await dispatch(deleteItem(id)).unwrap();
-        setToastMessage('Item removed successfully');
-        setShowToast(true);
-        setTimeout(() => setShowToast(false), 2000);
-      } catch (error) {
-        console.error('Error removing item:', error);
-        setToastMessage('Failed to remove item');
-        setShowToast(true);
-        setTimeout(() => setShowToast(false), 2000);
-      }
+      dispatch(decrementItemCount(item.listId));
     }
+    dispatch(deleteItemAction(id));
+    setToastMessage('Item removed successfully');
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 2000);
   };
 
   const closeAddItemModal = () => {
@@ -215,7 +173,7 @@ export const Home = () => {
     setItemImage(null);
   };
 
-  const handleAddItem = async () => {
+  const handleAddItem = () => {
     if (itemName.trim() && itemListId) {
       const selectedList = lists.find(l => l.id === itemListId);
       if (!selectedList) return;
@@ -229,19 +187,12 @@ export const Home = () => {
         image: itemImage ? URL.createObjectURL(itemImage) : undefined
       };
 
-      try {
-        await dispatch(createItem(newItem)).unwrap();
-        dispatch(incrementItemCount(itemListId));
-        closeAddItemModal();
-        setToastMessage('Item added successfully');
-        setShowToast(true);
-        setTimeout(() => setShowToast(false), 3000);
-      } catch (error) {
-        console.error('Error adding item:', error);
-        setToastMessage('Failed to add item');
-        setShowToast(true);
-        setTimeout(() => setShowToast(false), 3000);
-      }
+      dispatch(addItem(newItem));
+      dispatch(incrementItemCount(itemListId));
+      closeAddItemModal();
+      setToastMessage('Item added successfully');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
     }
   };
 
@@ -266,46 +217,50 @@ export const Home = () => {
     }
   };
 
+  const getSortedLists = () => {
+    if (sortMethod === 'alphabetical') {
+      return [...items].sort((a, b) => a.name.localeCompare(b.name));
+    }
+    return items;
+  };
+
   // Search filtering logic
   const getFilteredLists = () => {
     if (!searchQuery.trim()) {
-      return lists;
+      return getSortedLists();
     }
 
     const query = searchQuery.toLowerCase();
     
-    return lists.filter(list => {
+    return items.filter(Itemslist => {
       // Check if list name matches
-      const listNameMatches = list.name.toLowerCase().includes(query);
+      const listNameMatches = Itemslist.name.toLowerCase().includes(query);
       
       // Check if any items in this list match
       const hasMatchingItems = items.some(item => 
-        item.listId === list.id && item.name.toLowerCase().includes(query)
+        item.name.toLowerCase().includes(query)
       );
       
       return listNameMatches || hasMatchingItems;
     });
   };
 
-  // Filter items by selected list and search query
-  const filteredItems = (() => {
-    let result = items;
-    
-    // First filter by list if one is selected
-    if (itemListId) {
-      result = result.filter(item => item.listId === itemListId);
+  const getFilteredItems = () => {
+    if (!searchQuery.trim()) {
+      return items.flatMap(list => list.id);
     }
-    
-    // Then filter by search query
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(item => item.name.toLowerCase().includes(query));
-    }
-    
-    return result;
-  })();
 
-  const filteredLists = getFilteredLists();
+    const query = searchQuery.toLowerCase();
+    
+    return items.flatMap(item =>
+      item.id
+    );
+  };
+
+  // Filter items by selected list
+  const filteredItems = itemListId 
+    ? items.filter(item => item.listId === itemListId)
+    : items;
 
   return (
         <>
@@ -383,13 +338,15 @@ export const Home = () => {
                             <Text variant={'h2'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace" }}> Lists </Text>
                         </div>
                         <div className='List-section-card'>
-                            {filteredLists.length === 0 ? (
+                            {lists.length === 0 ? (
                                 <div className='empty-state'>
                                     <Text variant='h3'><FaClipboardList style={{fontSize:'50px',color:'#000'}}/></Text>
-                                    <p>{searchQuery.trim() ? 'No lists match your search.' : 'No lists yet. Create your first list!'}</p>
+                                    <p>No lists yet. Create your first list!</p>
                                 </div>
                             ) : (
-                                filteredLists.map((list) => (
+                                lists.map((list) => (
+                           
+                                    
                                     <div key={list.id} className='content-list' ref={openDropdownId === list.id ? dropdownRef : null}>
                                         <div className='list-info'>
                                             {editingId === list.id ? (
@@ -460,45 +417,9 @@ export const Home = () => {
 
                         <div className='Items-section-card'>
                             {filteredItems.length === 0 ? (
-                                <>
-                                    <table className='table-content'>
-                                        <thead>
-                                            <tr>
-                                                <th className='text-left'>Item picture and name</th>
-                                                <th className='text-center'>Quantity</th>
-                                                <th className='text-center'>Edit</th>
-                                                <th className='text-right'>Remove</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {[1, 2, 3].map((_, index) => (
-                                                <tr key={`skeleton-${index}`} className='item-row skeleton-row'>
-                                                    <td className='text-left'>
-                                                        <div className='item-cell'>
-                                                            <div className='skeleton-image'></div>
-                                                            <div className='item-details'>
-                                                                <div className='skeleton-name'></div>
-                                                                <div className='skeleton-category'></div>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td className='text-center'>
-                                                        <div className='skeleton-stepper'></div>
-                                                    </td>
-                                                    <td className='text-center'>
-                                                        <div className='skeleton-edit'></div>
-                                                    </td>
-                                                    <td className='text-right'>
-                                                        <div className='skeleton-delete'></div>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                    <div className='empty-state'>
-                                        <p>{searchQuery.trim() ? 'No items match your search.' : (itemListId ? 'No items in this list yet.' : 'No items yet. Add your first item!')}</p>
-                                    </div>
-                                </>
+                                <div className='empty-state'>
+                                    <p>{itemListId ? 'No items in this list yet.' : 'No items yet. Add your first item!'}</p>
+                                </div>
                             ) : (
                                 <table className='table-content'>
                                     <thead>
