@@ -11,7 +11,7 @@ const DB_PATH = path.join(__dirname, 'src', 'database.json');
 app.use(cors());
 app.use(express.json());
 
-// Helper functions to read/write database
+// functions helps to read/write database
 const readDatabase = () => {
   try {
     const data = fs.readFileSync(DB_PATH, 'utf8');
@@ -138,6 +138,7 @@ app.delete('/items/:id', (req, res) => {
   const item = db.items.find(item => item.id === itemId);
   
   if (item) {
+    
     // Decrement item count in the associated list
     const listIndex = db.lists.findIndex(list => list.id === item.listId);
     if (listIndex !== -1 && db.lists[listIndex].itemCount > 0) {

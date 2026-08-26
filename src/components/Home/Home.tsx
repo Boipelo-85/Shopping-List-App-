@@ -6,8 +6,9 @@ import { addList, removeList as removeListAction, updateListName, incrementItemC
 import { addItem, removeItem as deleteItemAction, updateItemQuantity } from '../../store/itemsSlice';
 import type { RootState } from '../../store/store';
 import type { AppDispatch } from '../../store/store';
-import type { List } from '../../store/listSlice';
-import type { Item } from '../../store/itemsSlice';
+import { imageApi, type PixabayImage } from '../../services/api';
+// import type { List } from '../../store/listSlice';
+// import type { Item } from '../../store/itemsSlice';
 
 export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -50,6 +51,16 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
 
   // Sorting State
   const [sortMethod, setSortMethod] = useState<'alphabetical' | 'manual'>('manual');
+
+  //Search state for pictures
+    const [searchTerm, setSearchTerm] = useState('');
+    const [searchResults, setSearchResults] = useState<PixabayImage[]>([]);
+
+    const handleImageSearch = async () => {
+    if (!searchTerm.trim()) return;
+        const results = await imageApi.search(searchTerm);
+        setSearchResults(results);
+    };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -599,30 +610,46 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                                 />
                             </div>
                             <div className='form-group-item'>
-                                <label>Upload Image</label>
+                                <label>Image</label>
                                 <div 
                                     className='image-upload-zone'
                                     onDrop={handleDrop}
                                     onDragOver={(e) => e.preventDefault()}
                                 >
-                                    <div className='upload-prompt'>
+                                    {/* <div className='upload-prompt'>
                                         <span>Choose file or Drag and drop image here</span>
-                                    </div>
+                                    </div> */}
                                     <input
-                                        type='file'
-                                        accept='image/*'
-                                        onChange={handleImageUpload}
+                                        type='text'
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
                                         className='file-input'
+                                        placeholder='search for a picture'
                                     />
-                                    <button className='browse-btn'>Browse file</button>
-                                {itemImage && (
+                                    <button  type='button' onClick={handleImageSearch} className='browse-btn'>Search</button>
+                                {/* {itemImage && (
                                     <div className='image-preview'>
                                         <img src={URL.createObjectURL(itemImage)} alt='Preview' />
                                         <button type='button' onClick={() => setItemImage(null)} className='remove-image-btn'>×</button>
                                     </div>
-                                )}
+                                )} */}
+                                {/* Show search results */}
+                                <div className='search-results'>
+                                    {searchResults.map((img) => (
+                                    <img
+                                        key={img.id}
+                                        src={img.previewURL}
+                                        alt='preview'
+                                        onClick={() => setItemImage(img.largeImageURL as any)}// store URL instead of File
+                                        style={{cursor:'pointer'}} 
+                                        // style={{
+                                        // cursor: 'pointer',
+                                        // border: itemImage === img.largeImageURL ? '2px solid blue' : 'none'
+                                        // }}
+                                    />
+                                    ))}
                                 </div>
-
+                            </div>
                             </div>
                         </div>
                         <div className='add-item-buttons'>
