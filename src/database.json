@@ -1,25 +1,7 @@
 {
   "users": [
-    {
-      "username": "harryboipelo@gmail.com",
-      "firstName": "Boipelo",
-      "lastName": "Motileng",
-      "email": "harryboipelo@gmail.com",
-      "celphone": "+27762958691",
-      "password": "Moti@2003",
-      "createdAt": 1787819489479,
-      "id": 1
-    },
-    {
-      "username": "lethaboboipelo@gmail.com",
-      "firstName": "Lesego",
-      "lastName": "sechaba",
-      "email": "lethaboboipelo@gmail.com",
-      "celphone": "+27762958676",
-      "password": "Lethabo@2003",
-      "createdAt": 1787821592148,
-      "id": 2
-    }
+  
+ 
   ],
   "lists": [
     {
