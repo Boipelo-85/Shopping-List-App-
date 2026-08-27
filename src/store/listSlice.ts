@@ -89,6 +89,39 @@ export const fetchLists = createAsyncThunk<
   }
 );
 
+    // Fetch single list by ID
+
+export const fetchListById = createAsyncThunk<
+  List,
+  number,
+  { rejectValue: string }
+>(
+  'lists/fetchListById',
+
+  async (id, { rejectWithValue }) => {
+    try {
+      const apiList = await listsApi.getById(id);
+
+      if (!apiList) {
+        return rejectWithValue('List not found');
+      }
+
+      return toList(apiList);
+    } catch (error) {
+      console.error(
+        'Failed to fetch list:',
+        error
+      );
+
+      return rejectWithValue(
+        error instanceof Error
+          ? error.message
+          : 'Failed to fetch list'
+      );
+    }
+  }
+);
+
     // Create List
 
 export const createList = createAsyncThunk<
@@ -288,6 +321,48 @@ const listSlice = createSlice({
             action.payload ??
             action.error.message ??
             'Failed to fetch lists';
+        }
+      )
+
+      // Fetch single list by ID
+
+      .addCase(
+        fetchListById.pending,
+        (state) => {
+          state.loading = true;
+          state.error = null;
+        }
+      )
+
+      .addCase(
+        fetchListById.fulfilled,
+        (state, action) => {
+          state.loading = false;
+          
+          // Replace or add the list
+          const index = state.lists.findIndex(
+            (list) => list.id === action.payload.id
+          );
+          
+          if (index !== -1) {
+            state.lists[index] = action.payload;
+          } else {
+            state.lists.push(action.payload);
+          }
+          
+          state.error = null;
+        }
+      )
+
+      .addCase(
+        fetchListById.rejected,
+        (state, action) => {
+          state.loading = false;
+
+          state.error =
+            action.payload ??
+            action.error.message ??
+            'Failed to fetch list';
         }
       )
 

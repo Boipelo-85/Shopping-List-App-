@@ -49,6 +49,31 @@ export const fetchItems = createAsyncThunk<
 );
 
 /* =========================================================
+   FETCH ITEMS BY LIST ID
+========================================================= */
+
+export const fetchItemsByListId = createAsyncThunk<
+  Item[],
+  number,
+  { rejectValue: string }
+>(
+  'items/fetchItemsByListId',
+  async (listId, { rejectWithValue }) => {
+    try {
+      return await itemsApi.getByListId(listId);
+    } catch (error) {
+      console.error('Failed to fetch items by list ID:', error);
+
+      return rejectWithValue(
+        error instanceof Error
+          ? error.message
+          : 'Failed to fetch items'
+      );
+    }
+  }
+);
+
+/* =========================================================
    CREATE ITEM
 ========================================================= */
 
@@ -176,6 +201,38 @@ const itemsSlice = createSlice({
 
       .addCase(
         fetchItems.rejected,
+        (state, action) => {
+          state.loading = false;
+
+          state.error =
+            action.payload ??
+            'Failed to fetch items';
+        }
+      )
+
+      /* ===============================================
+         FETCH BY LIST ID
+      =============================================== */
+
+      .addCase(
+        fetchItemsByListId.pending,
+        (state) => {
+          state.loading = true;
+          state.error = null;
+        }
+      )
+
+      .addCase(
+        fetchItemsByListId.fulfilled,
+        (state, action) => {
+          state.loading = false;
+          state.items = action.payload;
+          state.error = null;
+        }
+      )
+
+      .addCase(
+        fetchItemsByListId.rejected,
         (state, action) => {
           state.loading = false;
 

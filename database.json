@@ -1,7 +1,15 @@
 {
   "users": [
- 
-        
+    {
+      "username": "lesego@gmail.com",
+      "firstName": "Lesego",
+      "lastName": "sechaba",
+      "email": "lesego@gmail.com",
+      "celphone": "+27735687356",
+      "password": "Lesego@gmail",
+      "createdAt": 1787859743450,
+      "id": 1
+    }
   ],
   "lists": [
     {

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { Text } from '../Text/Text';
-import { FaEdit, FaEllipsisH, FaTrash, FaCopy, FaPlus, FaClipboardList } from 'react-icons/fa';
+import { FaEdit, FaEllipsisH, FaTrash, FaCopy, FaPlus, FaClipboardList, FaShareAlt } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import { createList, deleteList, updateList, incrementItemCount, decrementItemCount,fetchLists } from '../../store/listSlice';
 import { createItem, updateItem,deleteItem, fetchItems,} from '../../store/itemsSlice';
@@ -128,6 +128,23 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
     }
+    setOpenDropdownId(null);
+  };
+
+  const shareList = (id: number) => {
+    const shareableLink = `${window.location.origin}/shared/list/${id}`;
+    
+    navigator.clipboard.writeText(shareableLink).then(() => {
+      setToastMessage('Link copied to clipboard!');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    }).catch((error) => {
+      console.error('Failed to copy link:', error);
+      setToastMessage('Failed to copy link');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    });
+    
     setOpenDropdownId(null);
   };
 
@@ -625,6 +642,9 @@ const getItemCount = (listId: number) => {
                                                     </button>
                                                     <button type='button' onClick={() => duplicateList(list.id)} className='dropdown-item'>
                                                         <FaCopy /> Duplicate
+                                                    </button>
+                                                    <button type='button' onClick={() => shareList(list.id)} className='dropdown-item'>
+                                                        <FaShareAlt /> Share
                                                     </button>
                                                     <button type='button' onClick={() => confirmRemoveList(list.id)} className='dropdown-item dropdown-item-danger'>
                                                         <FaTrash /> Remove
