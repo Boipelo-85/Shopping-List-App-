@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { Text } from '../Text/Text';
 import { FaEdit, FaEllipsisH, FaTrash, FaCopy, FaPlus, FaClipboardList } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
-import { createList, deleteList, updateListName, incrementItemCount, decrementItemCount } from '../../store/listSlice';
+import { createList, deleteList, updateList, incrementItemCount, decrementItemCount,fetchLists } from '../../store/listSlice';
 import { createItem, updateItem,deleteItem, fetchItems,} from '../../store/itemsSlice';
 import type { RootState } from '../../store/store';
 import type { AppDispatch } from '../../store/store';
@@ -29,9 +29,11 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editName, setEditName] = useState('');
 
-  // Confirmation Dialog State
+  // Confirmation Dialog State - FIXED: separate states for list and item deletion
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [itemsToDelete, setItemsToDelete] = useState<number | null>(null);
+  const [confirmType, setConfirmType] = useState<'list' | 'item' | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<number | null>(null);
+  const [listToDelete, setListToDelete] = useState<number | null>(null);
 
   // Add List Modal State
   const [showAddListModal, setShowAddListModal] = useState(false);
@@ -46,7 +48,8 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
   const [showNewListInput, setShowNewListInput] = useState(false);
   const [newListFromItem, setNewListFromItem] = useState('');
   const [itemNotes, setItemNotes] = useState('');
-  const [selectedItemImage, setSelectedItemImage] = useState("")
+  const [selectedItemImage, setSelectedItemImage] = useState<string>('');
+  const [editItemImage, setEditItemImage] = useState<string>('');
 
   // Edit Item Modal State
   const [showEditItemModal, setShowEditItemModal] = useState(false);
@@ -56,11 +59,12 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
   const [editItemCategory, setEditItemCategory] = useState('');
   const [editItemListId, setEditItemListId] = useState<number | null>(null);
   const [editItemNotes, setEditItemNotes] = useState('');
-  const [editItemImage, setEditItemImage] = useState<string>('');
+
 
 // Fetch from database
     useEffect(() => {
     dispatch(fetchItems());
+    dispatch(fetchLists());
     }, [dispatch]);
 
   // Toast Notification State
@@ -101,14 +105,15 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
     setOpenDropdownId(null);
   };
 
-  const saveEdit = (id: number) => {
-    dispatch(updateListName({ id, name: editName }));
-    setEditingId(null);
-    setEditName('');
-    setToastMessage('List name updated successfully');
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
-  };
+    const saveEdit = (id: number) => {
+  dispatch(updateList({ id, data: { name: editName } }));
+  setEditingId(null);
+  setEditName('');
+  setToastMessage('List name updated successfully');
+  setShowToast(true);
+  setTimeout(() => setShowToast(false), 3000);
+};
+
 
   const cancelEdit = () => {
     setEditingId(null);
@@ -154,82 +159,80 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
       setTimeout(() => setShowToast(false), 3000);
     }
   };
-
-  const confirmRemove = (id: number) => {
-    setItemsToDelete(id);
+  // FIXED: Separate confirmation functions for list and item
+  const confirmRemoveList = (id: number) => {
+    setListToDelete(id);
+    setConfirmType('list');
     setShowConfirmDialog(true);
     setOpenDropdownId(null);
   };
 
-  const handleRemoveList = () => {
-    if (itemsToDelete !== null) {
-      dispatch(deleteList(itemsToDelete));
-      const listItems = items.filter(item => item.listId === itemsToDelete);
-      listItems.forEach(item => dispatch(deleteList(item.id)));
-      setItemsToDelete(null);
+  const confirmRemoveItem = (id: number) => {
+    setItemToDelete(id);
+    setConfirmType('item');
+    setShowConfirmDialog(true);
+  };
+
+   const handleRemoveList = async () => {
+    if (listToDelete === null) return;
+
+    try {
+      await dispatch(deleteList(listToDelete)).unwrap();
+      
+      // Also delete all items in this list
+      const listItems = items.filter(item => item.listId === listToDelete);
+      for (const item of listItems) {
+        await dispatch(deleteItem(item.id)).unwrap();
+      }
+      
+      setListToDelete(null);
+      setConfirmType(null);
       setShowConfirmDialog(false);
       setToastMessage('List removed successfully!');
       setShowToast(true);
       setTimeout(() => setShowToast(false), 2000);
-
+    } catch (error) {
+      console.error('Failed to delete list:', error);
+      setToastMessage('Failed to remove list');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2000);
     }
   };
 
-  const handleRemoveItem = async (
-  id: number
-) => {
-  const item = items.find(
-    (item) => item.id === id
-  );
+  // FIXED: Handle item removal
+  const handleRemoveItem = async () => {
+    if (itemToDelete === null) return;
 
-  if (!item) {
-    return;
-  }
-
-  try {
-    await dispatch(
-      deleteItem(id)
-    ).unwrap();
-
-    /*
-     * Update the list count only after the
-     * item has actually been deleted.
-     */
-    if (item.listId) {
-      dispatch(
-        decrementItemCount(item.listId)
-      );
+    const item = items.find(item => item.id === itemToDelete);
+    if (!item) {
+      setToastMessage('Item not found');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2000);
+      return;
     }
 
-    setToastMessage(
-      'Item removed successfully'
-    );
+    try {
+      await dispatch(deleteItem(itemToDelete)).unwrap();
 
-    setShowToast(true);
+      // Update the list count after the item has been deleted
+      if (item.listId) {
+        dispatch(decrementItemCount(item.listId));
+      }
 
-    setTimeout(
-      () => setShowToast(false),
-      2000
-    );
+      setItemToDelete(null);
+      setConfirmType(null);
+      setShowConfirmDialog(false);
+      setToastMessage('Item removed successfully');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2000);
+    } catch (error) {
+      console.error('Failed to delete item:', error);
+      setToastMessage('Failed to remove item');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2000);
+    }
+  };
 
-  } catch (error) {
-    console.error(
-      'Failed to delete item:',
-      error
-    );
-
-    setToastMessage(
-      'Failed to remove item'
-    );
-
-    setShowToast(true);
-
-    setTimeout(
-      () => setShowToast(false),
-      2000
-    );
-  }
-};
 
   const closeAddItemModal = () => {
     setShowAddItemModal(false);
@@ -350,6 +353,9 @@ const updateQuantity = async (
   }
 };
 
+const getItemCount = (listId: number) => {
+    return items.filter(item => item.listId === listId).length;
+  };
   const startEditItem = (itemId: number) => {
     const itemToEdit = items.find(item => item.id === itemId);
     if (itemToEdit) {
@@ -527,7 +533,6 @@ const updateQuantity = async (
                     <div className='sort-section'>
                         <label className='sort-label'>Sort by:</label>
                            <select className='sort-part' name='sort' value={sortMethod} onChange={(e) => handleSortChange(e.target.value)}>
-                            <option value=''></option>
                             <option value='name'>Name</option>
                             <option value='category'>Category</option>
                             <option value='dateAdded'>Date Added</option>
@@ -564,7 +569,7 @@ const updateQuantity = async (
                 {activeTab === 'lists' && (
                     <>
                         <div className='heading-names'>
-                            <Text variant={'h2'} style={{ fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace" }}> Lists </Text>
+                            <Text variant={'h2'} style={{ color: '#000',fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace" }}> Lists </Text>
                         </div>
                         <div className='List-section-card'>
                             {filteredLists.length === 0 ? (
@@ -600,7 +605,7 @@ const updateQuantity = async (
                                                         }}
                                                     >
                                                     {list.name}</div>
-                                                    <Text variant={'p'} style={{ fontSize: '12px', color: '#999', marginLeft: '-620px', marginTop: '5px' }}>{list.itemCount} items</Text>
+                                                    <Text variant={'p'} style={{ fontSize: '12px', color: '#999', marginLeft: '-620px', marginTop: '5px' }}>{getItemCount(list.id)} items </Text>
                                                 </>
                                             )}
                                         </div>
@@ -621,7 +626,7 @@ const updateQuantity = async (
                                                     <button type='button' onClick={() => duplicateList(list.id)} className='dropdown-item'>
                                                         <FaCopy /> Duplicate
                                                     </button>
-                                                    <button type='button' onClick={() => confirmRemove(list.id)} className='dropdown-item dropdown-item-danger'>
+                                                    <button type='button' onClick={() => confirmRemoveList(list.id)} className='dropdown-item dropdown-item-danger'>
                                                         <FaTrash /> Remove
                                                     </button>
                                                 </div>
@@ -633,6 +638,8 @@ const updateQuantity = async (
                         </div>
                     </>
                 )}
+
+             
 
                 {/* Items Tab Content */}
                 {activeTab === 'items' && (
@@ -676,6 +683,7 @@ const updateQuantity = async (
                                                             {item.category && (
                                                                 <div className='item-subtext'>Category: {item.category}</div>
                                                             )}
+                                                         
                                                         </div>
                                                     </div>
                                                 </td>
@@ -688,11 +696,11 @@ const updateQuantity = async (
                                                 </td>
                                                 <td className='text-center'>
                                                     <button type='button' onClick={() => startEditItem(item.id)} className='dropdown-item'>
-                                                        <FaEdit />
+                                                        <FaEdit className='eidt-Icon'/>
                                                     </button>
                                                 </td>
                                                 <td className='text-right'>
-                                                    <button type='button' onClick={() => handleRemoveItem(item.id)} className='delete-btn'>
+                                                    <button type='button' onClick={() => confirmRemoveItem(item.id)}  className='delete-btn'>
                                                         <FaTrash />
                                                     </button>
                                                 </td>
@@ -709,17 +717,28 @@ const updateQuantity = async (
 
             {/* Confirm Dialog */}
             {showConfirmDialog && (
-                <div className='confirm-dialog-overlay'>
-                    <div className='confirm-dialog'>
-                        <h3>Confirm Remove</h3>
-                        <p>Are you sure you want to remove this item?</p>
-                        <div className='confirm-dialog-buttons'>
-                            <button type='button' onClick={() => setShowConfirmDialog(false)} className='cancel-btn'>Cancel</button>
-                            <button type='button' onClick={handleRemoveList} className='remove-btn'>Remove</button>
-                        </div>
-                    </div>
-                </div>
-            )}
+          <div className='confirm-dialog-overlay'>
+            <div className='confirm-dialog'>
+              <h3>Confirm Remove</h3>
+              <p>Are you sure you want to remove this ?</p>
+              <div className='confirm-dialog-buttons'>
+                <button type='button' onClick={() => {
+                  setShowConfirmDialog(false);
+                  setItemToDelete(null);
+                  setListToDelete(null);
+                  setConfirmType(null);
+                }} className='cancel-btn'>Cancel</button>
+                <button 
+                  type='button' 
+                  onClick={confirmType === 'list' ? handleRemoveList : handleRemoveItem} 
+                  className='remove-btn'
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
             {/* Add List Modal */}
             {showAddListModal && (
@@ -771,6 +790,7 @@ const updateQuantity = async (
                                 </div>
                                 <div className='form-group-item'>
                                     <label>Category (List)</label>
+                                    
                                     <select
                                         value={itemListId || ''}
                                         onChange={(e) => {

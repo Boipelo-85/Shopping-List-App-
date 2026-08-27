@@ -1,62 +1,42 @@
 {
   "users": [
-    {
-      "username": "harryboipelo@gmail.com",
-      "firstName": "Boipelo",
-      "lastName": "Motileng",
-      "email": "harryboipelo@gmail.com",
-      "celphone": "+27762958691",
-      "password": "Moti@2003",
-      "createdAt": 1787819489479,
-      "id": 1
-    },
-    {
-      "username": "lethaboboipelo@gmail.com",
-      "firstName": "Lesego",
-      "lastName": "sechaba",
-      "email": "lethaboboipelo@gmail.com",
-      "celphone": "+27762958676",
-      "password": "Lethabo@2003",
-      "createdAt": 1787821592148,
-      "id": 2
-    }
+ 
+        
   ],
   "lists": [
     {
-      "name": "eee",
+      "name": "Cloth",
       "itemCount": 0,
-      "createdAt": 1787823462765,
+      "createdAt": 1787835755026,
       "id": 1
     },
     {
-      "name": "Legggg",
+      "name": "Weekly Gross",
       "itemCount": 0,
-      "createdAt": 1787824595148,
+      "createdAt": 1787835762818,
       "id": 2
-    },
-    {
-      "name": "BHHA",
-      "itemCount": 0,
-      "createdAt": 1787824608916,
-      "id": 3
-    },
-    {
-      "name": "DDD",
-      "itemCount": 0,
-      "createdAt": 1787824779421,
-      "id": 4
     }
   ],
   "items": [
     {
-      "name": "KK, IJYK",
-      "quantity": 2,
-      "category": "DDD",
-      "listId": 4,
-      "notes": "DDD",
-      "image": "https://pixabay.com/get/g8579700fa4ab4194b060e487fd9af3e328d5ec6cd7443847963646b133536034387d01f6fbc12df4edf5ddfe16cf9378_640.jpg",
-      "createdAt": 1787824786308,
+      "name": "Nike",
+      "quantity": 3,
+      "category": "Cloth",
+      "listId": 1,
+      "notes": "Everything is right",
+      "image": "https://pixabay.com/get/gac1201f9be644e5a378f1ee9ed4d7c18931cd234d2f798c36bb3c3b34885cb8b3b8f9fd9bfc55d55ae258adeb7148a62f4aaf8c61b366c8e2e0a20a13f2a9146_640.jpg",
+      "createdAt": 1787835804522,
       "id": 1
+    },
+    {
+      "name": "Meeat",
+      "quantity": 1,
+      "category": "Weekly Gross",
+      "listId": 2,
+      "notes": "sss",
+      "image": "https://pixabay.com/get/gdbbd482cafc3e600a75fdcb545c934659ccf39a498280a2421485b11e758bdb2d2e95e6c817798573b52eb3357c14ee8_640.jpg",
+      "createdAt": 1787836563396,
+      "id": 2
     }
   ]
 }

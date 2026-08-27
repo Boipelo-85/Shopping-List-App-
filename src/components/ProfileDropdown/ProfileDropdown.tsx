@@ -57,7 +57,7 @@ export const ProfileDropdown = () => {
   };
 
 
-  // Get user display name
+  // Get user displayed name
   const displayName = auth.user?.firstName && auth.user?.lastName 
     ? `${auth.user.firstName} ${auth.user.lastName}` 
     : auth.user?.username || 'User';
@@ -156,7 +156,7 @@ export const ProfileDropdown = () => {
               <span>Edit Profile</span>
             </button>
 
-            <button
+            {/* <button
               className="profile-dropdown-option"
               onClick={handleCreateProfile}
               style={{
@@ -183,8 +183,9 @@ export const ProfileDropdown = () => {
               <FaUserPlus style={{ color: '#6b7280', fontSize: '16px' }} />
               <span>Create Profile</span>
 
-            </button>
-               <button
+            </button> */}
+
+              <button
               className="profile-dropdown-option"
               onClick={handleViewProfile}
               style={{ width: '100%', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', fontSize: '14px', color: '#374151', fontFamily: "'Courier New', Courier, monospace", transition: 'background-color 0.2s',}}

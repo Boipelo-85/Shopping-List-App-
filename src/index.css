@@ -1142,10 +1142,10 @@ code {
 .sort-label {
 
   font-size: 15px;
-  padding-right: 5px;
+  padding-right: 0px;
   color: #000;
   font-family: 'Courier New', Courier, monospace;
-  margin-left: -250px;
+  margin-left: -210px;
   white-space: nowrap;
   
 }
@@ -1161,7 +1161,12 @@ code {
 }
 .sort-part{
 
-      padding: 5px 20px;
+        padding: 6px 30px;
+        border-radius: 10px;
+}
+.sort-part:hover{
+
+    background-color: #3f3f4152;
 }
 .addList-content {
 
@@ -1504,13 +1509,19 @@ code {
   text-align: left;
   cursor: pointer;
   display: flex;
-  align-items: center;
+  margin-right: -30px;
   gap: 8px;
-  font-size: 14px;
+  font-size: 19px;
   color: #333;
   transition: background 0.2s ease;
-}
 
+}
+.eidt-Icon{
+
+   margin-right: -30px;
+   color: #000;
+   
+}
 .dropdown-item:hover {
   background: #f5f5f5;
 }
