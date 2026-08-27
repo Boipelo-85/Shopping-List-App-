@@ -1124,7 +1124,8 @@ code {
 
       display: flex;
       align-items: center;
-  gap: 5px;
+      gap: 5px;
+      flex: 1;
 
 }
 
@@ -1144,30 +1145,35 @@ code {
   padding-right: 5px;
   color: #000;
   font-family: 'Courier New', Courier, monospace;
-
+  margin-left: -250px;
+  white-space: nowrap;
   
 }
 
 .sort-by-section {
 
   border-radius: 10px;
-  padding: 5px 10px;
-  padding-left: 10px;
+  
+ 
   border: none;
   font-family: 'Courier New', Courier, monospace;
   background-color: #f5f6f5;
 }
+.sort-part{
 
+      padding: 5px 20px;
+}
 .addList-content {
 
   border-radius: 10px;
-  padding: 5px 35px;
+  padding: 6px 30px;
   background-color: #98a09e;
   border: none;
-  margin-left: 25px;
+  margin-right: 10px;
   cursor: pointer;
   color: #fdfdfd;
   font-family: 'Courier New', Courier, monospace;
+
 }
 
 .addList-content:hover {

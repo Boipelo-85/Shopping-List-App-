@@ -1,58 +1,165 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { Text } from '../Text/Text';
-import {PhoneInput} from 'react-international-phone'
-import 'react-international-phone/style.css'
+import { PhoneInput } from 'react-international-phone';
+import 'react-international-phone/style.css';
 
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../store/store';
+import { registerUser } from '../../store/authSlice';
 
 export const Registration = () => {
-  const [formData, setFormData] = useState({
+  const dispatch = useDispatch<AppDispatch>();
 
+  const { loading, error } = useSelector(
+    (state: RootState) => state.auth
+  );
+
+  const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
     celphone: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+  });
 
-  })
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
+  const [successMessage, setSuccessMessage] = useState('');
+
+    //  HANDLE INPUT CHANGES
+
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
-    }))
-  }
+      [name]: value,
+    }));
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log('Registration data:', formData)
-  }
+    // Clear success message when user starts editing again
+    if (successMessage) {
+      setSuccessMessage('');
+    }
+  };
 
+  /* =====================================================
+     HANDLE PHONE CHANGE
+  ===================================================== */
+
+  const handlePhoneChange = (phone: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      celphone: phone,
+    }));
+
+    if (successMessage) {
+      setSuccessMessage('');
+    }
+  };
+
+  /* =====================================================
+     HANDLE REGISTRATION
+  ===================================================== */
+
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
+    e.preventDefault();
+
+    setSuccessMessage('');
+
+    try {
+      
+      await dispatch(
+        registerUser(formData)
+      ).unwrap();
+
+      // Registration was successful
+      setSuccessMessage(
+        'Account created successfully! You can now sign in.'
+      );
+
+      // Clear form
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        celphone: '',
+        password: '',
+        confirmPassword: '',
+      });
+
+    } catch (err) {
+    
+      console.error(
+        'Registration failed:',
+        err
+      );
+    }
+  };
 
   return (
-    
     <div className="registration-container">
+
+      {/* =================================================
+          HEADER
+      ================================================= */}
+
       <div className="registration-header">
-        <Text variant={'h1'} style={{ color:'#000',fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace"}}>Create Account</Text>
-        <p className="registration-subtitle">Join us today and get started with your shopping list</p>
+        <Text
+          variant="h1"
+          style={{
+            color: '#000',
+            fontWeight: 'bold',
+            fontFamily:
+              "'Courier New', Courier, monospace",
+          }}
+        >
+          Create Account
+        </Text>
+
+        <p className="registration-subtitle">
+          Join us today and get started with your
+          shopping list
+        </p>
       </div>
 
-      <form className="registration-form" onSubmit={handleSubmit}>
+      {/* =================================================
+          FORM
+      ================================================= */}
+
+      <form
+        className="registration-form"
+        onSubmit={handleSubmit}
+      >
+
+        {/* FIRST + LAST NAME */}
+
         <div className="form-row">
+
           <div className="form-group">
-            <label className='reg-labels'>First name</label>
+            <label className="reg-labels">
+              First name
+            </label>
+
             <input
               type="text"
+              name="firstName"
               value={formData.firstName}
               onChange={handleChange}
               placeholder="First name"
               required
-
+              disabled={loading}
             />
           </div>
 
           <div className="form-group">
-            <label className='reg-labels'>Last name</label>
+            <label className="reg-labels">
+              Last name
+            </label>
+
             <input
               type="text"
               name="lastName"
@@ -60,13 +167,19 @@ export const Registration = () => {
               onChange={handleChange}
               placeholder="Last name"
               required
+              disabled={loading}
             />
+          </div>
 
-          </div>       
         </div>
 
+        {/* EMAIL */}
+
         <div className="form-group">
-          <label className='reg-labels-emals'>Email address</label>
+          <label className="reg-labels-emals">
+            Email address
+          </label>
+
           <input
             type="email"
             name="email"
@@ -74,21 +187,36 @@ export const Registration = () => {
             onChange={handleChange}
             placeholder="Email address"
             required
+            disabled={loading}
           />
-
         </div>
 
+        {/* PHONE */}
+
         <div className="form-group">
-          <label className='reg-labels-phone'>Phone number</label>
+          <label className="reg-labels-phone">
+            Phone number
+          </label>
+
           <div className="phone-input-group">
-            {/* <PhoneInput  defaultCountry='za' forceDialCode={true} value={formData.celphone}  onChange={(phone) => setFormData(phone)} /> */}
-            {/* <input type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="Phone number" required /> */}
-            <PhoneInput className='cel-input' defaultCountry="za" forceDialCode={true} value={formData.celphone} onChange={(phone) => setFormData({ ...formData,celphone: phone})} />
-        </div>
+            <PhoneInput
+              className="cel-input"
+              defaultCountry="za"
+              forceDialCode={true}
+              value={formData.celphone}
+              onChange={handlePhoneChange}
+              disabled={loading}
+            />
           </div>
+        </div>
+
+        {/* PASSWORD */}
 
         <div className="form-group">
-          <label className='reg-labels-password'>Password</label>
+          <label className="reg-labels-password">
+            Password
+          </label>
+
           <input
             type="password"
             id="password"
@@ -97,11 +225,17 @@ export const Registration = () => {
             onChange={handleChange}
             placeholder="Password"
             required
+            disabled={loading}
           />
         </div>
 
+        {/* CONFIRM PASSWORD */}
+
         <div className="form-group">
-          <label className='reg-labels-emals'>Confirm Password</label>
+          <label className="reg-labels-emals">
+            Confirm Password
+          </label>
+
           <input
             type="password"
             id="confirmPassword"
@@ -110,15 +244,54 @@ export const Registration = () => {
             onChange={handleChange}
             placeholder="Confirm Password"
             required
+            disabled={loading}
           />
         </div>
 
-        <button type="submit" className="register-btn">Create Account</button>
+        {/* =================================================
+            ERROR MESSAGE
+        ================================================= */}
+
+        {error && (
+          <div className="registration-error">
+            {error}
+          </div>
+        )}
+
+        {/* =================================================
+            SUCCESS MESSAGE
+        ================================================= */}
+
+        {successMessage && (
+          <div className="registration-success">
+            {successMessage}
+          </div>
+        )}
+
+        {/* =================================================
+            SUBMIT BUTTON
+        ================================================= */}
+
+        <button
+          type="submit"
+          className="register-btn"
+          disabled={loading}
+        >
+          {loading
+            ? 'Creating Account...'
+            : 'Create Account'}
+        </button>
+
+        {/* LOGIN LINK */}
 
         <p className="login-link">
-          Already have an account? <a href="/login">Sign in</a>
+          Already have an account?{' '}
+          <a href="/login">
+            Sign in
+          </a>
         </p>
+
       </form>
     </div>
-  )
-}
+  );
+};

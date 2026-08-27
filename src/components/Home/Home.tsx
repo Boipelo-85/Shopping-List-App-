@@ -2,8 +2,8 @@ import { useState, useRef, useEffect } from 'react'
 import { Text } from '../Text/Text';
 import { FaEdit, FaEllipsisH, FaTrash, FaCopy, FaPlus, FaClipboardList } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
-import { addList, removeList, updateListName, incrementItemCount, decrementItemCount } from '../../store/listSlice';
-import { addItem, removeItem, updateItem, updateItemQuantity } from '../../store/itemsSlice';
+import { createList, deleteList, updateListName, incrementItemCount, decrementItemCount } from '../../store/listSlice';
+import { createItem, updateItem,deleteItem, fetchItems,} from '../../store/itemsSlice';
 import type { RootState } from '../../store/store';
 import type { AppDispatch } from '../../store/store';
 import { PaxiBayResources } from '../../PaxiBayResources';
@@ -46,7 +46,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
   const [showNewListInput, setShowNewListInput] = useState(false);
   const [newListFromItem, setNewListFromItem] = useState('');
   const [itemNotes, setItemNotes] = useState('');
-  const [selectedItemImage, setSelectedItemImage] = useState<string>('');
+  const [selectedItemImage, setSelectedItemImage] = useState("")
 
   // Edit Item Modal State
   const [showEditItemModal, setShowEditItemModal] = useState(false);
@@ -58,6 +58,10 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
   const [editItemNotes, setEditItemNotes] = useState('');
   const [editItemImage, setEditItemImage] = useState<string>('');
 
+// Fetch from database
+    useEffect(() => {
+    dispatch(fetchItems());
+    }, [dispatch]);
 
   // Toast Notification State
   const [showToast, setShowToast] = useState(false);
@@ -114,7 +118,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
   const duplicateList = (id: number) => {
     const listToDuplicate = lists.find(list => list.id === id);
     if (listToDuplicate) {
-      dispatch(addList(`${listToDuplicate.name} (Copy)`));
+      dispatch(createList(`${listToDuplicate.name} (Copy)`));
       setToastMessage('List duplicated successfully');
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
@@ -124,7 +128,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
 
   const addNewList = () => {
     if (newListName.trim()) {
-      dispatch(addList(newListName.trim()));
+      dispatch(createList(newListName.trim()));
       setNewListName('');
       setShowAddListModal(false);
       setToastMessage('List created successfully!');
@@ -141,7 +145,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
   const createListFromItem = () => {
     if (newListFromItem.trim()) {
       const listName = newListFromItem.trim();
-      dispatch(addList(listName));
+      dispatch(createList(listName));
       setItemCategory(listName);
       setNewListFromItem('');
       setShowNewListInput(false);
@@ -159,27 +163,73 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
 
   const handleRemoveList = () => {
     if (itemsToDelete !== null) {
-      dispatch(removeList(itemsToDelete));
+      dispatch(deleteList(itemsToDelete));
       const listItems = items.filter(item => item.listId === itemsToDelete);
-      listItems.forEach(item => dispatch(removeItem(item.id)));
+      listItems.forEach(item => dispatch(deleteList(item.id)));
       setItemsToDelete(null);
       setShowConfirmDialog(false);
       setToastMessage('List removed successfully!');
       setShowToast(true);
       setTimeout(() => setShowToast(false), 2000);
+
     }
   };
 
-  const handleRemoveItem = (id: number) => {
-    const item = items.find(i => i.id === id);
-    if (item && item.listId) {
-      dispatch(decrementItemCount(item.listId));
+  const handleRemoveItem = async (
+  id: number
+) => {
+  const item = items.find(
+    (item) => item.id === id
+  );
+
+  if (!item) {
+    return;
+  }
+
+  try {
+    await dispatch(
+      deleteItem(id)
+    ).unwrap();
+
+    /*
+     * Update the list count only after the
+     * item has actually been deleted.
+     */
+    if (item.listId) {
+      dispatch(
+        decrementItemCount(item.listId)
+      );
     }
-    dispatch(removeItem(id));
-    setToastMessage('Item removed successfully');
+
+    setToastMessage(
+      'Item removed successfully'
+    );
+
     setShowToast(true);
-    setTimeout(() => setShowToast(false), 2000);
-  };
+
+    setTimeout(
+      () => setShowToast(false),
+      2000
+    );
+
+  } catch (error) {
+    console.error(
+      'Failed to delete item:',
+      error
+    );
+
+    setToastMessage(
+      'Failed to remove item'
+    );
+
+    setShowToast(true);
+
+    setTimeout(
+      () => setShowToast(false),
+      2000
+    );
+  }
+};
 
   const closeAddItemModal = () => {
     setShowAddItemModal(false);
@@ -194,34 +244,111 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
 
   };
 
-  const handleAddItem = () => {
-    if (itemName.trim() && itemListId) {
-      const selectedList = lists.find(l => l.id === itemListId);
-      if (!selectedList) return;
+ const handleAddItem = async () => {
+  if (!itemName.trim() || itemListId === null) {
+    return;
+  }
 
-      const newItem = {
-        name: itemName,
-        quantity: itemQuantity,
-        category: itemCategory,
-        listId: itemListId,
-        notes: itemNotes || undefined,
-        image: selectedItemImage || undefined,
-      };
+  const selectedList = lists.find(
+    (list) => list.id === itemListId
+  );
 
-      dispatch(addItem(newItem));
-      dispatch(incrementItemCount(itemListId));
-      closeAddItemModal();
-      setToastMessage('Item added successfully');
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
-    }
+  if (!selectedList) {
+    return;
+  }
+
+  const newItem = {
+    name: itemName.trim(),
+    quantity: Math.max(1, itemQuantity),
+    category: itemCategory.trim(),
+    listId: itemListId,
+    notes: itemNotes.trim() || undefined,
+    image: selectedItemImage || undefined,
   };
 
-  const updateQuantity = (itemId: number, newQuantity: number) => {
-    if (newQuantity >= 1) {
-      dispatch(updateItemQuantity({ id: itemId, quantity: newQuantity }));
-    }
-  };
+  try {
+    await dispatch(
+      createItem(newItem)
+    ).unwrap();
+
+    /*
+     * Only update the list count after the item
+     * was successfully saved to the API.
+     */
+
+    dispatch(
+      incrementItemCount(itemListId)
+    );
+
+    closeAddItemModal();
+
+    setToastMessage(
+      'Item added successfully'
+    );
+
+    setShowToast(true);
+
+    setTimeout(
+      () => setShowToast(false),
+      3000
+    );
+
+  } catch (error) {
+    console.error(
+      'Failed to add item:',
+      error
+    );
+
+    setToastMessage(
+      error instanceof Error
+        ? error.message
+        : 'Failed to add item'
+    );
+
+    setShowToast(true);
+
+    setTimeout(
+      () => setShowToast(false),
+      3000
+    );
+  }
+};
+
+const updateQuantity = async (
+  itemId: number,
+  newQuantity: number) => {
+  if (newQuantity < 1) {
+    return;
+  }
+
+  try {
+    await dispatch(
+      updateItem({
+        id: itemId,
+        data: {
+          quantity: newQuantity,
+        },
+      })
+    ).unwrap();
+
+  } catch (error) {
+    console.error(
+      'Failed to update quantity:',
+      error
+    );
+
+    setToastMessage(
+      'Failed to update quantity'
+    );
+
+    setShowToast(true);
+
+    setTimeout(
+      () => setShowToast(false),
+      2000
+    );
+  }
+};
 
   const startEditItem = (itemId: number) => {
     const itemToEdit = items.find(item => item.id === itemId);
@@ -248,24 +375,72 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
     setEditItemImage('');
   };
 
-  const handleUpdateItem = () => {
-    if (editingItemId && editItemName.trim() && editItemListId) {
-      const updatedItem = {
-        name: editItemName,
-        quantity: editItemQuantity,
-        category: editItemCategory,
-        listId: editItemListId,
-        notes: editItemNotes || undefined,
-        image: editItemImage || undefined,
-      };
+  const handleUpdateItem = async () => {
+  if (
+    editingItemId === null ||
+    !editItemName.trim() ||
+    editItemListId === null
+  ) {
+    return;
+  }
 
-      dispatch(updateItem({ id: editingItemId, ...updatedItem }));
-      closeEditItemModal();
-      setToastMessage('Item updated successfully');
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
-    }
+  const updatedItem = {
+    name: editItemName.trim(),
+    quantity: Math.max(
+      1,
+      editItemQuantity
+    ),
+    category: editItemCategory.trim(),
+    listId: editItemListId,
+    notes:
+      editItemNotes.trim() ||
+      undefined,
+    image:
+      editItemImage ||
+      undefined,
   };
+
+  try {
+    await dispatch(
+      updateItem({
+        id: editingItemId,
+        data: updatedItem,
+      })
+    ).unwrap();
+
+    closeEditItemModal();
+
+    setToastMessage(
+      'Item updated successfully'
+    );
+
+    setShowToast(true);
+
+    setTimeout(
+      () => setShowToast(false),
+      3000
+    );
+
+  } catch (error) {
+    console.error(
+      'Failed to update item:',
+      error
+    );
+
+    setToastMessage(
+      error instanceof Error
+        ? error.message
+        : 'Failed to update item'
+    );
+
+    setShowToast(true);
+
+    setTimeout(
+      () => setShowToast(false),
+      3000
+    );
+  }
+};
 
 
 
@@ -351,8 +526,8 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                 <div className='buttons-content'>
                     <div className='sort-section'>
                         <label className='sort-label'>Sort by:</label>
-                           <select name='sort' value={sortMethod} onChange={(e) => handleSortChange(e.target.value)}>
-                            <option value=''>Manual</option>
+                           <select className='sort-part' name='sort' value={sortMethod} onChange={(e) => handleSortChange(e.target.value)}>
+                            <option value=''></option>
                             <option value='name'>Name</option>
                             <option value='category'>Category</option>
                             <option value='dateAdded'>Date Added</option>
@@ -381,9 +556,11 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
                 </div>
             </div>
             {/* Main content where my list and the items will be placed */}
+
             <div className='main-content-card'>
 
                 {/* Lists Tab Content */}
+                
                 {activeTab === 'lists' && (
                     <>
                         <div className='heading-names'>

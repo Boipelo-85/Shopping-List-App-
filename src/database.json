@@ -1,4 +1,62 @@
 {
-  "lists": [],
-  "items": []
-}                                                                                 
+  "users": [
+    {
+      "username": "harryboipelo@gmail.com",
+      "firstName": "Boipelo",
+      "lastName": "Motileng",
+      "email": "harryboipelo@gmail.com",
+      "celphone": "+27762958691",
+      "password": "Moti@2003",
+      "createdAt": 1787819489479,
+      "id": 1
+    },
+    {
+      "username": "lethaboboipelo@gmail.com",
+      "firstName": "Lesego",
+      "lastName": "sechaba",
+      "email": "lethaboboipelo@gmail.com",
+      "celphone": "+27762958676",
+      "password": "Lethabo@2003",
+      "createdAt": 1787821592148,
+      "id": 2
+    }
+  ],
+  "lists": [
+    {
+      "name": "eee",
+      "itemCount": 0,
+      "createdAt": 1787823462765,
+      "id": 1
+    },
+    {
+      "name": "Legggg",
+      "itemCount": 0,
+      "createdAt": 1787824595148,
+      "id": 2
+    },
+    {
+      "name": "BHHA",
+      "itemCount": 0,
+      "createdAt": 1787824608916,
+      "id": 3
+    },
+    {
+      "name": "DDD",
+      "itemCount": 0,
+      "createdAt": 1787824779421,
+      "id": 4
+    }
+  ],
+  "items": [
+    {
+      "name": "KK, IJYK",
+      "quantity": 2,
+      "category": "DDD",
+      "listId": 4,
+      "notes": "DDD",
+      "image": "https://pixabay.com/get/g8579700fa4ab4194b060e487fd9af3e328d5ec6cd7443847963646b133536034387d01f6fbc12df4edf5ddfe16cf9378_640.jpg",
+      "createdAt": 1787824786308,
+      "id": 1
+    }
+  ]
+}
