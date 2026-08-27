@@ -615,14 +615,16 @@ const getItemCount = (listId: number) => {
                                             ) : (
                                                 <>
                                                     <div 
-                                                        style={{ color:'#000',fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace", marginLeft: '-640px',paddingLeft:'15px', cursor: 'pointer', fontSize: '24px' }} 
+                                                        className='list-name'
                                                         onClick={() => {
                                                             setItemListId(list.id);
                                                             setActiveTab('items');
                                                         }}
                                                     >
                                                     {list.name}</div>
-                                                    <Text variant={'p'} style={{ fontSize: '12px', color: '#999', marginLeft: '-620px', marginTop: '5px' }}>{getItemCount(list.id)} items </Text>
+                                                    <div className='list-item-count'>
+                                                    <Text variant={'p'} style={{ fontSize: '12px', color: '#999' }}>{getItemCount(list.id)} items </Text>
+                                                    </div>
                                                 </>
                                             )}
                                         </div>

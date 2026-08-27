@@ -41,10 +41,10 @@ export const Header = () => {
                 <img src={searchIcon} alt="search logo" className='search-logo' />
                 <input 
                   type="text" 
+                  className='search-input'
                   placeholder='Search for Item' 
                   value={searchQuery}
                   onChange={handleSearchChange}
-                  style={{padding: '10px 10px 10px 45px',borderRadius:'20px',border:'none',background:'#fdfdfd'}}
                 />
         </div>
         <div className='profile-content'>

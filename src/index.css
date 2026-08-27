@@ -51,10 +51,10 @@
 }
 
 #root {
-  width: 1126px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 1126px;
   margin: 0 auto;
-  text-align: center;
+  text-align: left;
   border-inline: 1px solid var(--border);
   min-height: 100svh;
   display: flex;
@@ -258,16 +258,18 @@ code {
   display: flex;
   flex: 1;
   align-items: center;
+  justify-content: space-between;
   padding: 0 20px;
   box-sizing: border-box;
-  gap: 50px;
+  gap: 24px;
   padding-bottom: 30px;
   padding-top: 20px;
 }
 
 .nav-content {
 
-  margin-left: 190px;
+  margin-left: 0;
+  flex-shrink: 0;
 
 }
 
@@ -278,13 +280,15 @@ code {
   align-items: center;
   border-radius: 20px;
   margin-top: 5px;
-  margin-left: 470px;
+  margin-left: 0;
+  flex: 1;
+  max-width: 420px;
   font-family: 'Courier New', Courier, monospace;
 }
 
 .search-logo {
   position: absolute;
-  left: 170px;
+  left: 12px;
   width: 20px;
   height: 20px;
   z-index: 1;
@@ -292,6 +296,16 @@ code {
   cursor: pointer;
   padding: 0px 2px;
 
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 10px 10px 40px;
+  border-radius: 20px;
+  border: none;
+  background: #fdfdfd;
+  box-sizing: border-box;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 .profile-icon {
@@ -310,12 +324,13 @@ code {
 
 .login-container {
   display: flex;
-  height: 100vh;
+  min-height: 100vh;
   width: 100%;
   background: #fff;
   padding-top: 5px;
-  position: fixed;
+  position: relative;
   justify-content: center;
+  box-sizing: border-box;
 }
 
 /* Left Side - Login Form */
@@ -325,7 +340,7 @@ code {
   justify-content: center;
   padding: 40px;
   background: #fff;
-  margin-left: -395px;
+  margin-left: 0;
 }
 
 .login-content {
@@ -333,9 +348,11 @@ code {
   width: 100%;
   max-width: 370px;
   border: 1px solid #0000002d;
-  padding: 100px;
+  padding: 48px 40px;
   border-radius: 20px;
   transition: border-color 0.3s ease;
+  box-sizing: border-box;
+  text-align: center;
 
 }
 
@@ -343,14 +360,18 @@ code {
 
   font-family: 'Courier New', Courier, monospace;
   color: #000;
-  margin-left: -78%;
+  margin-left: 0;
+  display: block;
+  text-align: left;
 }
 
 .password-label {
 
   font-family: 'Courier New', Courier, monospace;
   color: #000;
-  margin-left: -78%;
+  margin-left: 0;
+  display: block;
+  text-align: left;
 
 }
 
@@ -775,7 +796,9 @@ code {
   font-family: 'Courier New', Courier, monospace;
   color: #000;
   font-weight: bold;
-  margin-left: -140px;
+  margin-left: 0;
+  display: block;
+  text-align: left;
 
 }
 
@@ -785,7 +808,9 @@ code {
   font-family: 'Courier New', Courier, monospace;
   color: #000;
   font-weight: bold;
-  margin-left: -360px;
+  margin-left: 0;
+  display: block;
+  text-align: left;
 }
 
 .reg-labels-phone {
@@ -793,7 +818,9 @@ code {
   font-family: 'Courier New', Courier, monospace;
   color: #000;
   font-weight: bold;
-  margin-left: -360px;
+  margin-left: 0;
+  display: block;
+  text-align: left;
 }
 
 .cel-input {
@@ -812,7 +839,9 @@ code {
   font-family: 'Courier New', Courier, monospace;
   color: #000;
   font-weight: bold;
-  margin-left: -420px;
+  margin-left: 0;
+  display: block;
+  text-align: left;
 
 }
 
@@ -971,7 +1000,8 @@ code {
 
   font-family: 'Courier New', Courier, monospace;
   color: #000;
-  margin-left: -70%;
+  margin-left: 0;
+  text-align: left;
 }
 
 .form-grid {
@@ -1048,14 +1078,15 @@ code {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
+  flex-wrap: wrap;
+  gap: 12px;
   border: 1px solid #5a595941;
   transition: border-color 0.3s ease;
   border-left: none;
   border-right: none;
   flex: 1;
-  display: flex;
-  padding: 10px 0px;
+  padding: 10px 20px;
+  box-sizing: border-box;
 
 }
 
@@ -1112,12 +1143,14 @@ code {
 
 .buttons-content {
 
-  margin-left: 64%;
+  margin-left: 0;
   padding-top: 10px;
-  justify-content: space-between;
+  justify-content: flex-end;
   display: flex;
   flex: 1;
-  
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
 
 }
 .sort-section{
@@ -1145,7 +1178,7 @@ code {
   padding-right: 0px;
   color: #000;
   font-family: 'Courier New', Courier, monospace;
-  margin-left: -210px;
+  margin-left: 0;
   white-space: nowrap;
   
 }
@@ -1210,7 +1243,10 @@ code {
 .heading-names {
 
   display: flex;
-  margin-left: -1000px;
+  margin-left: 0;
+  width: 80%;
+  margin: 0 auto 8px;
+  box-sizing: border-box;
 }
 
 .content-list {
@@ -1229,9 +1265,10 @@ code {
   border: 1px solid #5a595941;
   transition: border-color 0.3s ease;
   width: 80%;
-  margin-left: 110px;
+  margin: 0 auto;
   min-height: 60%;
   border-radius: 15px;
+  box-sizing: border-box;
 
 }
 
@@ -1251,13 +1288,15 @@ code {
   display: flex;
   flex-direction: column;
   width: 80%;
-  margin-left: 110px;
+  margin: 0 auto;
   min-height: 60%;
   border-radius: 15px;
   padding: 20px;
   background: #fff;
   border: 1px solid #e0e0e0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  overflow-x: auto;
 }
 
 .table-content {
@@ -1473,6 +1512,23 @@ code {
 /* Dropdown menu styles */
 .list-info {
   flex: 1;
+  text-align: left;
+}
+
+.list-name {
+  color: #000;
+  font-weight: bold;
+  font-family: 'Courier New', Courier, monospace;
+  padding-left: 15px;
+  cursor: pointer;
+  font-size: 24px;
+  text-align: left;
+}
+
+.list-item-count {
+  padding-left: 15px;
+  margin-top: 5px;
+  text-align: left;
 }
 
 .list-actions {
@@ -1486,6 +1542,7 @@ code {
   align-items: center;
   justify-content: space-between;
   position: relative;
+  padding: 8px 12px;
 }
 
 .dropdown-menu {
@@ -1539,7 +1596,9 @@ code {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-left: -700px;
+  margin-left: 0;
+  flex-wrap: wrap;
+  padding-left: 15px;
 }
 
 .edit-name-input {
@@ -2084,7 +2143,9 @@ code {
 .toast-notification {
   position: fixed;
   top: 50px;
-  margin-left: 400px;
+  right: 24px;
+  left: auto;
+  margin-left: 0;
   background: #2b2a2ac7;
   color: #fff;
   padding: 16px 24px;
@@ -2212,4 +2273,320 @@ code {
   background: #f0f0f0;
   border-radius: 12px;
   display: inline-block;
+}
+
+.profile-dropdown-container {
+  position: relative;
+}
+
+.profile-content {
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   RESPONSIVE — DESKTOP
+========================================================= */
+
+@media (min-width: 1025px) {
+  .nav {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .search-items {
+    max-width: 420px;
+  }
+
+  .List-section-card,
+  .Items-section-card,
+  .heading-names {
+    width: 80%;
+  }
+
+  .add-item-modal {
+    max-width: 600px;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE — TABLET
+========================================================= */
+
+@media (max-width: 1024px) {
+  #root {
+    width: 100%;
+    border-inline: none;
+  }
+
+  .nav {
+    gap: 16px;
+    padding: 16px 20px;
+  }
+
+  .login-container {
+    flex-direction: column;
+    height: auto;
+    position: relative;
+  }
+
+  .login-left,
+  .login-right {
+    flex: unset;
+    min-height: auto;
+    margin-left: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .login-content {
+    max-width: 480px;
+    padding: 36px 28px;
+  }
+
+  .home-content {
+    margin-top: 90px;
+    padding: 16px;
+    box-sizing: border-box;
+  }
+
+  .innerContent {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px 16px;
+  }
+
+  .buttons-content {
+    margin-left: 0;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .heading-names,
+  .List-section-card,
+  .Items-section-card {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .profile-container {
+    padding: 24px 16px;
+    padding-top: 140px;
+  }
+
+  .registration-container {
+    padding-top: 40px;
+  }
+
+  .shared-list-view {
+    padding: 16px;
+  }
+
+  .shared-list-container {
+    padding: 20px;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  #root {
+    width: 100%;
+    border-inline: none;
+  }
+
+  .nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .nav-content {
+    margin-left: 0;
+    text-align: center;
+  }
+
+  .search-items {
+    margin-left: 0;
+    width: 100%;
+    max-width: none;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 10px 10px 10px 40px;
+  }
+
+  .search-logo {
+    left: 12px;
+  }
+
+  .profile-content {
+    margin-left: 0;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .profile-dropdown-menu {
+    min-width: min(300px, calc(100vw - 32px)) !important;
+    right: 0 !important;
+  }
+
+  .login-left {
+    padding: 16px;
+    min-height: auto;
+  }
+
+  .login-content {
+    padding: 24px 16px;
+    max-width: 100%;
+  }
+
+  .login-content h1 {
+    font-size: 24px;
+  }
+
+  .home-content {
+    margin-top: 180px;
+    padding: 12px;
+    padding-bottom: 80px;
+  }
+
+  .innerContent {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 10px 8px;
+  }
+
+  .tab-navigation {
+    width: 100%;
+  }
+
+  .tab-button {
+    flex: 1;
+    padding: 10px 16px;
+  }
+
+  .buttons-content {
+    margin-left: 0;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .sort-section {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .sort-label {
+    margin-left: 0;
+    margin-bottom: 0;
+  }
+
+  .sort-part,
+  .addList-content {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .heading-names,
+  .List-section-card,
+  .Items-section-card {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .Items-section-card {
+    padding: 12px 8px;
+  }
+
+  .list-name {
+    font-size: 18px;
+    padding-left: 8px;
+  }
+
+  .list-item-count {
+    padding-left: 8px;
+  }
+
+  .content-list {
+    padding: 8px 4px;
+  }
+
+  .edit-name-container {
+    margin-left: 0;
+    flex-direction: column;
+    align-items: stretch;
+    padding-left: 8px;
+  }
+
+  .table-content th,
+  .table-content td {
+    padding: 12px 8px;
+    font-size: 12px;
+  }
+
+  .item-image {
+    width: 40px;
+    height: 40px;
+  }
+
+  .form-row-two-col {
+    flex-direction: column;
+  }
+
+  .add-item-modal,
+  .add-list-popup,
+  .confirm-dialog {
+    width: 94%;
+    padding: 20px 16px;
+    max-height: 88vh;
+  }
+
+  .toast-notification {
+    top: auto;
+    bottom: 20px;
+    right: 12px;
+    left: 12px;
+    margin-left: 0;
+    text-align: center;
+  }
+
+  .profile-container {
+    padding: 16px 12px;
+    padding-top: 200px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .personal-info-section {
+    padding: 20px 16px;
+  }
+
+  .registration-header h1 {
+    font-size: 24px;
+  }
+
+  .shared-list-view {
+    padding: 12px;
+  }
+
+  .shared-list-container {
+    padding: 16px 12px;
+  }
+
+  .shared-list-header h2 {
+    font-size: 22px;
+  }
 }
