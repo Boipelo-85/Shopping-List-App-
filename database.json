@@ -49,21 +49,18 @@
       "password": "246813579",
       "createdAt": 1787903214693,
       "id": 5
-    }
-  ],
-  "lists": [
-    {
-      "name": "sss",
-      "itemCount": 0,
-      "createdAt": 1787899900836,
-      "id": 8
     },
     {
-      "name": "sss",
-      "itemCount": 0,
-      "createdAt": 1787899910612,
-      "id": 9
+      "username": "luu@gmail.com",
+      "firstName": "Motlatsi",
+      "lastName": "Luu",
+      "email": "luu@gmail.com",
+      "celphone": "+27723458935",
+      "password": "135792468",
+      "createdAt": 1787908356841,
+      "id": 6
     }
   ],
+  "lists": [],
   "items": []
 }

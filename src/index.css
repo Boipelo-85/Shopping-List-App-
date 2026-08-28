@@ -261,16 +261,16 @@ code {
   justify-content: space-between;
   padding: 0 20px;
   box-sizing: border-box;
-  gap: 24px;
   padding-bottom: 30px;
   padding-top: 20px;
+  
 }
 
 .nav-content {
 
   margin-left: 0;
   flex-shrink: 0;
-  margin-left: 185px;
+  margin-left: 195px;
 
 }
 
@@ -315,7 +315,7 @@ code {
   font-size: 30px;
   color: #2e2d2d9a;
   cursor: pointer;
-  margin-right: 170px;
+  margin-right: 200px;
 }
 
 .profile-icon:hover {
@@ -1069,7 +1069,7 @@ code {
   display: flex;
   flex-direction: column;
 
-  margin-top: 77px;
+  margin-top: 67px;
   /* border: 1px solid #e0e0e0;
     transition: border-color 0.3s ease; */
   padding-top: 20px;
@@ -2295,10 +2295,6 @@ code {
     align-items: center;
   }
 
-  .search-items {
-    max-width: 420px;
-  }
-
   .List-section-card,
   .Items-section-card,
   .heading-names {
@@ -2405,14 +2401,15 @@ code {
 
   .nav {
     flex-direction: column;
-    align-items: stretch;
     gap: 12px;
     padding: 12px 16px;
+
   }
 
   .nav-content {
     margin-left: 0;
     text-align: center;
+
   }
 
   .search-items {
@@ -2424,6 +2421,7 @@ code {
   .search-input {
     width: 100%;
     padding: 10px 10px 10px 40px;
+
   }
 
   .search-logo {
@@ -2590,5 +2588,217 @@ code {
 
   .shared-list-header h2 {
     font-size: 22px;
+  }
+}
+/* 1200px - Desktop */
+/* @media (min-width: 1200px) {
+  .List-section-card,
+  .Items-section-card,
+  .heading-names {
+    width: 80%;
+  }
+
+  .home-content {
+    padding: 20px 0px;
+  }
+
+  .nav {
+    padding: 20px 0px;
+  }
+}@media (max-width: 1024px) {
+  #root {
+    border-inline: none;
+  }
+
+  .nav {
+    gap: 16px;
+    padding: 16px 20px;
+  }
+
+  .nav-content {
+    margin-left: 40px;
+  }
+
+  .search-logo {
+    left: 60px;
+  }
+
+  .search-input {
+    margin-left: 50px;
+  }
+
+  .profile-icon {
+    margin-right: 40px;
+  }
+
+  .home-content {
+    margin-top: 100px;
+  }
+
+  .sort-label {
+    margin-left: 100px;
+  }
+
+  .List-section-card,
+  .Items-section-card,
+  .heading-names {
+    width: 90%;
+  }
+
+  .login-container {
+    flex-direction: column;
+  }
+}
+/* 480px - Large phones */
+
+@media (max-width: 480px) {
+  .nav {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .nav-content {
+    margin-left: 0 !important;
+  }
+
+  .search-items {
+    margin-left: 0 !important;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .search-input {
+    width: 100% !important;
+    margin-left: 0 !important;
+    padding-left: 40px;
+  }
+
+  .search-logo {
+    left: 12px !important;
+  }
+
+  .profile-icon {
+    margin-right: 0 !important;
+  }
+
+  .home-content {
+    margin-top: 150px;
+    padding: 12px;
+  }
+
+  .innerContent {
+    flex-direction: column;
+  }
+
+  .buttons-content {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .sort-label {
+    margin-left: 0 !important;
+  }
+
+  .sort-part,
+  .addList-content {
+    width: 100%;
+  }
+
+  .List-section-card,
+  .Items-section-card,
+  .heading-names {
+    width: 100% !important;
+  }
+
+  .list-name {
+    font-size: 18px;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .toast-notification {
+    margin-left: 0;
+    left: 12px;
+    right: 12px;
+    top: auto;
+    bottom: 20px;
+  }
+}
+
+/* ===================== DESKTOP (1024px and up) ===================== */
+@media (min-width: 1024px) {
+  .nav {
+    padding: 20px 40px 30px 40px;
+  }
+
+  .nav-content {
+    margin-left: 195px;
+  }
+
+  .search-logo {
+    left: 210px;
+  }
+
+  .search-input {
+    margin-left: 200px;
+    width: 70%;
+  }
+
+  .profile-icon {
+    margin-right: 200px;
+  }
+}
+
+/* ===================== LARGE DESKTOP (1200px and up) ===================== */
+@media (min-width: 1200px) {
+  .nav {
+    padding: 20px 60px 30px 60px;
+  }
+
+  .nav-content {
+    margin-left: 195px;   /* stays the same */
+  }
+
+  .search-logo {
+    left: 210px;          /* stays the same */
+  }
+
+  .search-input {
+    margin-left: 200px;   /* stays the same */
+  }
+
+  .profile-icon {
+    margin-right: 200px;  /* stays the same */
+  }
+}
+
+/* ===================== EXTRA LARGE (1400px+) ===================== */
+@media (min-width: 1400px) {
+  .nav {
+    padding: 20px 80px 30px 80px;
+  }
+
+  /* Everything else remains locked so components don't move */
+  .nav-content {
+    margin-left: 195px;
+  }
+
+  .search-logo {
+    left: 210px;
+  }
+
+  .search-input {
+    margin-left: 200px;
+  }
+
+  .profile-icon {
+    margin-right: 200px;
   }
 }
