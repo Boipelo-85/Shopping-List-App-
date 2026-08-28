@@ -35,7 +35,7 @@ export const Header = () => {
 
         <div className='nav-content'>
 
-                <Text variant={'h2'} style={{fontWeight: 'bold',fontFamily: "'Courier New', Courier, monospace"}}><FaClipboardList style={{color:'#000',fontSize:'25px',marginRight:'-7px'}}/> Shopping List-App </Text>
+                <Text variant={'h2'} style={{fontWeight: 'bold',fontFamily: "'Courier New', Courier, monospace"}}><FaClipboardList style={{color:'#000',fontSize:'25px',marginRight:'-10px'}}/> Shopping List-App </Text>
         </div>
         <div className='search-items'>
                 <img src={searchIcon} alt="search logo" className='search-logo' />

@@ -9,42 +9,41 @@
       "password": "Lesego@gmail",
       "createdAt": 1787859743450,
       "id": 1
+    },
+    {
+      "username": "kabelo@gmail",
+      "firstName": "Kabelo",
+      "lastName": "Mogoshi",
+      "email": "kabelo@gmail",
+      "celphone": "+27735687356",
+      "password": "Kabelo@2000",
+      "createdAt": 1787898759179,
+      "id": 2
+    },
+    {
+      "username": "mpho@gmail.com",
+      "firstName": "Mpho",
+      "lastName": "Pops",
+      "email": "mpho@gmail.com",
+      "celphone": "+27735687356",
+      "password": "Mpho@2000",
+      "createdAt": 1787899575379,
+      "id": 3
     }
   ],
   "lists": [
     {
-      "name": "Cloth",
+      "name": "sss",
       "itemCount": 0,
-      "createdAt": 1787835755026,
-      "id": 1
+      "createdAt": 1787899900836,
+      "id": 8
     },
     {
-      "name": "Weekly Gross",
+      "name": "sss",
       "itemCount": 0,
-      "createdAt": 1787835762818,
-      "id": 2
+      "createdAt": 1787899910612,
+      "id": 9
     }
   ],
-  "items": [
-    {
-      "name": "Nike",
-      "quantity": 3,
-      "category": "Cloth",
-      "listId": 1,
-      "notes": "Everything is right",
-      "image": "https://pixabay.com/get/gac1201f9be644e5a378f1ee9ed4d7c18931cd234d2f798c36bb3c3b34885cb8b3b8f9fd9bfc55d55ae258adeb7148a62f4aaf8c61b366c8e2e0a20a13f2a9146_640.jpg",
-      "createdAt": 1787835804522,
-      "id": 1
-    },
-    {
-      "name": "Meeat",
-      "quantity": 1,
-      "category": "Weekly Gross",
-      "listId": 2,
-      "notes": "sss",
-      "image": "https://pixabay.com/get/gdbbd482cafc3e600a75fdcb545c934659ccf39a498280a2421485b11e758bdb2d2e95e6c817798573b52eb3357c14ee8_640.jpg",
-      "createdAt": 1787836563396,
-      "id": 2
-    }
-  ]
+  "items": []
 }
