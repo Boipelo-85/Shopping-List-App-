@@ -4,7 +4,7 @@ A shopping list manager built with React, TypeScript, and Redux Toolkit. Organiz
 
 ### Links
 
-- **Live Site:** [View Live](react-weather-app-nine-weld.vercel.app)
+- **Live Site:** [View Live](shopping-list-app-nine-drab.vercel.app)
 - **Repository:** [GitHub Repo](https://github.com/Boipelo-85/Shopping-List-App-.git)
 
 
