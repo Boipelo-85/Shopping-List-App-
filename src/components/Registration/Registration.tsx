@@ -6,6 +6,7 @@ import 'react-international-phone/style.css';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../store/store';
 import { registerUser } from '../../store/authSlice';
+import { Link } from 'react-router-dom';
 
 export const Registration = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -118,6 +119,7 @@ export const Registration = () => {
           }}
         >
           Create Account
+
         </Text>
 
         <p className="registration-subtitle">
@@ -286,9 +288,7 @@ export const Registration = () => {
 
         <p className="login-link">
           Already have an account?{' '}
-          <a href="/login">
-            Sign in
-          </a>
+          <Link to="/login">Sign in</Link>
         </p>
 
       </form>

@@ -39,6 +39,16 @@
       "password": "mok@2000",
       "createdAt": 1787900706272,
       "id": 4
+    },
+    {
+      "username": "kabi@gmail.com",
+      "firstName": "Kabelo",
+      "lastName": "Mok",
+      "email": "kabi@gmail.com",
+      "celphone": "+27735687356",
+      "password": "246813579",
+      "createdAt": 1787903214693,
+      "id": 5
     }
   ],
   "lists": [
