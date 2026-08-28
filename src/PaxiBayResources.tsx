@@ -88,6 +88,7 @@ export const PaxiBayResources = ({ onImageSelect }: PaxiBayResourcesProps) => {
           placeholder="Search for images (e.g., apple, banana, grocery)"
           className="pixabay-search-input"
         />
+        
         <button
           type="button"
           onClick={handleImageSearch}
