@@ -29,6 +29,16 @@
       "password": "Mpho@2000",
       "createdAt": 1787899575379,
       "id": 3
+    },
+    {
+      "username": "mok@gmail.com",
+      "firstName": "Kabelo",
+      "lastName": "Mok",
+      "email": "mok@gmail.com",
+      "celphone": "+27345874564",
+      "password": "mok@2000",
+      "createdAt": 1787900706272,
+      "id": 4
     }
   ],
   "lists": [
