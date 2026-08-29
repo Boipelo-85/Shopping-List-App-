@@ -57,6 +57,19 @@ interface LoginResponse {
   token: string;
 }
 
+interface UpdateUserCredentialsData {
+  email: string;
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}
+
+interface UpdateUserProfileData {
+  firstName: string;
+  lastName: string;
+  celphone: string;
+}
+
 /* =========================================================
    CONSTANTS
 ========================================================= */
@@ -404,6 +417,148 @@ export const registerUser = createAsyncThunk<
   }
 );
 
+export const updateUserCredentials = createAsyncThunk<
+  User,
+  UpdateUserCredentialsData,
+  { state: { auth: AuthState }; rejectValue: string }
+>(
+  'auth/updateUserCredentials',
+  async (data, { getState, rejectWithValue }) => {
+    try {
+      const currentUser = getState().auth.user;
+      const currentToken = getState().auth.token;
+
+      if (!currentUser) {
+        return rejectWithValue('You must be logged in to update your login details');
+      }
+
+      const email = data.email.trim().toLowerCase();
+      const currentPassword = data.currentPassword;
+      const newPassword = data.newPassword;
+      const confirmNewPassword = data.confirmNewPassword;
+
+      if (!email) {
+        return rejectWithValue('Email is required');
+      }
+
+      if (!currentPassword) {
+        return rejectWithValue('Current password is required');
+      }
+
+      if (!newPassword) {
+        return rejectWithValue('New password is required');
+      }
+
+      if (!confirmNewPassword) {
+        return rejectWithValue('Please confirm your new password');
+      }
+
+      if (newPassword !== confirmNewPassword) {
+        return rejectWithValue('New passwords do not match');
+      }
+
+      if (newPassword.length < 8) {
+        return rejectWithValue('Password must be at least 8 characters');
+      }
+
+      const existingRecord = await usersApi.getById(currentUser.id) as ApiUser | null;
+
+      if (!existingRecord) {
+        return rejectWithValue('User account could not be found');
+      }
+
+      if (existingRecord.password !== currentPassword) {
+        return rejectWithValue('Current password is incorrect');
+      }
+
+      const existingUserWithEmail = await usersApi.getByEmail(email);
+      if (existingUserWithEmail && existingUserWithEmail.id !== currentUser.id) {
+        return rejectWithValue('User with this email already exists');
+      }
+
+      const updatedApiUser = await usersApi.update(currentUser.id, {
+        email,
+        username: email,
+        password: newPassword,
+      }) as ApiUser;
+
+      const updatedUser = mapApiUserToReduxUser(updatedApiUser);
+
+      if (currentToken) {
+        saveAuthToStorage(updatedUser, currentToken);
+      }
+
+      return updatedUser;
+    } catch (error) {
+      console.error('Failed to update user credentials:', error);
+
+      return rejectWithValue(
+        getErrorMessage(
+          error,
+          'Failed to update login details. Please try again.'
+        )
+      );
+    }
+  }
+);
+
+export const updateUserProfile = createAsyncThunk<
+  User,
+  UpdateUserProfileData,
+  { state: { auth: AuthState }; rejectValue: string }
+>(
+  'auth/updateUserProfile',
+  async (data, { getState, rejectWithValue }) => {
+    try {
+      const currentUser = getState().auth.user;
+      const currentToken = getState().auth.token;
+
+      if (!currentUser) {
+        return rejectWithValue('You must be logged in to update your profile');
+      }
+
+      const firstName = data.firstName.trim();
+      const lastName = data.lastName.trim();
+      const celphone = data.celphone.trim();
+
+      if (!firstName) {
+        return rejectWithValue('First name is required');
+      }
+
+      if (!lastName) {
+        return rejectWithValue('Last name is required');
+      }
+
+      if (!celphone) {
+        return rejectWithValue('Cellphone number is required');
+      }
+
+      const updatedApiUser = await usersApi.update(currentUser.id, {
+        firstName,
+        lastName,
+        celphone,
+      }) as ApiUser;
+
+      const updatedUser = mapApiUserToReduxUser(updatedApiUser);
+
+      if (currentToken) {
+        saveAuthToStorage(updatedUser, currentToken);
+      }
+
+      return updatedUser;
+    } catch (error) {
+      console.error('Failed to update user profile:', error);
+
+      return rejectWithValue(
+        getErrorMessage(
+          error,
+          'Failed to update profile. Please try again.'
+        )
+      );
+    }
+  }
+);
+
 /* =========================================================
    AUTH SLICE
 ========================================================= */
@@ -531,6 +686,60 @@ const authSlice = createSlice({
           state.error =
             action.payload ??
             'Registration failed. Please try again.';
+        }
+      )
+
+      .addCase(
+        updateUserCredentials.pending,
+        (state) => {
+          state.loading = true;
+          state.error = null;
+        }
+      )
+
+      .addCase(
+        updateUserCredentials.fulfilled,
+        (state, action) => {
+          state.loading = false;
+          state.user = action.payload;
+          state.error = null;
+        }
+      )
+
+      .addCase(
+        updateUserCredentials.rejected,
+        (state, action) => {
+          state.loading = false;
+          state.error =
+            action.payload ??
+            'Failed to update login details. Please try again.';
+        }
+      )
+
+      .addCase(
+        updateUserProfile.pending,
+        (state) => {
+          state.loading = true;
+          state.error = null;
+        }
+      )
+
+      .addCase(
+        updateUserProfile.fulfilled,
+        (state, action) => {
+          state.loading = false;
+          state.user = action.payload;
+          state.error = null;
+        }
+      )
+
+      .addCase(
+        updateUserProfile.rejected,
+        (state, action) => {
+          state.loading = false;
+          state.error =
+            action.payload ??
+            'Failed to update profile. Please try again.';
         }
       );
   },

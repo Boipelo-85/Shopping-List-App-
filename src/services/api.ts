@@ -49,6 +49,10 @@ export type CreateUserData = Omit<
   'id' | 'createdAt'
 >;
 
+export type UpdateUserData = Partial<
+  Omit<User, 'id' | 'createdAt'>
+>;
+
 /* ---------------------------------------------------------
    LIST
 --------------------------------------------------------- */
@@ -303,6 +307,30 @@ export const usersApi = {
           createdAt: Date.now(),
         }),
       });
+
+    return response.json();
+  },
+
+  update: async (
+    id: number,
+    userData: UpdateUserData
+  ): Promise<User> => {
+    const normalizedData: UpdateUserData = {
+      ...userData,
+    };
+
+    if (typeof normalizedData.email === 'string') {
+      normalizedData.email = normalizedData.email.trim().toLowerCase();
+    }
+
+    if (typeof normalizedData.username === 'string') {
+      normalizedData.username = normalizedData.username.trim().toLowerCase();
+    }
+
+    const response = await apiCall(`/users/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(normalizedData),
+    });
 
     return response.json();
   },

@@ -268,7 +268,7 @@ code {
 
 .nav-content {
 
-  margin-left: 0;
+  margin-left: -10px;
   flex-shrink: 0;
   margin-left: 195px;
 
@@ -281,8 +281,8 @@ code {
   align-items: center;
   border-radius: 20px;
   margin-top: 5px;
-  margin-left: 0;
   flex: 1;
+  gap:20px;
   max-width: 420px;
   font-family: 'Courier New', Courier, monospace;
 }
@@ -307,7 +307,7 @@ code {
   background: #fdfdfd;
   box-sizing: border-box;
   font-family: 'Courier New', Courier, monospace;
-  margin-left: 200px;
+
 }
 
 .profile-icon {
@@ -315,7 +315,7 @@ code {
   font-size: 30px;
   color: #2e2d2d9a;
   cursor: pointer;
-  margin-right: 200px;
+
 }
 
 .profile-icon:hover {
@@ -335,6 +335,7 @@ code {
   position: relative;
   justify-content: center;
   box-sizing: border-box;
+
 }
 
 /* Left Side - Login Form */
@@ -357,6 +358,7 @@ code {
   transition: border-color 0.3s ease;
   box-sizing: border-box;
   text-align: center;
+  
 
 }
 
@@ -1014,6 +1016,48 @@ code {
   gap: 30px;
 }
 
+.profile-credentials-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px 30px;
+}
+
+.profile-credentials-form .form-group {
+  margin-bottom: 0;
+}
+
+.profile-form-span-full {
+  grid-column: 1 / -1;
+}
+
+.profile-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.profile-save-btn {
+  padding: 12px 24px;
+  background: #98a09e;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 600;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.profile-save-btn:hover:not(:disabled) {
+  background: #484b4af3;
+}
+
+.profile-save-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -1069,7 +1113,7 @@ code {
   display: flex;
   flex-direction: column;
 
-  margin-top: 67px;
+  margin-top: 37px;
   /* border: 1px solid #e0e0e0;
     transition: border-color 0.3s ease; */
   padding-top: 20px;
@@ -1091,7 +1135,7 @@ code {
   flex: 1;
   padding: 10px 20px;
   box-sizing: border-box;
-
+  margin-top: -37px;
 }
 
 /* Tab Navigation Styles */
@@ -2570,6 +2614,10 @@ code {
     grid-template-columns: 1fr;
   }
 
+  .profile-credentials-form {
+    grid-template-columns: 1fr;
+  }
+
   .personal-info-section {
     padding: 20px 16px;
   }
@@ -2800,5 +2848,169 @@ code {
 
   .profile-icon {
     margin-right: 200px;
+  }
+}
+
+/* ===================== DESKTOP LAYOUT ENHANCEMENTS ===================== */
+@media (min-width: 1025px) {
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    width: 100%;
+    left: 0;
+    transform: none;
+    padding: 20px max(24px, calc((100vw - 1126px) / 2 + 24px)) 30px;
+    border-inline: none;
+    box-sizing: border-box;
+  }
+
+  .nav-content {
+    margin-left: 0;
+    min-width: max-content;
+  }
+
+  .search-items {
+    flex: 1;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .search-input {
+    width: 100%;
+    margin-left: 0;
+    padding-left: 44px;
+  }
+
+  .search-logo {
+    left: 14px;
+  }
+
+  .profile-content {
+    margin-left: 0;
+    display: flex;
+    justify-content: flex-end;
+    min-width: max-content;
+  }
+
+  .home-content {
+    margin-top: 110px;
+    padding: 24px 0 100px;
+    box-sizing: border-box;
+  }
+
+  .innerContent {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 16px 24px;
+    flex-wrap: nowrap;
+  }
+
+  .tab-navigation {
+    flex-shrink: 0;
+  }
+
+  .buttons-content {
+    margin-left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+    flex: 1;
+    flex-wrap: nowrap;
+    padding-top: 0;
+  }
+
+  .sort-section {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    flex: 0 1 auto;
+  }
+
+  .sort-label {
+    margin-left: 0;
+    margin-bottom: 0;
+  }
+
+  .addList-content {
+    margin-right: 0;
+    flex-shrink: 0;
+  }
+
+  .heading-names,
+  .List-section-card,
+  .Items-section-card {
+    width: min(100%, 1100px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .content-list {
+    padding: 16px 20px;
+  }
+
+  .table-content th,
+  .table-content td {
+    padding: 16px 20px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .search-items {
+    max-width: 600px;
+  }
+}
+
+/* ===================== LOGIN DESKTOP RESPONSIVENESS ===================== */
+@media (min-width: 1025px) {
+  .login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    margin: 0 auto;
+    min-height: 100vh;
+    width: 100%;
+    padding: 40px 24px;
+  }
+
+  .login-left {
+    flex: 0 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    width: 100%;
+  }
+
+  .login-content {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 56px 48px;
+  }
+
+  .login-right {
+    display: none;
+  }
+
+  .illustration-section {
+    max-width: 420px;
+  }
+
+  .illustration-placeholder {
+    height: 300px;
+    margin-bottom: 32px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .login-content {
+    max-width: 760px;
   }
 }

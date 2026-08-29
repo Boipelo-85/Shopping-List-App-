@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { FaUserCircle, FaEdit, FaEye, FaUserPlus, FaSignOutAlt, FaPencilAlt } from 'react-icons/fa';
+import { FaUserCircle, FaSignOutAlt, FaPencilAlt } from 'react-icons/fa';
 import type { RootState } from '../../store/store';
 import { logout } from '../../store/authSlice';
 
@@ -36,7 +36,7 @@ export const ProfileDropdown = () => {
   };
 
   const handleViewProfile = () => {
-    navigate('/profile');
+    navigate('/profile?mode=credentials');
     setIsOpen(false);
   };
 
@@ -45,10 +45,6 @@ export const ProfileDropdown = () => {
     setIsOpen(false);
   };
 
-  const handleCreateProfile = () => {
-    navigate('/profile');
-    setIsOpen(false);
-  };
 
   const handleLogout = () => {
     dispatch(logout());
