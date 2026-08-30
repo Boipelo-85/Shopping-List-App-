@@ -59,6 +59,16 @@
       "password": "135792468",
       "createdAt": 1787908356841,
       "id": 6
+    },
+    {
+      "username": "mk@gmail.com",
+      "firstName": "MK",
+      "lastName": "Suno",
+      "email": "mk@gmail.com",
+      "celphone": "+27735687356",
+      "password": "mk@2027M",
+      "createdAt": 1788115632908,
+      "id": 7
     }
   ],
   "lists": [],

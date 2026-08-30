@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text } from '../Text/Text';
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../store/store';
-import { registerUser } from '../../store/authSlice';
-import { Link } from 'react-router-dom';
+import { clearError, registerUser } from '../../store/authSlice';
+import { Link, useNavigate } from 'react-router-dom';
 
 export const Registration = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   const { loading, error } = useSelector(
     (state: RootState) => state.auth
@@ -24,7 +25,8 @@ export const Registration = () => {
     confirmPassword: '',
   });
 
-  const [successMessage, setSuccessMessage] = useState('');
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
     //  HANDLE INPUT CHANGES
 
@@ -39,9 +41,8 @@ export const Registration = () => {
       [name]: value,
     }));
 
-    // Clear success message when user starts editing again
-    if (successMessage) {
-      setSuccessMessage('');
+    if (error) {
+      dispatch(clearError());
     }
   };
 
@@ -55,8 +56,8 @@ export const Registration = () => {
       celphone: phone,
     }));
 
-    if (successMessage) {
-      setSuccessMessage('');
+    if (error) {
+      dispatch(clearError());
     }
   };
 
@@ -69,20 +70,14 @@ export const Registration = () => {
   ) => {
     e.preventDefault();
 
-    setSuccessMessage('');
-
     try {
-      
       await dispatch(
         registerUser(formData)
       ).unwrap();
 
-      // Registration was successful
-      setSuccessMessage(
-        'Account created successfully! You can now sign in.'
-      );
+      setToastMessage('Registered successfully');
+      setShowToast(true);
 
-      // Clear form
       setFormData({
         firstName: '',
         lastName: '',
@@ -92,8 +87,11 @@ export const Registration = () => {
         confirmPassword: '',
       });
 
+      window.setTimeout(() => {
+        setShowToast(false);
+        navigate('/login');
+      }, 1500);
     } catch (err) {
-    
       console.error(
         'Registration failed:',
         err
@@ -101,8 +99,19 @@ export const Registration = () => {
     }
   };
 
+  useEffect(() => {
+    return () => {
+      setShowToast(false);
+    };
+  }, []);
+
   return (
     <div className="registration-container">
+      {showToast && (
+        <div className='toast-notification'>
+          <span>{toastMessage}</span>
+        </div>
+      )}
 
       {/* =================================================
           HEADER
@@ -257,16 +266,6 @@ export const Registration = () => {
         {error && (
           <div className="registration-error">
             {error}
-          </div>
-        )}
-
-        {/* =================================================
-            SUCCESS MESSAGE
-        ================================================= */}
-
-        {successMessage && (
-          <div className="registration-success">
-            {successMessage}
           </div>
         )}
 
