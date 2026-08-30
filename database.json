@@ -61,24 +61,6 @@
       "id": 6
     }
   ],
-  "lists": [
-    {
-      "name": "Shoes",
-      "itemCount": 0,
-      "createdAt": 1788076690606,
-      "id": 1
-    }
-  ],
-  "items": [
-    {
-      "name": "Nike",
-      "quantity": 2,
-      "category": "Shoes",
-      "listId": 1,
-      "notes": "I love nike",
-      "image": "https://pixabay.com/get/g6a1cc8630b026db27a7615b696ada8c0d6abca77ed4e8af694076d6777e7e117e687e58edb4e2a05f44d59fd506efc2f3dac5a42729dc1fe47dd3922b8895591_640.jpg",
-      "createdAt": 1788076723801,
-      "id": 1
-    }
-  ]
+  "lists": [],
+  "items": []
 }
