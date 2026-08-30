@@ -674,26 +674,71 @@ const getItemCount = (listId: number) => {
                         </div>
 
                         <div className='Items-section-card'>
-                            {filteredItems.length === 0 ? (
-                                <div className='empty-state'>
-                                    <p>{normalizedSearchQuery
-                                        ? 'No lists or items match your search.'
-                                        : itemListId
-                                            ? 'No items in this list yet.'
-                                            : 'No items yet. Add your first item!'}</p>
-                                </div>
-                            ) : (
-                                <table className='table-content'>
-                                    <thead>
-                                        <tr>
-                                            <th className='text-left'>Item picture and name</th>
-                                            <th className='text-center'>Quantity</th>
-                                            <th className='text-center'>Edit</th>
-                                            <th className='text-right'>Remove</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {filteredItems.map(item => (
+                            <table className='table-content'>
+                                <thead>
+                                    <tr>
+                                        <th className='text-left'>Item picture and name</th>
+                                        <th className='text-center'>Quantity</th>
+                                        <th className='text-center'>Edit</th>
+                                        <th className='text-right'>Remove</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filteredItems.length === 0 ? (
+                                        normalizedSearchQuery ? (
+                                            <tr>
+                                                <td colSpan={4}>
+                                                    <div className='empty-state'>
+                                                        <p>No lists or items match your search.</p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ) : (
+                                            <>
+                                                {[1, 2, 3].map((row) => (
+                                                    <tr key={row} className='item-row skeleton-row' aria-hidden='true'>
+                                                        <td className='text-left'>
+                                                            <div className='item-cell'>
+                                                                <div className='skeleton-image' />
+                                                                <div className='item-details'>
+                                                                    <div className='skeleton-name' />
+                                                                    <div className='skeleton-category' />
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td className='text-center'>
+                                                            <div className='skeleton-stepper' />
+                                                        </td>
+                                                        <td className='text-center'>
+                                                            <div className='skeleton-action skeleton-action-edit' />
+                                                        </td>
+                                                        <td className='text-right'>
+                                                            <div className='skeleton-action skeleton-action-remove' />
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                                <tr>
+                                                    <td colSpan={4}>
+                                                        <div className='empty-state items-empty-state'>
+                                                            <p>{itemListId ? 'No items in this list yet.' : 'No items yet. Add your first item!'}</p>
+                                                            <button type='button' className='addList-content items-empty-action' onClick={() => {
+                                                                if (itemListId) {
+                                                                    const selectedList = lists.find(l => l.id === itemListId);
+                                                                    if (selectedList) {
+                                                                        setItemCategory(selectedList.name);
+                                                                    }
+                                                                }
+                                                                setShowAddItemModal(true);
+                                                            }}>
+                                                                <FaPlus style={{ marginRight: '8px' }} /> Add Item
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </>
+                                        )
+                                    ) : (
+                                        filteredItems.map(item => (
                                             <tr key={item.id} className='item-row'> 
                                                 <td className='text-left'>
                                                     <div className='item-cell'>
@@ -727,10 +772,10 @@ const getItemCount = (listId: number) => {
                                                     </button>
                                                 </td>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            )}
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
                         </div>
                     </>
                 )}

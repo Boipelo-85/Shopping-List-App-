@@ -46,6 +46,7 @@ export const Header = () => {
                   value={searchQuery}
                   onChange={handleSearchChange}
                 />
+                
         </div>
         <div className='profile-content'>
               <ProfileDropdown />
