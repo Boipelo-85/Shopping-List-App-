@@ -284,6 +284,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
     listId: itemListId,
     notes: itemNotes.trim() || undefined,
     image: selectedItemImage || undefined,
+    purchased: false,
   };
 
   try {
@@ -407,6 +408,10 @@ const getItemCount = (listId: number) => {
     return;
   }
 
+  const existingItem = items.find(
+    (item) => item.id === editingItemId
+  );
+
   const updatedItem = {
     name: editItemName.trim(),
     quantity: Math.max(
@@ -421,6 +426,7 @@ const getItemCount = (listId: number) => {
     image:
       editItemImage ||
       undefined,
+    purchased: existingItem?.purchased ?? false,
   };
 
   try {
@@ -461,6 +467,36 @@ const getItemCount = (listId: number) => {
     setTimeout(
       () => setShowToast(false),
       3000
+    );
+  }
+};
+
+const togglePurchased = async (
+  itemId: number,
+  currentPurchased: boolean
+) => {
+  try {
+    await dispatch(
+      updateItem({
+        id: itemId,
+        data: {
+          purchased: !currentPurchased,
+        },
+      })
+    ).unwrap();
+  } catch (error) {
+    console.error(
+      'Failed to update purchased state:',
+      error
+    );
+
+    setToastMessage(
+      'Failed to update item status'
+    );
+    setShowToast(true);
+    setTimeout(
+      () => setShowToast(false),
+      2000
     );
   }
 };
@@ -739,14 +775,29 @@ const getItemCount = (listId: number) => {
                                         )
                                     ) : (
                                         filteredItems.map(item => (
-                                            <tr key={item.id} className='item-row'> 
+                                            <tr key={item.id} className={`item-row ${item.purchased ? 'item-row-purchased' : ''}`}> 
                                                 <td className='text-left'>
                                                     <div className='item-cell'>
                                                         {item.image && (
                                                             <img src={item.image} alt={item.name} className='item-image' />
                                                         )}
                                                         <div className='item-details'>
-                                                            <div className='item-name'>{item.name}</div>
+                                                            <div
+                                                                className={`item-name ${item.purchased ? 'item-name-purchased' : ''}`}
+                                                                onClick={() => togglePurchased(item.id, item.purchased)}
+                                                                role='button'
+                                                                tabIndex={0}
+                                                                onKeyDown={(e) => {
+                                                                    if (e.key === 'Enter' || e.key === ' ') {
+                                                                        e.preventDefault();
+                                                                        togglePurchased(item.id, item.purchased);
+                                                                    }
+                                                                }}
+                                                                aria-pressed={item.purchased}
+                                                                title={item.purchased ? 'Mark as not purchased' : 'Mark as purchased'}
+                                                            >
+                                                                {item.name}
+                                                            </div>
                                                             {item.category && (
                                                                 <div className='item-subtext'>Category: {item.category}</div>
                                                             )}

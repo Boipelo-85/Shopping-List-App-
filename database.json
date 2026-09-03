@@ -71,6 +71,25 @@
       "id": 7
     }
   ],
-  "lists": [],
-  "items": []
+  "lists": [
+    {
+      "name": "cloth",
+      "itemCount": 0,
+      "createdAt": 1788333954263,
+      "id": 1
+    }
+  ],
+  "items": [
+    {
+      "name": "Nike",
+      "quantity": 3,
+      "category": "cloth",
+      "listId": 1,
+      "notes": "I love nikes",
+      "image": "https://pixabay.com/get/gb82a9b91f3f10c3aedf89a1a7c8298b95a83c389a8b30f07676dbc8dd0cb969c1c956ed3a807627007f3f2ada1ee39b5646f82cf866b985ecfd71e3732786e8c_640.jpg",
+      "createdAt": 1788456615621,
+      "id": 1,
+      "purchased": false
+    }
+  ]
 }

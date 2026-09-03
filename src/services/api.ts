@@ -18,6 +18,7 @@ export interface Item {
   category: string;
   notes?: string;
   image?: string;
+  purchased: boolean;
   createdAt: number;
 }
 
@@ -47,10 +48,6 @@ export interface User {
 export type CreateUserData = Omit<
   User,
   'id' | 'createdAt'
->;
-
-export type UpdateUserData = Partial<
-  Omit<User, 'id' | 'createdAt'>
 >;
 
 /* ---------------------------------------------------------
@@ -246,6 +243,7 @@ export const usersApi = {
             .toLowerCase() ===
           normalizedEmail
       ) || null
+      
     );
 
   } catch (error) {
@@ -307,30 +305,6 @@ export const usersApi = {
           createdAt: Date.now(),
         }),
       });
-
-    return response.json();
-  },
-
-  update: async (
-    id: number,
-    userData: UpdateUserData
-  ): Promise<User> => {
-    const normalizedData: UpdateUserData = {
-      ...userData,
-    };
-
-    if (typeof normalizedData.email === 'string') {
-      normalizedData.email = normalizedData.email.trim().toLowerCase();
-    }
-
-    if (typeof normalizedData.username === 'string') {
-      normalizedData.username = normalizedData.username.trim().toLowerCase();
-    }
-
-    const response = await apiCall(`/users/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(normalizedData),
-    });
 
     return response.json();
   },
@@ -517,6 +491,7 @@ export const itemsApi = {
 
         body: JSON.stringify({
           ...item,
+          purchased: item.purchased ?? false,
           createdAt: Date.now(),
         }),
       });

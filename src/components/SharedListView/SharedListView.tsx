@@ -89,14 +89,14 @@ export const SharedListView = () => {
               </thead>
               <tbody>
                 {listItems.map(item => (
-                  <tr key={item.id} className='item-row'>
+                  <tr key={item.id} className={`item-row ${item.purchased ? 'item-row-purchased' : ''}`}>
                     <td className='text-left'>
                       <div className='item-cell'>
                         {item.image && (
                           <img src={item.image} alt={item.name} className='item-image' />
                         )}
                         <div className='item-details'>
-                          <div className='item-name'>{item.name}</div>
+                          <div className={`item-name ${item.purchased ? 'item-name-purchased' : ''}`}>{item.name}</div>
                           {item.notes && (
                             <div className='item-subtext'>Notes: {item.notes}</div>
                           )}
