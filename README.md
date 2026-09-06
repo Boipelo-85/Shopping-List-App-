@@ -92,11 +92,6 @@ src/
 
 - Desktop view
 
-![Screenshot 1](src/assets/weather_1.png)
-![Screenshot 2](src/assets/weather_2.png)
-![Screenshot 3](src/assets/weather_3.png)
-![Screenshot 4](src/assets/weather_4.png)
-
 ### Available Scripts
 
 | Command | Description |
