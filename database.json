@@ -71,25 +71,6 @@
       "id": 7
     }
   ],
-  "lists": [
-    {
-      "name": "Cloth",
-      "itemCount": 0,
-      "createdAt": 1788714344575,
-      "id": 1
-    }
-  ],
-  "items": [
-    {
-      "name": "Puma",
-      "quantity": 3,
-      "category": "Cloth",
-      "listId": 1,
-      "notes": "Puma kim",
-      "image": "https://pixabay.com/get/g1d3617c142a4bdac249be8e14eaac3adb6c43a9fac01619514e26cbac271e231ac9a716581c32d725c0d7a6055391727e052979cd4cb6133d039b212a8dc6f9c_640.jpg",
-      "purchased": false,
-      "createdAt": 1788714440325,
-      "id": 2
-    }
-  ]
+  "lists": [],
+  "items": []
 }

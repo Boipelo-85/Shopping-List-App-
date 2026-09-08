@@ -3,15 +3,29 @@ import searchIcon from '../../assets/searchbar.png'
 import { ProfileDropdown } from '../ProfileDropdown/ProfileDropdown';
 import { FaClipboardList } from 'react-icons/fa';
 import { useSearchParams } from 'react-router-dom';
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useEffect, useState } from 'react';
 
 export const Header = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get('search') || '';
+  const [inputValue, setInputValue] = useState(searchQuery);
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    setInputValue(searchQuery);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
+    setInputValue(query);
     
     if (searchTimeoutRef.current) {
       clearTimeout(searchTimeoutRef.current);
@@ -43,7 +57,7 @@ export const Header = () => {
                   type="text" 
                   className='search-input'
                   placeholder='Search for Item' 
-                  value={searchQuery}
+                  value={inputValue}
                   onChange={handleSearchChange}
                 />
                 

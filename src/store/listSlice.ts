@@ -7,6 +7,7 @@ import {
 } from '@reduxjs/toolkit';
 
 import {
+  itemsApi,
   listsApi,
   type List as ApiList,
 } from '../services/api';
@@ -222,6 +223,12 @@ export const deleteList = createAsyncThunk<
 
   async (id, { rejectWithValue }) => {
     try {
+      const listItems = await itemsApi.getByListId(id);
+
+      await Promise.all(
+        listItems.map((item) => itemsApi.delete(item.id))
+      );
+
       await listsApi.delete(id);
 
       return id;

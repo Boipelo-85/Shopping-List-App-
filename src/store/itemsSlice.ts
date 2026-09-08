@@ -172,7 +172,11 @@ const itemsSlice = createSlice({
   initialState,
 
   reducers: {
-   
+    removeItemsByListId: (state, action) => {
+      state.items = state.items.filter(
+        (item) => item.listId !== action.payload
+      );
+    },
   },
 
   extraReducers: (builder) => {
@@ -366,5 +370,9 @@ const itemsSlice = createSlice({
 /* =========================================================
    EXPORT
 ========================================================= */
+
+export const {
+  removeItemsByListId,
+} = itemsSlice.actions;
 
 export default itemsSlice.reducer;

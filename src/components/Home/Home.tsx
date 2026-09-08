@@ -1,9 +1,9 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { Text } from '../Text/Text';
 import { FaEdit, FaEllipsisH, FaTrash, FaCopy, FaPlus, FaClipboardList, FaShareAlt } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import { createList, deleteList, updateList, incrementItemCount, decrementItemCount,fetchLists } from '../../store/listSlice';
-import { createItem, updateItem,deleteItem, fetchItems,} from '../../store/itemsSlice';
+import { createItem, updateItem,deleteItem, fetchItems, removeItemsByListId } from '../../store/itemsSlice';
 import type { RootState } from '../../store/store';
 import type { AppDispatch } from '../../store/store';
 import { PaxiBayResources } from '../../PaxiBayResources';
@@ -195,12 +195,7 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
 
     try {
       await dispatch(deleteList(listToDelete)).unwrap();
-      
-      // Also delete all items in this list
-      const listItems = items.filter(item => item.listId === listToDelete);
-      for (const item of listItems) {
-        await dispatch(deleteItem(item.id)).unwrap();
-      }
+      dispatch(removeItemsByListId(listToDelete));
       
       setListToDelete(null);
       setConfirmType(null);
@@ -503,38 +498,44 @@ const togglePurchased = async (
 
 
 
-    const normalizedSearchQuery = searchQuery.trim().toLowerCase();
-    const hasItemsInCurrentView = itemListId
-        ? items.some(item => item.listId === itemListId)
-        : items.length > 0;
-    const filteredLists = lists
-        .filter(list => !normalizedSearchQuery || list.name.toLowerCase().includes(normalizedSearchQuery))
-        .sort((firstList, secondList) => {
-            if (sortMethod === 'dateAdded') return secondList.createdAt - firstList.createdAt;
-            if (sortMethod === 'name' || sortMethod === 'category') {
-                return firstList.name.localeCompare(secondList.name);
-            }
-            return 0;
-        });
+    const normalizedSearchQuery = useMemo(
+        () => searchQuery.trim().toLowerCase(),
+        [searchQuery]
+    );
 
-    const filteredItems = items
-        .filter(item => {
-            const matchesSelectedList = !itemListId || item.listId === itemListId;
-            const matchesSearch = !normalizedSearchQuery ||
-                item.name.toLowerCase().includes(normalizedSearchQuery) ||
-                (item.category ?? '').toLowerCase().includes(normalizedSearchQuery);
 
-            return matchesSelectedList && matchesSearch;
-        })
-        .sort((firstItem, secondItem) => {
-            if (sortMethod === 'dateAdded') return secondItem.createdAt - firstItem.createdAt;
-            if (sortMethod === 'category') {
-                return (firstItem.category ?? '').localeCompare(secondItem.category ?? '') ||
-                    firstItem.name.localeCompare(secondItem.name);
-            }
-            if (sortMethod === 'name') return firstItem.name.localeCompare(secondItem.name);
-            return 0;
-        });
+    const filteredLists = useMemo(() => {
+        return [...lists]
+            .filter(list => !normalizedSearchQuery || list.name.toLowerCase().includes(normalizedSearchQuery))
+            .sort((firstList, secondList) => {
+                if (sortMethod === 'dateAdded') return secondList.createdAt - firstList.createdAt;
+                if (sortMethod === 'name' || sortMethod === 'category') {
+                    return firstList.name.localeCompare(secondList.name);
+                }
+                return 0;
+            });
+    }, [lists, normalizedSearchQuery, sortMethod]);
+
+    const filteredItems = useMemo(() => {
+        return [...items]
+            .filter(item => {
+                const matchesSelectedList = !itemListId || item.listId === itemListId;
+                const matchesSearch = !normalizedSearchQuery ||
+                    item.name.toLowerCase().includes(normalizedSearchQuery) ||
+                    (item.category ?? '').toLowerCase().includes(normalizedSearchQuery);
+
+                return matchesSelectedList && matchesSearch;
+            })
+            .sort((firstItem, secondItem) => {
+                if (sortMethod === 'dateAdded') return secondItem.createdAt - firstItem.createdAt;
+                if (sortMethod === 'category') {
+                    return (firstItem.category ?? '').localeCompare(secondItem.category ?? '') ||
+                        firstItem.name.localeCompare(secondItem.name);
+                }
+                if (sortMethod === 'name') return firstItem.name.localeCompare(secondItem.name);
+                return 0;
+            });
+    }, [items, itemListId, normalizedSearchQuery, sortMethod]);
 
     const handleSortChange = (value: string) => {
         setSearchParams((currentParams) => {
@@ -863,7 +864,13 @@ const togglePurchased = async (
                 <div className='add-list-popup-overlay'>
                     <div className='add-list-popup'>
                         <h3>Add New List</h3>
-                        <div className='add-list-form'>
+                        <form
+                            className='add-list-form'
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                addNewList();
+                            }}
+                        >
                             <div className='form-row'>
                                 <label className='list-label'>List Name :</label>
                                 <input
@@ -875,11 +882,11 @@ const togglePurchased = async (
                                     autoFocus={true}
                                 />
                             </div>
-                        </div>
-                        <div className='add-list-buttons'>
-                            <button type='button' onClick={cancelAddList} className='cancel-btn'>Cancel</button>
-                            <button type='button' onClick={addNewList} className='confirm-btn'>Add List</button>
-                        </div>
+                            <div className='add-list-buttons'>
+                                <button type='button' onClick={cancelAddList} className='cancel-btn'>Cancel</button>
+                                <button type='submit' className='confirm-btn'>Add List</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             )}
