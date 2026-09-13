@@ -6,6 +6,14 @@
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
 
+let _currentUserId: number | null = null;
+
+export const setCurrentUserId = (id: number | null): void => {
+  _currentUserId = id;
+};
+
+export const getCurrentUserId = (): number | null => _currentUserId;
+
 /* =========================================================
    TYPES
 ========================================================= */
@@ -13,6 +21,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001
 export interface Item {
   id: number;
   listId: number;
+  userId: number;
   name: string;
   quantity: number;
   category: string;
@@ -24,7 +33,7 @@ export interface Item {
 
 export type CreateItemData = Omit<
   Item,
-  'id' | 'createdAt'
+  'id' | 'createdAt' | 'userId'
 >;
 
 export type UpdateItemData =
@@ -56,6 +65,7 @@ export type CreateUserData = Omit<
 
 export interface List {
   id: number;
+  userId: number;
   name: string;
   itemCount: number;
   createdAt: number;
@@ -98,6 +108,7 @@ const apiCall = async (
 
       headers: {
         'Content-Type': 'application/json',
+        ...(_currentUserId !== null ? { 'x-user-id': String(_currentUserId) } : {}),
         ...(options.headers || {}),
       },
     });
@@ -377,7 +388,6 @@ export const listsApi = {
         body: JSON.stringify({
           name: cleanName,
           itemCount: 0,
-          createdAt: Date.now(),
         }),
       });
 
@@ -492,7 +502,6 @@ export const itemsApi = {
         body: JSON.stringify({
           ...item,
           purchased: item.purchased ?? false,
-          createdAt: Date.now(),
         }),
       });
 

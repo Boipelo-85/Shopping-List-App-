@@ -16,6 +16,7 @@ import {
 
 export interface List {
   id: number;
+  userId: number;
   name: string;
   itemCount: number;
   createdAt: number;
@@ -23,7 +24,7 @@ export interface List {
 
 export type CreateListData = Omit<
   List,
-  'id' | 'itemCount' | 'createdAt'
+  'id' | 'itemCount' | 'createdAt' | 'userId'
 >;
 
 export type UpdateListData = Partial<
@@ -56,6 +57,7 @@ const initialState: ListState = {
 
 const toList = (apiList: ApiList): List => ({
   id: apiList.id,
+  userId: apiList.userId ?? 0,
   name: apiList.name,
   itemCount: apiList.itemCount ?? 0,
   createdAt: apiList.createdAt ?? Date.now(),

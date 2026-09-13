@@ -8,7 +8,9 @@ import { Login } from './components/LoginPage/Login';
 import { Registration } from './components/Registration/Registration';
 import {Profile} from './components/Profile/Profile'; // <-- create this
 import { SharedListView } from './components/SharedListView/SharedListView';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { setCurrentUserId } from './services/api';
 import type { RootState } from './store/store';
 
 import { BrowserRouter as Router, Routes, Route, Navigate, useSearchParams } from 'react-router-dom';
@@ -53,10 +55,22 @@ const HomePage = () => {
   );
 };
 
+/** Keeps the api.ts userId in sync with the Redux auth state. */
+const AuthSync = () => {
+  const user = useSelector((state: RootState) => state.auth.user);
+
+  useEffect(() => {
+    setCurrentUserId(user ? user.id : null);
+  }, [user]);
+
+  return null;
+};
+
 function App() {
   return (
     <>
       <Router>
+        <AuthSync />
         <Routes>
           {/* Default route - Login page without header */}
           <Route path="/" element={

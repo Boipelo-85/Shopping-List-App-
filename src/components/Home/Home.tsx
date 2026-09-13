@@ -630,6 +630,11 @@ const togglePurchased = async (
                                 <div className='empty-state'>
                                     <Text variant='h3'><FaClipboardList style={{fontSize:'50px',color:'#000'}}/></Text>
                                     <p>{normalizedSearchQuery ? 'No lists or items match your search.' : 'No lists yet. Create your first list!'}</p>
+                                    {!normalizedSearchQuery && (
+                                        <button type='button' className='addList-content' onClick={() => setShowAddListModal(true)}>
+                                            <FaPlus style={{ marginRight: '8px' }} /> Add List
+                                        </button>
+                                    )}
                                 </div>
                             ) : (
                                 filteredLists.map((list) => (
@@ -711,6 +716,29 @@ const togglePurchased = async (
                         </div>
 
                         <div className='Items-section-card'>
+                            {filteredItems.length === 0 ? (
+                                <div className='empty-state'>
+                                    <Text variant='h3'><FaClipboardList style={{ fontSize: '50px', color: '#000' }} /></Text>
+                                    <p>{normalizedSearchQuery ? 'No lists or items match your search.' : itemListId ? 'No items in this list yet. Add your first item!' : 'No items yet. Add your first item!'}</p>
+                                    {!normalizedSearchQuery && (
+                                        <button
+                                            type='button'
+                                            className='addList-content'
+                                            onClick={() => {
+                                                if (itemListId) {
+                                                    const selectedList = lists.find(l => l.id === itemListId);
+                                                    if (selectedList) {
+                                                        setItemCategory(selectedList.name);
+                                                    }
+                                                }
+                                                setShowAddItemModal(true);
+                                            }}
+                                        >
+                                            <FaPlus style={{ marginRight: '8px' }} /> Add Item
+                                        </button>
+                                    )}
+                                </div>
+                            ) : (
                             <table className='table-content'>
                                 <thead>
                                     <tr>
@@ -721,113 +749,58 @@ const togglePurchased = async (
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredItems.length === 0 ? (
-                                        normalizedSearchQuery ? (
-                                            <tr>
-                                                <td colSpan={4}>
-                                                    <div className='empty-state'>
-                                                        <p>No lists or items match your search.</p>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ) : (
-                                            <>
-                                                {[1, 2, 3].map((row) => (
-                                                    <tr key={row} className='item-row skeleton-row' aria-hidden='true'>
-                                                        <td className='text-left'>
-                                                            <div className='item-cell'>
-                                                                <div className='skeleton-image' />
-                                                                <div className='item-details'>
-                                                                    <div className='skeleton-name' />
-                                                                    <div className='skeleton-category' />
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td className='text-center'>
-                                                            <div className='skeleton-stepper' />
-                                                        </td>
-                                                        <td className='text-center'>
-                                                            <div className='skeleton-action skeleton-action-edit' />
-                                                        </td>
-                                                        <td className='text-right'>
-                                                            <div className='skeleton-action skeleton-action-remove' />
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                                <tr>
-                                                    <td colSpan={4}>
-                                                        <div className='empty-state items-empty-state'>
-                                                            <p>{itemListId ? 'No items in this list yet.' : 'No items yet. Add your first item!'}</p>
-                                                            <button type='button' className='addList-content items-empty-action' onClick={() => {
-                                                                if (itemListId) {
-                                                                    const selectedList = lists.find(l => l.id === itemListId);
-                                                                    if (selectedList) {
-                                                                        setItemCategory(selectedList.name);
-                                                                    }
+                                    {filteredItems.map(item => (
+                                        <tr key={item.id} className={`item-row ${item.purchased ? 'item-row-purchased' : ''}`}>
+                                            <td className='text-left'>
+                                                <div className='item-cell'>
+                                                    {item.image && (
+                                                        <img src={item.image} alt={item.name} className='item-image' />
+                                                    )}
+                                                    <div className='item-details'>
+                                                        <div
+                                                            className={`item-name ${item.purchased ? 'item-name-purchased' : ''}`}
+                                                            onClick={() => togglePurchased(item.id, item.purchased)}
+                                                            role='button'
+                                                            tabIndex={0}
+                                                            onKeyDown={(e) => {
+                                                                if (e.key === 'Enter' || e.key === ' ') {
+                                                                    e.preventDefault();
+                                                                    togglePurchased(item.id, item.purchased);
                                                                 }
-                                                                setShowAddItemModal(true);
-                                                            }}>
-                                                                <FaPlus style={{ marginRight: '8px' }} /> Add Item
-                                                            </button>
+                                                            }}
+                                                            aria-pressed={item.purchased}
+                                                            title={item.purchased ? 'Mark as not purchased' : 'Mark as purchased'}
+                                                        >
+                                                            {item.name}
                                                         </div>
-                                                    </td>
-                                                </tr>
-                                            </>
-                                        )
-                                    ) : (
-                                        filteredItems.map(item => (
-                                            <tr key={item.id} className={`item-row ${item.purchased ? 'item-row-purchased' : ''}`}> 
-                                                <td className='text-left'>
-                                                    <div className='item-cell'>
-                                                        {item.image && (
-                                                            <img src={item.image} alt={item.name} className='item-image' />
+                                                        {item.category && (
+                                                            <div className='item-subtext'>Category: {item.category}</div>
                                                         )}
-                                                        <div className='item-details'>
-                                                            <div
-                                                                className={`item-name ${item.purchased ? 'item-name-purchased' : ''}`}
-                                                                onClick={() => togglePurchased(item.id, item.purchased)}
-                                                                role='button'
-                                                                tabIndex={0}
-                                                                onKeyDown={(e) => {
-                                                                    if (e.key === 'Enter' || e.key === ' ') {
-                                                                        e.preventDefault();
-                                                                        togglePurchased(item.id, item.purchased);
-                                                                    }
-                                                                }}
-                                                                aria-pressed={item.purchased}
-                                                                title={item.purchased ? 'Mark as not purchased' : 'Mark as purchased'}
-                                                            >
-                                                                {item.name}
-                                                            </div>
-                                                            {item.category && (
-                                                                <div className='item-subtext'>Category: {item.category}</div>
-                                                            )}
-                                                         
-                                                        </div>
                                                     </div>
-                                                </td>
-                                                <td className='text-center'>
-                                                    <div className='quantity-stepper'>
-                                                        <button type='button' className='stepper-btn' onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
-                                                        <span className='stepper-value'>{item.quantity}</span>
-                                                        <button type='button' className='stepper-btn' onClick={() => updateQuantity(item.id, item.quantity - 1)}>−</button>
-                                                    </div>
-                                                </td>
-                                                <td className='text-center'>
-                                                    <button type='button' onClick={() => startEditItem(item.id)} className='dropdown-item'>
-                                                        <FaEdit className='eidt-Icon'/>
-                                                    </button>
-                                                </td>
-                                                <td className='text-right'>
-                                                    <button type='button' onClick={() => confirmRemoveItem(item.id)}  className='delete-btn'>
-                                                        <FaTrash />
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))
-                                    )}
+                                                </div>
+                                            </td>
+                                            <td className='text-center'>
+                                                <div className='quantity-stepper'>
+                                                    <button type='button' className='stepper-btn' onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
+                                                    <span className='stepper-value'>{item.quantity}</span>
+                                                    <button type='button' className='stepper-btn' onClick={() => updateQuantity(item.id, item.quantity - 1)}>−</button>
+                                                </div>
+                                            </td>
+                                            <td className='text-center'>
+                                                <button type='button' onClick={() => startEditItem(item.id)} className='dropdown-item'>
+                                                    <FaEdit className='eidt-Icon'/>
+                                                </button>
+                                            </td>
+                                            <td className='text-right'>
+                                                <button type='button' onClick={() => confirmRemoveItem(item.id)} className='delete-btn'>
+                                                    <FaTrash />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                             </table>
+                            )}
                         </div>
                     </>
                 )}
