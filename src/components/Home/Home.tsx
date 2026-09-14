@@ -17,6 +17,10 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const lists = useSelector((state: RootState) => state.lists.lists);
   const items = useSelector((state: RootState) => state.items.items);
+  const listsLoading  = useSelector((state: RootState) => state.lists.loading);
+  const creating      = useSelector((state: RootState) => state.lists.creating);
+  const listDeleting  = useSelector((state: RootState) => state.lists.deleting);
+  const itemsLoading  = useSelector((state: RootState) => state.items.loading);
   
   // Tab Navigation
   const [activeTab, setActiveTab] = useState<'lists' | 'items'>('lists');
@@ -132,7 +136,8 @@ export const Home = ({ searchQuery = '' }: { searchQuery?: string }) => {
   };
 
   const shareList = (id: number) => {
-    const shareableLink = `${window.location.origin}/shared/list/${id}`;
+    const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+    const shareableLink = `${window.location.origin}/shared/list/${id}?api=${encodeURIComponent(apiBase)}`;
     
     navigator.clipboard.writeText(shareableLink).then(() => {
       setToastMessage('Link copied to clipboard!');
@@ -626,7 +631,12 @@ const togglePurchased = async (
                             <Text variant={'h2'} style={{ color: '#000',fontWeight: 'bold', fontFamily: "'Courier New', Courier, monospace" }}> Lists </Text>
                         </div>
                         <div className='List-section-card'>
-                            {filteredLists.length === 0 ? (
+                            {listsLoading ? (
+                                <div className='empty-state'>
+                                    <span className='btn-spinner' style={{ width: '36px', height: '36px', borderWidth: '3px', marginRight: 0, marginBottom: '16px', display: 'block' }} />
+                                    <p>Loading lists...</p>
+                                </div>
+                            ) : filteredLists.length === 0 ? (
                                 <div className='empty-state'>
                                     <Text variant='h3'><FaClipboardList style={{fontSize:'50px',color:'#000'}}/></Text>
                                     <p>{normalizedSearchQuery ? 'No lists or items match your search.' : 'No lists yet. Create your first list!'}</p>
@@ -819,13 +829,15 @@ const togglePurchased = async (
                   setItemToDelete(null);
                   setListToDelete(null);
                   setConfirmType(null);
-                }} className='cancel-btn'>Cancel</button>
+                }} className='cancel-btn' disabled={listDeleting || itemsLoading}>Cancel</button>
                 <button 
                   type='button' 
                   onClick={confirmType === 'list' ? handleRemoveList : handleRemoveItem} 
-                  className='remove-btn'
+                  className={`remove-btn${(listDeleting || itemsLoading) ? ' btn-loading' : ''}`}
+                  disabled={listDeleting || itemsLoading}
                 >
-                  Remove
+                  {(listDeleting || itemsLoading) && <span className='btn-spinner' />}
+                  {(listDeleting || itemsLoading) ? 'Removing...' : 'Remove'}
                 </button>
               </div>
             </div>
@@ -856,8 +868,11 @@ const togglePurchased = async (
                                 />
                             </div>
                             <div className='add-list-buttons'>
-                                <button type='button' onClick={cancelAddList} className='cancel-btn'>Cancel</button>
-                                <button type='submit' className='confirm-btn'>Add List</button>
+                                <button type='button' onClick={cancelAddList} className='cancel-btn' disabled={creating}>Cancel</button>
+                                <button type='submit' className={`confirm-btn${creating ? ' btn-loading' : ''}`} disabled={creating}>
+                                    {creating && <span className='btn-spinner' />}
+                                    {creating ? 'Adding...' : 'Add List'}
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -957,8 +972,11 @@ const togglePurchased = async (
                             </div>
                         </div>
                         <div className='add-item-buttons'>
-                            <button type='button' onClick={closeAddItemModal} className='cancel-btn'>Cancel</button>
-                            <button type='button' onClick={handleAddItem} className='confirm-btn'>Add Item</button>
+                            <button type='button' onClick={closeAddItemModal} className='cancel-btn' disabled={itemsLoading}>Cancel</button>
+                            <button type='button' onClick={handleAddItem} className={`confirm-btn${itemsLoading ? ' btn-loading' : ''}`} disabled={itemsLoading}>
+                                {itemsLoading && <span className='btn-spinner' />}
+                                {itemsLoading ? 'Adding...' : 'Add Item'}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1037,8 +1055,11 @@ const togglePurchased = async (
                             </div>
                         </div>
                         <div className='add-item-buttons'>
-                            <button type='button' onClick={closeEditItemModal} className='cancel-btn'>Cancel</button>
-                            <button type='button' onClick={handleUpdateItem} className='confirm-btn'>Update Item</button>
+                            <button type='button' onClick={closeEditItemModal} className='cancel-btn' disabled={itemsLoading}>Cancel</button>
+                            <button type='button' onClick={handleUpdateItem} className={`confirm-btn${itemsLoading ? ' btn-loading' : ''}`} disabled={itemsLoading}>
+                                {itemsLoading && <span className='btn-spinner' />}
+                                {itemsLoading ? 'Saving...' : 'Update Item'}
+                            </button>
                         </div>
                     </div>
                 </div>

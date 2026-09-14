@@ -919,6 +919,33 @@ code {
   margin-bottom: 40px;
 }
 
+.profile-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  color: #666;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.profile-back-btn:hover {
+  color: #000;
+}
+
+.input-readonly {
+  background-color: #f0f0f0;
+  color: #888;
+  cursor: not-allowed;
+  border: 1px solid #ddd !important;
+  user-select: none;
+}
+
 .profile-header h1 {
   font-size: 32px;
   font-weight: 600;
@@ -1803,6 +1830,32 @@ code {
 
   background: #e71616;
   color: #fdfdfd;
+}
+
+/* ── Spinner ───────────────────────────────────────────── */
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.btn-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+  margin-right: 8px;
+  opacity: 0.85;
+}
+
+/* keep button layout stable while loading */
+.btn-loading {
+  opacity: 0.75;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 /* Add list popup styles */

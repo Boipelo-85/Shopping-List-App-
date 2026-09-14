@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { PhoneInput } from 'react-international-phone'
 import 'react-international-phone/style.css'
 import { useDispatch, useSelector } from 'react-redux';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Text } from '../Text/Text';
 import type { AppDispatch, RootState } from '../../store/store';
 import { clearError, updateUserCredentials, updateUserProfile } from '../../store/authSlice';
 
 export const Profile = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const auth = useSelector((state: RootState) => state.auth);
   const [searchParams] = useSearchParams();
   const mode = searchParams.get('mode');
@@ -120,6 +121,13 @@ export const Profile = () => {
       )}
 
       <div className="profile-header">
+        <button
+          type='button'
+          onClick={() => navigate('/home')}
+          className='profile-back-btn'
+        >
+          ← Back to Home
+        </button>
         <Text variant={'h1'} style={{color:'#000',fontWeight: 'bold',fontFamily: "'Courier New', Courier, monospace"}}>
           {isCredentialsMode ? 'Update Login Details' : 'Personal Information'}
         </Text>
@@ -135,7 +143,14 @@ export const Profile = () => {
           <form className="profile-credentials-form" onSubmit={handleCredentialsSubmit}>
             <div className="form-group">
               <label className='label-content'>Email address</label>
-              <input type="email" name="email" value={credentialsFormData.email} onChange={handleCredentialsChange} placeholder="Email@gmail.com" required />
+              <input
+                type="email"
+                name="email"
+                value={credentialsFormData.email}
+                readOnly
+                className='input-readonly'
+                title="Your email address cannot be changed here"
+              />
             </div>
 
             <div className="form-group">
@@ -154,7 +169,8 @@ export const Profile = () => {
             </div>
 
             <div className="profile-actions">
-              <button type="submit" className="profile-save-btn" disabled={auth.loading}>
+              <button type="submit" className={`profile-save-btn${auth.loading ? ' btn-loading' : ''}`} disabled={auth.loading}>
+                {auth.loading && <span className='btn-spinner' />}
                 {auth.loading ? 'Saving...' : 'Save Details'}
               </button>
             </div>
@@ -179,7 +195,8 @@ export const Profile = () => {
               }} />
             </div>
             <div className="profile-actions">
-              <button type="submit" className="profile-save-btn" disabled={auth.loading}>
+              <button type="submit" className={`profile-save-btn${auth.loading ? ' btn-loading' : ''}`} disabled={auth.loading}>
+                {auth.loading && <span className='btn-spinner' />}
                 {auth.loading ? 'Saving...' : 'Save Profile'}
               </button>
             </div>

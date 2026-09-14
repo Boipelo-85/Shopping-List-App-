@@ -116,6 +116,7 @@ const loadAuthFromStorage = (): AuthState => {
    * A session is considered valid on the client only when
    * both token and user exist.
    */
+  
   const isAuthenticated = Boolean(token && user);
 
   /**

@@ -93,6 +93,19 @@ app.get('/users/:id', (req, res) => {
   res.json(user);
 });
 
+// ── Public shared-list endpoints (no auth required) ────────────────────────
+
+app.get('/shared/list/:id', (req, res) => {
+  const db = readDatabase();
+  const listId = parseInt(req.params.id);
+  const list = db.lists.find(l => l.id === listId);
+
+  if (!list) return res.status(404).json({ message: 'List not found' });
+
+  const items = db.items.filter(item => item.listId === listId);
+  res.json({ list, items });
+});
+
 // ── Lists ─────────────────────────────────────────────────────────────────────
 
 app.get('/lists', (req, res) => {

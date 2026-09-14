@@ -304,12 +304,11 @@ export const Login = () => {
 
             <button
               type="submit"
-              className="login-btn"
+              className={`login-btn${loading ? ' btn-loading' : ''}`}
               disabled={loading}
             >
-              {loading
-                ? 'Logging in...'
-                : 'Login'}
+              {loading && <span className='btn-spinner' />}
+              {loading ? 'Logging in...' : 'Login'}
             </button>
 
           </form>

@@ -81,6 +81,27 @@
       "createdAt": 1789328942026
     }
   ],
-  "lists": [],
-  "items": []
+  "lists": [
+    {
+      "id": 1789417644796,
+      "name": "Grocery",
+      "itemCount": 0,
+      "userId": 1789328942026,
+      "createdAt": 1789417644796
+    }
+  ],
+  "items": [
+    {
+      "id": 1789417675803,
+      "name": "Meat",
+      "quantity": 2,
+      "category": "Grocery",
+      "listId": 1789417644796,
+      "notes": "Meatttin",
+      "image": "https://pixabay.com/get/gc8a3116700011b93a7c428dc4cd66f013f4dc760de6b80008c2ef0ddeef2f9c0109fe8063587cb56cf9aa5fbbe3891fe_640.jpg",
+      "purchased": false,
+      "userId": 1789328942026,
+      "createdAt": 1789417675803
+    }
+  ]
 }

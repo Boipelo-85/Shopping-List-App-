@@ -7,6 +7,7 @@ import { logout } from '../../store/authSlice';
 
 export const ProfileDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -46,10 +47,19 @@ export const ProfileDropdown = () => {
   };
 
 
-  const handleLogout = () => {
+  const handleLogoutClick = () => {
+    setIsOpen(false);
+    setShowLogoutConfirm(true);
+  };
+
+  const handleLogoutConfirm = () => {
+    setShowLogoutConfirm(false);
     dispatch(logout());
     navigate('/login');
-    setIsOpen(false);
+  };
+
+  const handleLogoutCancel = () => {
+    setShowLogoutConfirm(false);
   };
 
 
@@ -197,7 +207,7 @@ export const ProfileDropdown = () => {
                
             <button
               className="profile-dropdown-option"
-              onClick={handleLogout}
+              onClick={handleLogoutClick}
               style={{
                 width: '100%',
                 padding: '12px 16px',
@@ -224,6 +234,22 @@ export const ProfileDropdown = () => {
 
       )}
 
+      {showLogoutConfirm && (
+        <div className='confirm-dialog-overlay'>
+          <div className='confirm-dialog'>
+            <h3>Confirm Logout</h3>
+            <p>Are you sure you want to logout?</p>
+            <div className='confirm-dialog-buttons'>
+              <button type='button' onClick={handleLogoutCancel} className='cancel-btn'>
+                Cancel
+              </button>
+              <button type='button' onClick={handleLogoutConfirm} className='remove-btn'>
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   
   );

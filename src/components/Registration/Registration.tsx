@@ -275,12 +275,11 @@ export const Registration = () => {
 
         <button
           type="submit"
-          className="register-btn"
+          className={`register-btn${loading ? ' btn-loading' : ''}`}
           disabled={loading}
         >
-          {loading
-            ? 'Creating Account...'
-            : 'Create Account'}
+          {loading && <span className='btn-spinner' />}
+          {loading ? 'Creating Account...' : 'Create Account'}
         </button>
 
         {/* LOGIN LINK */}
