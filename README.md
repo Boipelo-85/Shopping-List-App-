@@ -63,7 +63,7 @@ src/
    ```bash
    npm install
    ```
-   
+
 2. **Add your Pixabay API key**
 
    Create a `.env` file in the project root (same folder as `package.json`):
@@ -91,6 +91,14 @@ src/
 ## Screenshots
 
 - Desktop view
+
+![Screenshot 1](src/shop_1.png)
+![Screenshot 2](src/item_empty.png)
+![Screenshot 3](src/shop_2.png)
+![Screenshot 4](src/shop_3.png)
+![Screenshot 4](src/shop_4.png)
+![Screenshot 4](src/shop_5.png)
+![Screenshot 4](src/shop_6.png)
 
 ### Available Scripts
 
