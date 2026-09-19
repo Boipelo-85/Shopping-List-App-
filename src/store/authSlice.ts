@@ -1,5 +1,5 @@
-import {createAsyncThunk,createSlice } from '@reduxjs/toolkit';
-import { usersApi } from '../services/api';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { API_BASE_URL } from '../services/api';
 
 /* =========================================================
    TYPES
@@ -23,14 +23,12 @@ export interface User {
 /**
  * User object returned by the API.
  *
- * The backend/database may contain the password,
- * but we NEVER put it into Redux.
+ * The server never sends the password field back,
+ * so this is now identical to the Redux User shape.
  */
-interface ApiUser extends User {
-  password: string;
-}
+interface ApiUser extends User {}
 
-interface AuthState {
+export interface AuthState {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
@@ -116,7 +114,6 @@ const loadAuthFromStorage = (): AuthState => {
    * A session is considered valid on the client only when
    * both token and user exist.
    */
-  
   const isAuthenticated = Boolean(token && user);
 
   /**
@@ -158,7 +155,8 @@ const clearAuthFromStorage = (): void => {
 /**
  * Convert API user data into the safe Redux User type.
  *
- * This makes sure password data NEVER enters Redux.
+ * Ensures no unexpected fields (e.g. a future password field)
+ * can leak into Redux state.
  */
 const mapApiUserToReduxUser = (
   user: ApiUser
@@ -185,6 +183,43 @@ const getErrorMessage = (
   }
 
   return fallback;
+};
+
+/**
+ * Make an authenticated fetch call to the backend.
+ * Throws an Error with the server's message on non-2xx responses.
+ */
+const authFetch = async (
+  endpoint: string,
+  token: string,
+  options: RequestInit = {}
+): Promise<Response> => {
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      ...(options.headers || {}),
+    },
+  });
+
+  if (!response.ok) {
+    let message = `Request failed: ${response.status} ${response.statusText}`;
+
+    try {
+      const errorData = await response.json();
+
+      if (errorData && typeof errorData.message === 'string') {
+        message = errorData.message;
+      }
+    } catch {
+      // Ignore JSON parsing errors on error responses.
+    }
+
+    throw new Error(message);
+  }
+
+  return response;
 };
 
 /* =========================================================
@@ -221,63 +256,59 @@ export const loginUser = createAsyncThunk<
       }
 
       /* -----------------------------------------------
-         Find user through API
+         Call backend — server verifies credentials
+         and returns a signed JWT
       ------------------------------------------------ */
 
-      const user = await usersApi.getByEmail(email) as ApiUser | null;
-
-      if (!user) {
-        return rejectWithValue(
-          'Invalid email or password'
-        );
-      }
-
-      /* -----------------------------------------------
-         Check password
-
-       
-      ------------------------------------------------ */
-
-      if (user.password !== password) {
-        return rejectWithValue(
-          'Invalid email or password'
-        );
-      }
-
-      /* -----------------------------------------------
-         Create session token
-
-      ------------------------------------------------ */
-
-      const token = btoa(
-        `${user.email}:${Date.now()}`
+      const response = await fetch(
+        `${API_BASE_URL}/auth/login`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        }
       );
 
+      if (!response.ok) {
+        let message = 'Invalid email or password';
+
+        try {
+          const errorData = await response.json();
+
+          if (
+            errorData &&
+            typeof errorData.message === 'string'
+          ) {
+            message = errorData.message;
+          }
+        } catch {
+          // Ignore JSON parsing errors on error responses.
+        }
+
+        return rejectWithValue(message);
+      }
+
+      const data: { token: string; user: ApiUser } =
+        await response.json();
+
       /* -----------------------------------------------
-         Remove password before storing user
+         Remove any unexpected fields before storing
       ------------------------------------------------ */
 
-      const reduxUser =
-        mapApiUserToReduxUser(user);
+      const reduxUser = mapApiUserToReduxUser(data.user);
 
       /* -----------------------------------------------
          Persist session
       ------------------------------------------------ */
 
-      saveAuthToStorage(
-        reduxUser,
-        token
-      );
+      saveAuthToStorage(reduxUser, data.token);
 
       return {
         user: reduxUser,
-        token,
+        token: data.token,
       };
     } catch (error) {
-      console.error(
-        'Login failed:',
-        error
-      );
+      console.error('Login failed:', error);
 
       return rejectWithValue(
         getErrorMessage(
@@ -294,7 +325,7 @@ export const loginUser = createAsyncThunk<
 ========================================================= */
 
 export const registerUser = createAsyncThunk<
-  ApiUser,
+  User,
   RegisterData,
   { rejectValue: string }
 >(
@@ -305,68 +336,43 @@ export const registerUser = createAsyncThunk<
          Normalize input
       ------------------------------------------------ */
 
-      const firstName =
-        data.firstName.trim();
-
-      const lastName =
-        data.lastName.trim();
-
-      const email =
-        data.email.trim().toLowerCase();
-
-      const celphone =
-        data.celphone.trim();
+      const firstName = data.firstName.trim();
+      const lastName = data.lastName.trim();
+      const email = data.email.trim().toLowerCase();
+      const celphone = data.celphone.trim();
 
       /* -----------------------------------------------
-         Validate required fields
+         Validate required fields (client-side)
       ------------------------------------------------ */
 
       if (!firstName) {
-        return rejectWithValue(
-          'First name is required'
-        );
+        return rejectWithValue('First name is required');
       }
 
       if (!lastName) {
-        return rejectWithValue(
-          'Last name is required'
-        );
+        return rejectWithValue('Last name is required');
       }
 
       if (!email) {
-        return rejectWithValue(
-          'Email is required'
-        );
+        return rejectWithValue('Email is required');
       }
 
       if (!celphone) {
-        return rejectWithValue(
-          'Cellphone number is required'
-        );
+        return rejectWithValue('Cellphone number is required');
       }
 
       if (!data.password) {
-        return rejectWithValue(
-          'Password is required'
-        );
+        return rejectWithValue('Password is required');
       }
 
       /* -----------------------------------------------
-         Validate password confirmation
+         Validate password confirmation (client-side only —
+         confirmPassword is NOT sent to the server)
       ------------------------------------------------ */
 
-      if (
-        data.password !==
-        data.confirmPassword
-      ) {
-        return rejectWithValue(
-          'Passwords do not match'
-        );
+      if (data.password !== data.confirmPassword) {
+        return rejectWithValue('Passwords do not match');
       }
-
-      /* -----------------------------------------------
-         Check password length
-      ------------------------------------------------ */
 
       if (data.password.length < 8) {
         return rejectWithValue(
@@ -375,38 +381,49 @@ export const registerUser = createAsyncThunk<
       }
 
       /* -----------------------------------------------
-         Check whether account already exists
+         Call backend — server hashes the password
+         and checks for duplicate emails
       ------------------------------------------------ */
 
-      const existingUser =
-        await usersApi.getByEmail(email);
+      const response = await fetch(
+        `${API_BASE_URL}/auth/register`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            firstName,
+            lastName,
+            email,
+            celphone,
+            password: data.password,
+          }),
+        }
+      );
 
-      if (existingUser) {
-        return rejectWithValue(
-          'User with this email already exists'
-        );
+      if (!response.ok) {
+        let message = 'Registration failed. Please try again.';
+
+        try {
+          const errorData = await response.json();
+
+          if (
+            errorData &&
+            typeof errorData.message === 'string'
+          ) {
+            message = errorData.message;
+          }
+        } catch {
+          // Ignore JSON parsing errors on error responses.
+        }
+
+        return rejectWithValue(message);
       }
 
-      /* -----------------------------------------------
-         Create user through API
-      ------------------------------------------------ */
+      const newUser: ApiUser = await response.json();
 
-    const newUser = await usersApi.create({
-      username: email,
-    firstName,
-    lastName,
-    email,
-    celphone,
-    password: data.password,
-    });
-
-      return newUser as ApiUser;
-      
+      return mapApiUserToReduxUser(newUser);
     } catch (error) {
-      console.error(
-        'Registration failed:',
-        error
-      );
+      console.error('Registration failed:', error);
 
       return rejectWithValue(
         getErrorMessage(
@@ -417,6 +434,10 @@ export const registerUser = createAsyncThunk<
     }
   }
 );
+
+/* =========================================================
+   UPDATE USER CREDENTIALS
+========================================================= */
 
 export const updateUserCredentials = createAsyncThunk<
   User,
@@ -429,9 +450,15 @@ export const updateUserCredentials = createAsyncThunk<
       const currentUser = getState().auth.user;
       const currentToken = getState().auth.token;
 
-      if (!currentUser) {
-        return rejectWithValue('You must be logged in to update your login details');
+      if (!currentUser || !currentToken) {
+        return rejectWithValue(
+          'You must be logged in to update your login details'
+        );
       }
+
+      /* -----------------------------------------------
+         Validate input (client-side)
+      ------------------------------------------------ */
 
       const email = data.email.trim().toLowerCase();
       const currentPassword = data.currentPassword;
@@ -459,35 +486,33 @@ export const updateUserCredentials = createAsyncThunk<
       }
 
       if (newPassword.length < 8) {
-        return rejectWithValue('Password must be at least 8 characters');
+        return rejectWithValue(
+          'Password must be at least 8 characters'
+        );
       }
 
-      const existingRecord = await usersApi.getById(currentUser.id) as ApiUser | null;
+      /* -----------------------------------------------
+         Call backend — server verifies currentPassword
+         with bcrypt and updates email + password hash
+      ------------------------------------------------ */
 
-      if (!existingRecord) {
-        return rejectWithValue('User account could not be found');
-      }
+      const response = await authFetch(
+        '/auth/me/credentials',
+        currentToken,
+        {
+          method: 'PATCH',
+          body: JSON.stringify({
+            email,
+            currentPassword,
+            newPassword,
+          }),
+        }
+      );
 
-      if (existingRecord.password !== currentPassword) {
-        return rejectWithValue('Current password is incorrect');
-      }
-
-      const existingUserWithEmail = await usersApi.getByEmail(email);
-      if (existingUserWithEmail && existingUserWithEmail.id !== currentUser.id) {
-        return rejectWithValue('User with this email already exists');
-      }
-
-      const updatedApiUser = await usersApi.update(currentUser.id, {
-        email,
-        username: email,
-        password: newPassword,
-      }) as ApiUser;
-
+      const updatedApiUser: ApiUser = await response.json();
       const updatedUser = mapApiUserToReduxUser(updatedApiUser);
 
-      if (currentToken) {
-        saveAuthToStorage(updatedUser, currentToken);
-      }
+      saveAuthToStorage(updatedUser, currentToken);
 
       return updatedUser;
     } catch (error) {
@@ -503,6 +528,10 @@ export const updateUserCredentials = createAsyncThunk<
   }
 );
 
+/* =========================================================
+   UPDATE USER PROFILE
+========================================================= */
+
 export const updateUserProfile = createAsyncThunk<
   User,
   UpdateUserProfileData,
@@ -514,9 +543,15 @@ export const updateUserProfile = createAsyncThunk<
       const currentUser = getState().auth.user;
       const currentToken = getState().auth.token;
 
-      if (!currentUser) {
-        return rejectWithValue('You must be logged in to update your profile');
+      if (!currentUser || !currentToken) {
+        return rejectWithValue(
+          'You must be logged in to update your profile'
+        );
       }
+
+      /* -----------------------------------------------
+         Validate input (client-side)
+      ------------------------------------------------ */
 
       const firstName = data.firstName.trim();
       const lastName = data.lastName.trim();
@@ -534,17 +569,23 @@ export const updateUserProfile = createAsyncThunk<
         return rejectWithValue('Cellphone number is required');
       }
 
-      const updatedApiUser = await usersApi.update(currentUser.id, {
-        firstName,
-        lastName,
-        celphone,
-      }) as ApiUser;
+      /* -----------------------------------------------
+         Call backend
+      ------------------------------------------------ */
 
+      const response = await authFetch(
+        '/auth/me/profile',
+        currentToken,
+        {
+          method: 'PATCH',
+          body: JSON.stringify({ firstName, lastName, celphone }),
+        }
+      );
+
+      const updatedApiUser: ApiUser = await response.json();
       const updatedUser = mapApiUserToReduxUser(updatedApiUser);
 
-      if (currentToken) {
-        saveAuthToStorage(updatedUser, currentToken);
-      }
+      saveAuthToStorage(updatedUser, currentToken);
 
       return updatedUser;
     } catch (error) {
@@ -591,12 +632,6 @@ const authSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
-
-    /* -----------------------------------------------
-       RESTORE SESSION
-    ------------------------------------------------ */
-
-   
   },
 
   /* =====================================================

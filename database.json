@@ -1,117 +1,26 @@
 {
   "users": [
     {
-      "username": "lesego@gmail.com",
-      "firstName": "Lesego",
-      "lastName": "sechaba",
-      "email": "lesego@gmail.com",
-      "celphone": "+27735687356",
-      "password": "Lesego@gmail",
-      "createdAt": 1787859743450,
-      "id": 1
+      "id": 1789841890080,
+      "username": "prience@gmail.com",
+      "firstName": "prience",
+      "lastName": "kb",
+      "email": "prience@gmail.com",
+      "celphone": "+27672531917",
+      "password": "$2b$10$BrGiSY4ykZrTrStZKDeE7OB0UI50z66nnqjcqH/QzwhyPenCGwRJq",
+      "createdAt": 1789841890080
     },
     {
-      "username": "kabelo@gmail",
-      "firstName": "Kabelo",
-      "lastName": "Mogoshi",
-      "email": "kabelo@gmail",
-      "celphone": "+27735687356",
-      "password": "Kabelo@2000",
-      "createdAt": 1787898759179,
-      "id": 2
-    },
-    {
-      "username": "mpho@gmail.com",
-      "firstName": "Mpho",
-      "lastName": "Pops",
-      "email": "mpho@gmail.com",
-      "celphone": "+27735687356",
-      "password": "Mpho@2000",
-      "createdAt": 1787899575379,
-      "id": 3
-    },
-    {
-      "username": "mok@gmail.com",
-      "firstName": "Kabelo",
-      "lastName": "Mok",
-      "email": "mok@gmail.com",
-      "celphone": "+27345874564",
-      "password": "mok@2000",
-      "createdAt": 1787900706272,
-      "id": 4
-    },
-    {
-      "username": "kabi@gmail.com",
-      "firstName": "Kabelo",
-      "lastName": "Mok",
-      "email": "kabi@gmail.com",
-      "celphone": "+27735687356",
-      "password": "246813579",
-      "createdAt": 1787903214693,
-      "id": 5
-    },
-    {
-      "username": "luu@gmail.com",
-      "firstName": "Motlatsi",
-      "lastName": "LuuM",
-      "email": "luu@gmail.com",
-      "celphone": "+27723458935",
-      "password": "135792468",
-      "createdAt": 1787908356841,
-      "id": 6
-    },
-    {
-      "username": "mk@gmail.com",
-      "firstName": "MK",
-      "lastName": "Suno",
-      "email": "mk@gmail.com",
-      "celphone": "+27735687356",
-      "password": "mk@2027M",
-      "createdAt": 1788115632908,
-      "id": 7
-    },
-    {
-      "id": 1789328942026,
+      "id": 1789841954514,
       "username": "222@gmail.com",
       "firstName": "fifi",
       "lastName": "mokoena",
       "email": "222@gmail.com",
       "celphone": "+27672531917",
-      "password": "246813579",
-      "createdAt": 1789328942026
-    },
-    {
-      "id": 1789636117096,
-      "username": "moloko@gmail.com",
-      "firstName": "moloko",
-      "lastName": "MO",
-      "email": "moloko@gmail.com",
-      "celphone": "+27672531917",
-      "password": "246813579",
-      "createdAt": 1789636117096
+      "password": "$2b$10$MCiytcHq1zrB5ysmqqCKQOKazPD50yxCrM0QuD8q3A7AfraUHF/Zi",
+      "createdAt": 1789841954514
     }
   ],
-  "lists": [
-    {
-      "id": 1789417644796,
-      "name": "Grocery",
-      "itemCount": 0,
-      "userId": 1789328942026,
-      "createdAt": 1789417644796
-    }
-  ],
-  "items": [
-    {
-      "id": 1789417675803,
-      "name": "Meat",
-      "quantity": 2,
-      "category": "Grocery",
-      "listId": 1789417644796,
-      "notes": "Meatttin",
-      "image": "https://pixabay.com/get/gc8a3116700011b93a7c428dc4cd66f013f4dc760de6b80008c2ef0ddeef2f9c0109fe8063587cb56cf9aa5fbbe3891fe_640.jpg",
-      "purchased": false,
-      "userId": 1789328942026,
-      "createdAt": 1789417675803
-    }
-  ]
+  "lists": [],
+  "items": []
 }

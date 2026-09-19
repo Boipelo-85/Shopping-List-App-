@@ -6,13 +6,11 @@
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
 
-let _currentUserId: number | null = null;
+let _authToken: string | null = null;
 
-export const setCurrentUserId = (id: number | null): void => {
-  _currentUserId = id;
+export const setAuthToken = (token: string | null): void => {
+  _authToken = token;
 };
-
-export const getCurrentUserId = (): number | null => _currentUserId;
 
 /* =========================================================
    TYPES
@@ -108,7 +106,7 @@ const apiCall = async (
 
       headers: {
         'Content-Type': 'application/json',
-        ...(_currentUserId !== null ? { 'x-user-id': String(_currentUserId) } : {}),
+        ...(_authToken ? { 'Authorization': `Bearer ${_authToken}` } : {}),
         ...(options.headers || {}),
       },
     });
@@ -291,6 +289,25 @@ export const usersApi = {
 
       throw error;
     }
+  },
+
+  /* -------------------------------------------------------
+     UPDATE USER
+  ------------------------------------------------------- */
+
+  update: async (
+    id: number,
+    data: Partial<User>
+  ): Promise<User> => {
+
+    const response =
+      await apiCall(`/users/${id}`, {
+        method: 'PATCH',
+
+        body: JSON.stringify(data),
+      });
+
+    return response.json();
   },
 
   /* -------------------------------------------------------
