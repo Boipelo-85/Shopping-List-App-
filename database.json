@@ -19,6 +19,16 @@
       "celphone": "+27672531917",
       "password": "$2b$10$MCiytcHq1zrB5ysmqqCKQOKazPD50yxCrM0QuD8q3A7AfraUHF/Zi",
       "createdAt": 1789841954514
+    },
+    {
+      "id": 1789843452920,
+      "username": "kamo@gmail.com",
+      "firstName": "kamo",
+      "lastName": "kamogelo",
+      "email": "kamo@gmail.com",
+      "celphone": "+27672531917",
+      "password": "$2b$10$sZkexhm6B9hO3.S7Vl6GQ.gYqY9F/4BKgfobWtKuS.0ZDZc/HanTa",
+      "createdAt": 1789843452920
     }
   ],
   "lists": [],
