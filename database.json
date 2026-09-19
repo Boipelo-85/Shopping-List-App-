@@ -79,6 +79,16 @@
       "celphone": "+27672531917",
       "password": "246813579",
       "createdAt": 1789328942026
+    },
+    {
+      "id": 1789636117096,
+      "username": "moloko@gmail.com",
+      "firstName": "moloko",
+      "lastName": "MO",
+      "email": "moloko@gmail.com",
+      "celphone": "+27672531917",
+      "password": "246813579",
+      "createdAt": 1789636117096
     }
   ],
   "lists": [

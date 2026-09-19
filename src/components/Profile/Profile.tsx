@@ -133,7 +133,7 @@ export const Profile = () => {
         </Text>
         <p className="profile-subtitle">
           {isCredentialsMode
-            ? 'Update the email and password you use to log in'
+            ? 'Update password you use to log in'
             : 'Manage your personal information and account details'}
         </p>
       </div>
