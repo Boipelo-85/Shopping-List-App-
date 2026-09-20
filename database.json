@@ -29,8 +29,33 @@
       "celphone": "+27672531917",
       "password": "$2b$10$sZkexhm6B9hO3.S7Vl6GQ.gYqY9F/4BKgfobWtKuS.0ZDZc/HanTa",
       "createdAt": 1789843452920
+    },
+    {
+      "id": 1789885116141,
+      "username": "shop@gmail.com",
+      "firstName": "shop",
+      "lastName": "shopping",
+      "email": "shop@gmail.com",
+      "celphone": "+27672531917",
+      "password": "$2b$10$0ERrBhcQOEH1tmQCt51.juZeqrmpEHBjEa4Yq4MsCZgh3H6xozhLm",
+      "createdAt": 1789885116141
     }
   ],
-  "lists": [],
+  "lists": [
+    {
+      "id": 1789885129463,
+      "name": "nikkk",
+      "itemCount": 0,
+      "userId": 1789885116141,
+      "createdAt": 1789885129463
+    },
+    {
+      "id": 1789885155653,
+      "name": "pumaaa",
+      "itemCount": 0,
+      "userId": 1789843452920,
+      "createdAt": 1789885155653
+    }
+  ],
   "items": []
 }

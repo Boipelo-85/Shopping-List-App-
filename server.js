@@ -10,10 +10,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = 3001;
-const DB_PATH = path.join(__dirname, 'database.json');
+const PORT = process.env.PORT || 3001;
+// In production on Render, use the persistent disk at /data.
+// Locally, use database.json in the project root.
+const DB_PATH = process.env.NODE_ENV === 'production'
+  ? '/data/database.json'
+  : path.join(__dirname, 'database.json');
 const JWT_SECRET = process.env.JWT_SECRET || 'shopping-list-secret-key-2024';
 const SALT_ROUNDS = 10;
+const DIST_PATH = path.join(__dirname, 'dist');
 
 // ── Middleware ────────────────────────────────────────────────────────────────
 
@@ -322,9 +327,21 @@ app.delete('/items/:id', authenticateToken, (req, res) => {
   res.json({ success: true });
 });
 
+// ── Serve React frontend (production build) ──────────────────────────────────
+
+if (fs.existsSync(DIST_PATH)) {
+  app.use(express.static(DIST_PATH));
+
+  // SPA fallback — any route not matched by the API returns index.html
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(DIST_PATH, 'index.html'));
+  });
+}
+
 // ── Start ─────────────────────────────────────────────────────────────────────
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
   console.log(`Database path: ${DB_PATH}`);
+  console.log(`Serving frontend: ${fs.existsSync(DIST_PATH) ? DIST_PATH : 'not built yet'}`);
 });

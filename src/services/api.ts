@@ -4,7 +4,10 @@
    API CONFIGURATION
 ========================================================= */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+// In production the frontend is served by the same Express server,
+// so API calls use a relative URL (empty string = same origin).
+// Locally .env sets VITE_API_BASE_URL=http://localhost:3001.
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
 
 let _authToken: string | null = null;
 
