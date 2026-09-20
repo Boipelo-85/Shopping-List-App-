@@ -11,14 +11,37 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-// In production on Render, use the persistent disk at /data.
-// Locally, use database.json in the project root.
-const DB_PATH = process.env.NODE_ENV === 'production'
-  ? '/data/database.json'
-  : path.join(__dirname, 'database.json');
+// DB_PATH can be overridden via environment variable.
+// On Render with a persistent disk mounted at /data, set DB_PATH=/data/database.json
+// Locally it defaults to database.json in the project root.
+const DB_PATH = process.env.DB_PATH
+  || (process.env.NODE_ENV === 'production'
+    ? path.join(__dirname, 'database.json')
+    : path.join(__dirname, 'database.json'));
 const JWT_SECRET = process.env.JWT_SECRET || 'shopping-list-secret-key-2024';
 const SALT_ROUNDS = 10;
 const DIST_PATH = path.join(__dirname, 'dist');
+
+// ── Ensure database file exists on startup ────────────────────────────────────
+
+const initDatabase = () => {
+  try {
+    if (!fs.existsSync(DB_PATH)) {
+      const dir = path.dirname(DB_PATH);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      fs.writeFileSync(DB_PATH, JSON.stringify({ users: [], lists: [], items: [] }, null, 2));
+      console.log(`Database initialised at ${DB_PATH}`);
+    } else {
+      console.log(`Database found at ${DB_PATH}`);
+    }
+  } catch (err) {
+    console.error('Failed to initialise database:', err);
+  }
+};
+
+initDatabase();
 
 // ── Middleware ────────────────────────────────────────────────────────────────
 
@@ -41,9 +64,24 @@ const writeDatabase = (data) => {
   try {
     fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
   } catch (error) {
-    console.error('Error writing database:', error);
+    console.error('CRITICAL: Error writing database to', DB_PATH, error);
   }
 };
+
+// ── Debug endpoint (read-only, safe to leave in) ─────────────────────────────
+// Visit /debug on your deployed URL to see server state.
+app.get('/debug', (req, res) => {
+  const db = readDatabase();
+  res.json({
+    dbPath: DB_PATH,
+    dbExists: fs.existsSync(DB_PATH),
+    userCount: db.users?.length ?? 0,
+    listCount: db.lists?.length ?? 0,
+    itemCount: db.items?.length ?? 0,
+    nodeEnv: process.env.NODE_ENV,
+    port: PORT,
+  });
+});
 
 // ── Auth middleware ───────────────────────────────────────────────────────────
 

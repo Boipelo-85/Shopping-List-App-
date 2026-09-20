@@ -1,7 +1,7 @@
 services:
   - type: web
     name: shopping-list-app
-    env: node
+    runtime: node
     buildCommand: npm install && npm run build
     startCommand: npm start
     envVars:
@@ -9,7 +9,3 @@ services:
         value: production
       - key: JWT_SECRET
         generateValue: true
-    disk:
-      name: database
-      mountPath: /data
-      sizeGB: 1
